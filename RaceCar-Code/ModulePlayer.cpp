@@ -8,6 +8,7 @@
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled), vehicle(NULL)
 {
 	turn = acceleration = brake = 0.0f;
+	position.setValue(0, 0, 0);
 }
 
 ModulePlayer::~ModulePlayer()
@@ -113,13 +114,14 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
+	position = vehicle->GetPos();
+
 	// =========================================================
 	//						Car Movement
 	// =========================================================
 
 	// Reset Variables (more or less like !Key_Down)
 	turn = acceleration = brake = 0.0f;
-
 	// Move forward
 	if(app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 	{
