@@ -1,4 +1,4 @@
-#include "Globals.h"
+﻿#include "Globals.h"
 #include "Application.h"
 #include "ModulePlayer.h"
 #include "Primitive.h"
@@ -96,8 +96,8 @@ bool ModulePlayer::Start()
 	car.wheels[3].brake = true;
 	car.wheels[3].steering = false;
 
-	vehicle = App->physics->AddVehicle(car);
-	vehicle->SetPos(0, 12, 10);
+	vehicle = app->physics->AddVehicle(car);
+	vehicle->SetPos(0, 0, 0);
 	
 	return true;
 }
@@ -121,7 +121,7 @@ update_status ModulePlayer::Update(float dt)
 	turn = acceleration = brake = 0.0f;
 
 	// Move forward
-	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+	if(app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 	{
 		// Max Velocity fixed to 100 km/h
 		// If velocity is negative the vehicle brakes instead of accelerating
@@ -134,7 +134,7 @@ update_status ModulePlayer::Update(float dt)
 	}
 	
 	// Move backwards
-	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+	if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
 	{
 		// Same as forward movement but for backwards. Velocity capped at 25km/h
 		if (vehicle->GetKmh() > 0) {
@@ -146,14 +146,14 @@ update_status ModulePlayer::Update(float dt)
 	}
 
 	// Turn left
-	if(App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+	if(app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 	{
 		if(turn < TURN_DEGREES)
 			turn +=  TURN_DEGREES;
 	}
 
 	// Turn Right
-	if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+	if(app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 	{
 		if(turn > -TURN_DEGREES)
 			turn -= TURN_DEGREES;
@@ -175,8 +175,8 @@ update_status ModulePlayer::Update(float dt)
 	// =========================================================
 
 	char title[80];
-	sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h", vehicle->GetKmh());
-	App->window->SetTitle(title);
+	sprintf_s(title, "Racing GP Piston Cup ඞ || Car Speed: %.1f Km/h", vehicle->GetKmh());
+	app->window->SetTitle(title);
 
 	return UPDATE_CONTINUE;
 }
