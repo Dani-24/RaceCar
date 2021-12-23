@@ -182,3 +182,10 @@ update_status ModulePlayer::Update(float dt)
 
 	return UPDATE_CONTINUE;
 }
+
+btVector3 ModulePlayer::VehicleNormalizedVec() {
+
+	btVector3 a = vehicle->vehicle->getForwardVector().normalize();
+
+	return a;
+}

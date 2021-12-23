@@ -19,6 +19,8 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
+	btVector3 VehicleNormalizedVec();
+
 public:
 	PhysVehicle3D* vehicle;
 	float turn;

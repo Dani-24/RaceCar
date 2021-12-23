@@ -3,6 +3,7 @@
 #include "p2DynArray.h"
 #include "Globals.h"
 #include "Primitive.h"
+#include "Bullet/include/LinearMath/btVector3.h"
 
 #define MAX_SNAKE 2
 
@@ -21,24 +22,18 @@ public:
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 
+	void CameraPlayer();
+
 public:
-	/*
-	PhysBody3D* pb_snake[MAX_SNAKE];
-	Sphere s_snake[MAX_SNAKE];
 
-	PhysBody3D* pb_snake2[MAX_SNAKE];
-	Sphere s_snake2[MAX_SNAKE];
-	*/
 
-	PhysBody3D* pb_chassis;
-	Cube p_chassis;
+private:
 
-	PhysBody3D* pb_wheel;
-	Cylinder p_wheel;
+	// Cameras:
 
-	PhysBody3D* pb_wheel2;
-	Cylinder p_wheel2;
+	vec3 playerCam, playerCamLookAt, Y;
+	btVector3 normalizedPlayerVec;
 
-	PhysMotor3D* left_wheel;
-	PhysMotor3D* right_wheel;
+
+	bool debug = true;
 };
