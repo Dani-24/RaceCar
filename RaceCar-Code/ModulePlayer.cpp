@@ -113,42 +113,70 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
+	// =========================================================
+	//						Car Movement
+	// =========================================================
+
+	// Reset Variables (more or less like !Key_Down)
 	turn = acceleration = brake = 0.0f;
 
+	// Move forward
 	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
-		acceleration = MAX_ACCELERATION;
+		// Max Velocity fixed to 100 km/h
+		// If velocity is negative the vehicle brakes instead of accelerating
+		if (vehicle->GetKmh() < 0) {
+			brake = BRAKE_POWER / 20;
+		}
+		else if (vehicle->GetKmh() <= 100) {
+			acceleration = MAX_ACCELERATION;
+		}
+	}
+	
+	// Move backwards
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+	{
+		// Same as forward movement but for backwards. Velocity capped at 25km/h
+		if (vehicle->GetKmh() > 0) {
+			brake = BRAKE_POWER / 20;
+		}
+		else if (vehicle->GetKmh() > -25) {
+			acceleration = -MAX_ACCELERATION;
+		}
 	}
 
+	// Turn left
 	if(App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 	{
 		if(turn < TURN_DEGREES)
 			turn +=  TURN_DEGREES;
 	}
 
+	// Turn Right
 	if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 	{
 		if(turn > -TURN_DEGREES)
 			turn -= TURN_DEGREES;
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-	{
-		brake = BRAKE_POWER;
-	}
-
+	// Apply inputs to vehicle
 	vehicle->ApplyEngineForce(acceleration);
 	vehicle->Turn(turn);
 	vehicle->Brake(brake);
 
+	// =========================================================
+	//						Post Update
+	// =========================================================
+
 	vehicle->Render();
 
+	// =========================================================
+	//						Window Title
+	// =========================================================
+
 	char title[80];
-	sprintf_s(title, "%.1f Km/h", vehicle->GetKmh());
+	sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h", vehicle->GetKmh());
 	App->window->SetTitle(title);
 
 	return UPDATE_CONTINUE;
 }
-
-
-
