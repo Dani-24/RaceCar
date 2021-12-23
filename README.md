@@ -1,7 +1,7 @@
-# Racing car physics game
+# Racing GP Piston Cup ඞ - Physics Racecar Game
 
 ### Description
-Racing car prototype game made with Bullet Physics library, OpenGl and SDL :D
+Racing GP Piston Cup ඞ is the future of racing car games, forza horizon, mario kart, gran turismo, nothing is better than Racing GP Piston Cup ඞ.
 
 ### Members
 
