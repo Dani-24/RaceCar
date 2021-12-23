@@ -19,6 +19,14 @@ bool ModulePlayer::Start()
 {
 	LOG("Loading player");
 
+	// Variables :
+
+	engineFx = app->audio->LoadFx("Assets/audio/fx/kartEngine.wav");
+
+	// ======================================================
+	//                         Vehicle
+	// ======================================================
+
 	VehicleInfo car;
 
 	// Car properties ----------------------------------------
@@ -129,9 +137,15 @@ update_status ModulePlayer::Update(float dt)
 		// If velocity is negative the vehicle brakes instead of accelerating
 		if (vehicle->GetKmh() < 0) {
 			brake = BRAKE_POWER / 20;
+
 		}
 		else if (vehicle->GetKmh() <= 100) {
 			acceleration = MAX_ACCELERATION;
+
+			if (playingEngineFx == false) {
+				app->audio->PlayFx(engineFx);
+				playingEngineFx = true;
+			}
 		}
 	}
 	
@@ -144,6 +158,11 @@ update_status ModulePlayer::Update(float dt)
 		}
 		else if (vehicle->GetKmh() > -25) {
 			acceleration = -MAX_ACCELERATION;
+
+			if (playingEngineFx == false) {
+				app->audio->PlayFx(engineFx);
+				playingEngineFx = true;
+			}
 		}
 	}
 

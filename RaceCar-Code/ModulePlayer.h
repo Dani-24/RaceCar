@@ -28,4 +28,8 @@ public:
 	float brake;
 
 	btVector3 position;
+
+private:
+	uint engineFx;
+	bool playingEngineFx = false;
 };

@@ -22,6 +22,10 @@ bool ModuleSceneIntro::Start()
 	app->camera->Move(vec3(app->player->position.getX(), app->player->position.getY() + 7, app->player->position.getZ() - 20));
 	app->camera->LookAt(vec3(app->player->position.getX(), app->player->position.getY(), app->player->position.getZ()));
 
+	app->audio->PlayMusic("Assets/audio/music/menuBGmusic.ogg");
+
+	winFx = app->audio->LoadFx("Assets/audio/fx/win.wav");
+
 	return ret;
 }
 
@@ -45,6 +49,10 @@ update_status ModuleSceneIntro::Update(float dt)
 	if (debug == true) {
 		normalizedPlayerVec = app->player->VehicleNormalizedVec();
 		CameraPlayer();
+	}
+
+	if (app->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+		app->audio->PlayFx(winFx);
 	}
 
 	// Ground?
