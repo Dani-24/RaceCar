@@ -57,13 +57,13 @@ bool ModulePhysics3D::Start()
 
 	// Big plane as ground
 	{
-		btCollisionShape* colShape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
+		/*btCollisionShape* colShape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
 
 		btDefaultMotionState* myMotionState = new btDefaultMotionState();
 		btRigidBody::btRigidBodyConstructionInfo rbInfo(0.0f, myMotionState, colShape);
 
 		btRigidBody* body = new btRigidBody(rbInfo);
-		world->addRigidBody(body);
+		world->addRigidBody(body);*/
 	}
 
 	return true;
@@ -112,8 +112,7 @@ update_status ModulePhysics3D::PreUpdate(float dt)
 // ---------------------------------------------------------
 update_status ModulePhysics3D::Update(float dt)
 {
-	if(app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-		debug = !debug;
+	debug = app->scene_intro->debug;
 
 	if(debug == true)
 	{
@@ -127,13 +126,15 @@ update_status ModulePhysics3D::Update(float dt)
 			item = item->next;
 		}
 
-		if(app->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+		// Add sphere by pressing 1
+
+		/*if(app->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 		{
 			Sphere s(1);
 			s.SetPos(app->camera->Position.x, app->camera->Position.y, app->camera->Position.z);
 			float force = 30.0f;
 			AddBody(s)->Push(-(app->camera->Z.x * force), -(app->camera->Z.y * force), -(app->camera->Z.z * force));
-		}
+		}*/
 	}
 
 	return UPDATE_CONTINUE;

@@ -19,6 +19,8 @@ public:
 
 	void OnResize(int width, int height);
 
+	void SetBGColor(int R, int G, int B);
+
 public:
 
 	Light lights[MAX_LIGHTS];

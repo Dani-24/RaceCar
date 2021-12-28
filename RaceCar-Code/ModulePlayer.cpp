@@ -124,9 +124,18 @@ update_status ModulePlayer::Update(float dt)
 {
 	position = vehicle->GetPos();
 
+	if (position.getY() < Vehicle_Fall_Dist || app->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
+		vehicle->SetPos(0, 0, 0);
+	}
+
 	// =========================================================
 	//						Car Movement
 	// =========================================================
+
+	// Jump bc yes
+	if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && app->scene_intro->debug == true) {
+		vehicle->Push(0, 3000, 0);
+	}
 
 	// Reset Variables (more or less like !Key_Down)
 	turn = acceleration = brake = 0.0f;
@@ -211,8 +220,4 @@ update_status ModulePlayer::Update(float dt)
 
 vec3 ModulePlayer::GetVehicleForwardVec() {
 	return vehicle->GetForwardVector();
-}
-
-btVector3 ModulePlayer::VehicleNormalizedVec() {
-	return vehicle->vehicle->getForwardVector().normalize();
 }

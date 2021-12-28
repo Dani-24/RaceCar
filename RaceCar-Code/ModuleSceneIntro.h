@@ -5,7 +5,8 @@
 #include "Primitive.h"
 #include "Bullet/include/LinearMath/btVector3.h"
 
-#define MAX_SNAKE 2
+#define Vehicle_Fall_Dist -100
+#define Camera_Fall_Dist -10
 
 struct PhysBody3D;
 struct PhysMotor3D;
@@ -25,10 +26,18 @@ public:
 	void CameraPlayer();
 
 public:
+	
+	p2List<Cube> ground;
 
+	// X, Y, Z and {sizeX, sizeY, sizeZ} and angle rotation
+	void AddGround(int X, int Y, int Z, vec3 size, int angle = 0, bool rotateX = false, bool rotateY = false, bool rotateZ = false);
+	// X, Y, Z and {sizeX, sizeY, sizeZ}
+	void AddWall(int X, int Y, int Z, vec3 size);
+
+	bool debug = false;
 
 private:
-
 	uint winFx;
-	bool debug = true;
+
+	SDL_Texture* HighSpeedSprite;
 };
