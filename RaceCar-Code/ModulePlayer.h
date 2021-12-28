@@ -20,6 +20,7 @@ public:
 	bool CleanUp();
 
 	btVector3 VehicleNormalizedVec();
+	vec3 GetVehicleForwardVec();
 
 public:
 	PhysVehicle3D* vehicle;

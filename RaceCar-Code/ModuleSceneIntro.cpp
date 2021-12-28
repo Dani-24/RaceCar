@@ -47,7 +47,6 @@ update_status ModuleSceneIntro::Update(float dt)
 	}
 
 	if (debug == true) {
-		normalizedPlayerVec = app->player->VehicleNormalizedVec();
 		CameraPlayer();
 	}
 
@@ -66,18 +65,20 @@ update_status ModuleSceneIntro::Update(float dt)
 void ModuleSceneIntro::CameraPlayer() {
 
 	// Camera following player
-	playerCam.x = app->player->position.getX() + normalizedPlayerVec.getX();
-	playerCam.y = app->player->position.getY() + normalizedPlayerVec.getY() + 7;
-	playerCam.z = app->player->position.getZ() + normalizedPlayerVec.getZ() - 20;
 
-	// Camera looking at player
-	playerCamLookAt.x = app->player->position.getX();
-	playerCamLookAt.y = app->player->position.getY();
-	playerCamLookAt.z = app->player->position.getZ();
+	float camX = app->player->position.getX() - 15 * app->player->GetVehicleForwardVec().x;
+	float camY = app->player->position.getY() + 6;
+	float camZ = app->player->position.getZ() - 15 * app->player->GetVehicleForwardVec().z;
 
+	vec3 playerCam = {camX, camY, camZ};
+ 
 	// Set camera
 	app->camera->Position = playerCam;
-	app->camera->LookAt(playerCamLookAt);
+
+	float posX = app->player->position.getX();
+	float posZ = app->player->position.getZ();
+
+	app->camera->LookAt(vec3(posX, 1, posZ));
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)

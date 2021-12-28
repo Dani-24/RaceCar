@@ -166,18 +166,25 @@ update_status ModulePlayer::Update(float dt)
 		}
 	}
 
+	// Brake if there is no acceleration
+	if (app->input->GetKey(SDL_SCANCODE_S) != KEY_REPEAT && app->input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT) {
+		brake = BRAKE_POWER / 200;
+	}
+
 	// Turn left
 	if(app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 	{
-		if(turn < TURN_DEGREES)
-			turn +=  TURN_DEGREES;
+		if (turn < TURN_DEGREES) {
+			turn += TURN_DEGREES;
+		}
 	}
 
 	// Turn Right
 	if(app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 	{
-		if(turn > -TURN_DEGREES)
+		if (turn > -TURN_DEGREES) {
 			turn -= TURN_DEGREES;
+		}
 	}
 
 	// Apply inputs to vehicle
@@ -202,9 +209,10 @@ update_status ModulePlayer::Update(float dt)
 	return UPDATE_CONTINUE;
 }
 
+vec3 ModulePlayer::GetVehicleForwardVec() {
+	return vehicle->GetForwardVector();
+}
+
 btVector3 ModulePlayer::VehicleNormalizedVec() {
-
-	btVector3 a = vehicle->vehicle->getForwardVector().normalize();
-
-	return a;
+	return vehicle->vehicle->getForwardVector().normalize();
 }

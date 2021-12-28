@@ -29,11 +29,6 @@ public:
 
 private:
 
-	// Cameras:
-
-	vec3 playerCam, playerCamLookAt, Y;
-	btVector3 normalizedPlayerVec;
-
 	uint winFx;
 	bool debug = true;
 };
