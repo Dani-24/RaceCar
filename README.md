@@ -14,10 +14,13 @@ https://github.com/Dani-24/RaceCar
 ### Controls
 
 - A/S/D/W: Movement
+- R: Reset
 
 ### Debug
 
-- F(insert num): Something
+- F1: Debug mode
+    - Arrows: Camera movement
+    - Space: Jump
 
 ## Additional comments
 This game has been done thanks to [Bullet Physics](https://pybullet.org/wordpress/), [SDL](https://www.libsdl.org/index.php) and [OpenGL](https://www.opengl.org/)
