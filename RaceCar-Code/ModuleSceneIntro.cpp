@@ -66,14 +66,14 @@ void ModuleSceneIntro::CameraPlayer() {
 
 	// Camera following player
 
-	float camX = app->player->position.getX() - 15 * app->player->GetVehicleForwardVec().x;
-	float camY = app->player->position.getY() + 6;
-	float camZ = app->player->position.getZ() - 15 * app->player->GetVehicleForwardVec().z;
+	float cameraDistance = 15;
 
-	vec3 playerCam = {camX, camY, camZ};
+	float camX = app->player->position.getX() - cameraDistance * app->player->GetVehicleForwardVec().x;
+	float camY = app->player->position.getY() + 6;
+	float camZ = app->player->position.getZ() - cameraDistance * app->player->GetVehicleForwardVec().z;
  
 	// Set camera
-	app->camera->Position = playerCam;
+	app->camera->Position = { camX, camY, camZ };
 
 	float posX = app->player->position.getX();
 	float posZ = app->player->position.getZ();

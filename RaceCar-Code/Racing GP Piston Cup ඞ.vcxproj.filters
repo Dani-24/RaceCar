@@ -19,6 +19,9 @@
     <Filter Include="Sources\Modules\Game">
       <UniqueIdentifier>{83f46af7-e02f-40c0-9e56-41d76082527b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource files">
+      <UniqueIdentifier>{f5ac66b2-42fd-4b9b-a767-2cf2835a910b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -84,6 +87,9 @@
     <ClInclude Include="ModulePlayer.h">
       <Filter>Sources\Modules\Game</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Resource files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -140,5 +146,15 @@
     <ClCompile Include="ModulePlayer.cpp">
       <Filter>Sources\Modules\Game</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Racing Car.rc">
+      <Filter>Resource files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico">
+      <Filter>Resource files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
