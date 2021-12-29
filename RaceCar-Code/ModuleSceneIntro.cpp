@@ -26,12 +26,20 @@ bool ModuleSceneIntro::Start()
 	app->audio->PlayMusic("Assets/audio/music/menuBGmusic.ogg");
 	winFx = app->audio->LoadFx("Assets/audio/fx/win.wav");
 
-	// Physbodys
+	// ===================================
+	//				Physbodys
+	// ===================================
+
+	// Initial ground
 	AddGround(0, -1, 0, { 15, 1, 100 });
 	AddWall(8, 0, 0, { 1, 4, 100 });
 	AddWall(-8, 0, 0, { 1, 4, 100 });
 
-	AddGround(0, -2, 55, { 15, 1, 10 }, 25, true);
+	// first ramp
+	AddGround(0, 7, 68, { 15, 1, 40 }, -24, true, false, false, 255, 0, 0);
+
+	// top of first ramp
+	AddGround(0, 15, 96, { 15, 1, 20 });
 
 	// BG Color
 	app->renderer3D->SetBGColor(255, 0, 153);
@@ -49,11 +57,11 @@ bool ModuleSceneIntro::CleanUp()
 	return true;
 }
 
-void ModuleSceneIntro::AddGround(int X, int Y, int Z, vec3 size, int angle, bool rotateX, bool rotateY, bool rotateZ)
+void ModuleSceneIntro::AddGround(int X, int Y, int Z, vec3 size, int angle, bool rotateX, bool rotateY, bool rotateZ, float R, float G, float B)
 {
 	Cube groundToAdd;
 
-	groundToAdd.color = { 0, 0, 255 };
+	groundToAdd.color = { R, G, B };
 
 	groundToAdd.SetPos(X, Y, Z);
 

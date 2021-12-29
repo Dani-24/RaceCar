@@ -30,7 +30,7 @@ public:
 	p2List<Cube> ground;
 
 	// X, Y, Z and {sizeX, sizeY, sizeZ} and angle rotation
-	void AddGround(int X, int Y, int Z, vec3 size, int angle = 0, bool rotateX = false, bool rotateY = false, bool rotateZ = false);
+	void AddGround(int X, int Y, int Z, vec3 size, int angle = 0, bool rotateX = false, bool rotateY = false, bool rotateZ = false, float R = 0, float G = 0, float B = 255);
 	// X, Y, Z and {sizeX, sizeY, sizeZ}
 	void AddWall(int X, int Y, int Z, vec3 size);
 
