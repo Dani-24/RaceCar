@@ -30,16 +30,23 @@ bool ModuleSceneIntro::Start()
 	//				Physbodys
 	// ===================================
 
-	// Initial ground
-	AddGround(0, -1, 0, { 15, 1, 100 });
-	AddWall(8, 0, 0, { 1, 4, 100 });
-	AddWall(-8, 0, 0, { 1, 4, 100 });
+	// Map ground
+	//AddGround(-200, -2, 0, { 500, 1, 1000 }, Green);
 
-	// first ramp
-	AddGround(0, 7, 68, { 15, 1, 40 }, -24, true, false, false, 255, 0, 0);
+	// River
 
-	// top of first ramp
-	AddGround(0, 15, 96, { 15, 1, 20 });
+	// 1
+	AddGround(0, -1, 0, { 25, 1, 300 });
+	AddGround(0, -1, 300, { 25, 1, 300 });
+	AddWall(13, 0, 0, { 1, 4, 700 });
+	AddWall(-13, 0, 0, { 1, 4, 700 });
+
+	// 2
+	AddGround(-62, -1, 400, { 100, 1, 100 });
+
+	// 3
+	AddGround(-100, -1, 250, {25, 1, 200});
+
 
 	// BG Color
 	app->renderer3D->SetBGColor(255, 0, 153);
@@ -57,11 +64,11 @@ bool ModuleSceneIntro::CleanUp()
 	return true;
 }
 
-void ModuleSceneIntro::AddGround(int X, int Y, int Z, vec3 size, int angle, bool rotateX, bool rotateY, bool rotateZ, float R, float G, float B)
+void ModuleSceneIntro::AddGround(int X, int Y, int Z, vec3 size, Color RGB, int angle, bool rotateX, bool rotateY, bool rotateZ)
 {
 	Cube groundToAdd;
 
-	groundToAdd.color = { R, G, B };
+	groundToAdd.color = RGB;
 
 	groundToAdd.SetPos(X, Y, Z);
 
@@ -87,7 +94,7 @@ void ModuleSceneIntro::AddWall(int X, int Y, int Z, vec3 size)
 {
 	Cube wallToAdd;
 
-	wallToAdd.color = { 0, 255, 0 };
+	wallToAdd.color = Turquoise;
 
 	wallToAdd.SetPos(X, Y, Z);
 

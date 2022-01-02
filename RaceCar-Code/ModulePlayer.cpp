@@ -156,6 +156,18 @@ update_status ModulePlayer::Update(float dt)
 				playingEngineFx = true;
 			}
 		}
+
+		if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
+			if (vehicle->GetKmh() < 150) {
+				acceleration = MAX_ACCELERATION * 5;
+			}
+		}
+		else {
+			if (vehicle->GetKmh() > 100) {
+				brake = BRAKE_POWER / 20;
+			}
+		}
+
 	}
 	
 	// Move backwards
@@ -178,6 +190,10 @@ update_status ModulePlayer::Update(float dt)
 	// Brake if there is no acceleration
 	if (app->input->GetKey(SDL_SCANCODE_S) != KEY_REPEAT && app->input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT) {
 		brake = BRAKE_POWER / 200;
+
+		if (vehicle->GetKmh() > 100) {
+			brake = BRAKE_POWER / 20;
+		}
 	}
 
 	// Turn left
