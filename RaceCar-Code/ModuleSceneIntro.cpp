@@ -47,7 +47,6 @@ bool ModuleSceneIntro::Start()
 	// 3
 	AddGround(-100, -1, 250, {25, 1, 200});
 
-
 	// BG Color
 	app->renderer3D->SetBGColor(255, 0, 153);
 
