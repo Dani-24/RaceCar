@@ -158,19 +158,30 @@ update_status ModuleSceneIntro::Update(float dt)
 	{
 	case TITLESCREEN:
 
-		if (titleMusic == false) {
-			app->audio->PlayMusic("Assets/audio/music/menuBGmusic.ogg");
-			titleMusic = true;
-			endMusic = menuMusic = gameplayMusic = false;
-		}
+		// ==========================
+		//			INPUT
+		// ==========================
 
 		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 			state = GameState::SELECTIONSCREEN;
 			LOG("Loading Selection screen");
 		}
 
-		app->camera->Position = { -300, 300, 100 };
+		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+			return UPDATE_STOP;
+		}
 
+		// ==========================
+		//			Update
+		// ==========================
+
+		if (titleMusic == false) {
+			app->audio->PlayMusic("Assets/audio/music/menuBGmusic.ogg");
+			titleMusic = true;
+			endMusic = menuMusic = gameplayMusic = false;
+		}
+
+		app->camera->Position = { -300, 300, 100 };
 		app->camera->LookAt(vec3(-300, 0, 101));
 
 		LOG("%.2f %.2f %.2f", app->camera->Position.x, app->camera->Position.y, app->camera->Position.z)
@@ -178,13 +189,29 @@ update_status ModuleSceneIntro::Update(float dt)
 		break;
 	case SELECTIONSCREEN:
 
+		// ==========================
+		//			INPUT
+		// ==========================
+
 		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
 			state = GameState::GAMEPLAY;
 			LOG("Loading Gameplay");
 		}
+		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+			state = GameState::TITLESCREEN;
+			LOG("Exiting to Title");
+		}
+
+		// ==========================
+		//			Update
+		// ==========================
 
 		break;
 	case GAMEPLAY:
+
+		// ==========================
+		//			INPUT
+		// ==========================
 
 		if (gameplayMusic == false) {
 			app->audio->PlayMusic("Assets/audio/music/coconutMall.ogg");
@@ -193,18 +220,19 @@ update_status ModuleSceneIntro::Update(float dt)
 		}
 
 		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
-			state = GameState::ENDSCREEN;
-			LOG("Loading Gameplay");
+			state = GameState::TITLESCREEN;
+			LOG("Exiting to Title");
 		}
 
-		// ====================================================
-		//					Camera Movement
-		// ====================================================
+		// ==========================
+		//			Update
+		// ==========================
 
 		if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) {
 			debug = !debug;
 		}
 
+		// CAMERA
 		if (debug != true) {
 			CameraPlayer();
 		}
@@ -216,9 +244,13 @@ update_status ModuleSceneIntro::Update(float dt)
 		break;
 	case ENDSCREEN:
 
-		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+		// ==========================
+		//			INPUT
+		// ==========================
+
+		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 			state = GameState::TITLESCREEN;
-			LOG("Loading Title");
+			LOG("Exiting to Title");
 		}
 
 		break;

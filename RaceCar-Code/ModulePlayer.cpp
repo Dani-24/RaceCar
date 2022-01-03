@@ -122,135 +122,136 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
-	position = vehicle->GetPos();
+	if (app->scene_intro->state == GameState::GAMEPLAY) {
+		position = vehicle->GetPos();
 
-	if (position.getY() < Vehicle_Fall_Dist || app->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-		vehicle->SetPos(0, 0, 0);
-	}
+		if (position.getY() < Vehicle_Fall_Dist || app->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
+			vehicle->SetPos(0, 0, 0);
+		}
 
-	// =========================================================
-	//						Car Movement
-	// =========================================================
+		// =========================================================
+		//						Car Movement
+		// =========================================================
 
-	// Jump bc yes
-	if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && app->scene_intro->debug == true) {
-		vehicle->Push(0, 3000, 0);
-	}
+		// Jump bc yes
+		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && app->scene_intro->debug == true) {
+			vehicle->Push(0, 3000, 0);
+		}
 
-	// Reset Variables (more or less like !Key_Down)
-	turn = acceleration = brake = 0.0f;
-	// Move forward
-	if(app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-	{
-		// Max Velocity fixed to 100 km/h
-		// If velocity is negative the vehicle brakes instead of accelerating
-		if (vehicle->GetKmh() < 0) {
-			brake = BRAKE_POWER / 20;
+		// Reset Variables (more or less like !Key_Down)
+		turn = acceleration = brake = 0.0f;
+		// Move forward
+		if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+		{
+			// Max Velocity fixed to 100 km/h
+			// If velocity is negative the vehicle brakes instead of accelerating
+			if (vehicle->GetKmh() < 0) {
+				brake = BRAKE_POWER / 20;
+
+			}
+			else if (vehicle->GetKmh() <= 100) {
+				acceleration = MAX_ACCELERATION;
+
+				if (playingEngineFx == false) {
+					app->audio->PlayFx(engineFx);
+					playingEngineFx = true;
+				}
+			}
+
+			if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
+				if (vehicle->GetKmh() < 150) {
+					acceleration = MAX_ACCELERATION * 5;
+				}
+			}
+			else {
+				if (vehicle->GetKmh() > 100) {
+					brake = BRAKE_POWER / 20;
+				}
+			}
 
 		}
-		else if (vehicle->GetKmh() <= 100) {
-			acceleration = MAX_ACCELERATION;
 
-			if (playingEngineFx == false) {
-				app->audio->PlayFx(engineFx);
-				playingEngineFx = true;
+		// Move backwards
+		if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+		{
+			// Same as forward movement but for backwards. Velocity capped at 25km/h
+			if (vehicle->GetKmh() > 0) {
+				brake = BRAKE_POWER / 20;
+			}
+			else if (vehicle->GetKmh() > -25) {
+				acceleration = -MAX_ACCELERATION;
+
+				if (playingEngineFx == false) {
+					app->audio->PlayFx(engineFx);
+					playingEngineFx = true;
+				}
 			}
 		}
 
-		if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-			if (vehicle->GetKmh() < 150) {
-				acceleration = MAX_ACCELERATION * 5;
-			}
-		}
-		else {
+		// Brake if there is no acceleration
+		if (app->input->GetKey(SDL_SCANCODE_S) != KEY_REPEAT && app->input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT) {
+			brake = BRAKE_POWER / 100;
+
 			if (vehicle->GetKmh() > 100) {
 				brake = BRAKE_POWER / 20;
 			}
 		}
 
+		// Turn left
+		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+		{
+			if (vehicle->GetKmh() > 110) {
+				if (turn < TURN_DEGREES) {
+					turn += TURN_DEGREES / 5;
+				}
+			}
+			else if (vehicle->GetKmh() > 98) {
+				if (turn < TURN_DEGREES) {
+					turn += TURN_DEGREES / 3;
+				}
+			}
+			else if (vehicle->GetKmh() > 75) {
+				if (turn < TURN_DEGREES) {
+					turn += TURN_DEGREES / 1.5;
+				}
+			}
+			else {
+				if (turn < TURN_DEGREES) {
+					turn += TURN_DEGREES;
+				}
+			}
+		}
+
+		// Turn Right
+		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+		{
+			if (vehicle->GetKmh() > 110) {
+				if (turn < TURN_DEGREES) {
+					turn -= TURN_DEGREES / 5;
+				}
+			}
+			else if (vehicle->GetKmh() > 98) {
+				if (turn < TURN_DEGREES) {
+					turn -= TURN_DEGREES / 3;
+				}
+			}
+			else if (vehicle->GetKmh() > 75) {
+				if (turn < TURN_DEGREES) {
+					turn -= TURN_DEGREES / 1.5;
+				}
+			}
+			else {
+				if (turn < TURN_DEGREES) {
+					turn -= TURN_DEGREES;
+				}
+			}
+		}
+
+		// Apply inputs to vehicle
+		vehicle->ApplyEngineForce(acceleration);
+		vehicle->Turn(turn);
+		vehicle->Brake(brake);
 	}
-	
-	// Move backwards
-	if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-	{
-		// Same as forward movement but for backwards. Velocity capped at 25km/h
-		if (vehicle->GetKmh() > 0) {
-			brake = BRAKE_POWER / 20;
-		}
-		else if (vehicle->GetKmh() > -25) {
-			acceleration = -MAX_ACCELERATION;
-
-			if (playingEngineFx == false) {
-				app->audio->PlayFx(engineFx);
-				playingEngineFx = true;
-			}
-		}
-	}
-
-	// Brake if there is no acceleration
-	if (app->input->GetKey(SDL_SCANCODE_S) != KEY_REPEAT && app->input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT) {
-		brake = BRAKE_POWER / 100;
-
-		if (vehicle->GetKmh() > 100) {
-			brake = BRAKE_POWER / 20;
-		}
-	}
-
-	// Turn left
-	if(app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-	{
-		if (vehicle->GetKmh() > 110) {
-			if (turn < TURN_DEGREES) {
-				turn += TURN_DEGREES / 5;
-			}
-		}
-		else if (vehicle->GetKmh() > 98) {
-			if (turn < TURN_DEGREES) {
-				turn += TURN_DEGREES / 3;
-			}
-		}
-		else if (vehicle->GetKmh() > 75) {
-			if (turn < TURN_DEGREES) {
-				turn += TURN_DEGREES / 1.5;
-			}
-		}
-		else {
-			if (turn < TURN_DEGREES) {
-				turn += TURN_DEGREES;
-			}
-		}
-	}
-
-	// Turn Right
-	if(app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-	{
-		if (vehicle->GetKmh() > 110) {
-			if (turn < TURN_DEGREES) {
-				turn -= TURN_DEGREES / 5;
-			}
-		}
-		else if (vehicle->GetKmh() > 98) {
-			if (turn < TURN_DEGREES) {
-				turn -= TURN_DEGREES / 3;
-			}
-		}
-		else if (vehicle->GetKmh() > 75) {
-			if (turn < TURN_DEGREES) {
-				turn -= TURN_DEGREES / 1.5;
-			}
-		}
-		else {
-			if (turn < TURN_DEGREES) {
-				turn -= TURN_DEGREES;
-			}
-		}
-	}
-
-	// Apply inputs to vehicle
-	vehicle->ApplyEngineForce(acceleration);
-	vehicle->Turn(turn);
-	vehicle->Brake(brake);
-
 	// =========================================================
 	//						Post Update
 	// =========================================================
