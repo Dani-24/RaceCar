@@ -11,6 +11,13 @@
 struct PhysBody3D;
 struct PhysMotor3D;
 
+enum GameState {
+	TITLESCREEN,
+	SELECTIONSCREEN,
+	GAMEPLAY,
+	ENDSCREEN
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -36,8 +43,12 @@ public:
 
 	bool debug = false;
 
+	GameState state = GameState::TITLESCREEN;
+
 private:
 	uint winFx;
 
 	SDL_Texture* HighSpeedSprite;
+
+	bool titleMusic = false, menuMusic = false, gameplayMusic = false, endMusic = false;
 };

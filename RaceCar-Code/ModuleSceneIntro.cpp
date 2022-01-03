@@ -23,7 +23,6 @@ bool ModuleSceneIntro::Start()
 	app->camera->LookAt(vec3(app->player->position.getX(), app->player->position.getY(), app->player->position.getZ()));
 
 	// Audios
-	app->audio->PlayMusic("Assets/audio/music/menuBGmusic.ogg");
 	winFx = app->audio->LoadFx("Assets/audio/fx/win.wav");
 
 	// ===================================
@@ -155,19 +154,79 @@ void ModuleSceneIntro::AddWall(int X, int Y, int Z, vec3 size)
 // Update
 update_status ModuleSceneIntro::Update(float dt)
 {
-	// Camera Movement
+	switch (state)
+	{
+	case TITLESCREEN:
 
-	if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) {
-		debug = !debug;
-	}
+		if (titleMusic == false) {
+			app->audio->PlayMusic("Assets/audio/music/menuBGmusic.ogg");
+			titleMusic = true;
+			endMusic = menuMusic = gameplayMusic = false;
+		}
 
-	if (debug != true) {
-		CameraPlayer();
-	}
+		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+			state = GameState::SELECTIONSCREEN;
+			LOG("Loading Selection screen");
+		}
 
-	if (app->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
-		app->audio->PlayFx(winFx);
+		app->camera->Position = { -300, 300, 100 };
+
+		app->camera->LookAt(vec3(-300, 0, 101));
+
+		LOG("%.2f %.2f %.2f", app->camera->Position.x, app->camera->Position.y, app->camera->Position.z)
+
+		break;
+	case SELECTIONSCREEN:
+
+		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+			state = GameState::GAMEPLAY;
+			LOG("Loading Gameplay");
+		}
+
+		break;
+	case GAMEPLAY:
+
+		if (gameplayMusic == false) {
+			app->audio->PlayMusic("Assets/audio/music/coconutMall.ogg");
+			gameplayMusic = true;
+			endMusic = menuMusic = titleMusic = false;
+		}
+
+		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
+			state = GameState::ENDSCREEN;
+			LOG("Loading Gameplay");
+		}
+
+		// ====================================================
+		//					Camera Movement
+		// ====================================================
+
+		if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) {
+			debug = !debug;
+		}
+
+		if (debug != true) {
+			CameraPlayer();
+		}
+
+		if (app->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
+			app->audio->PlayFx(winFx);
+		}
+
+		break;
+	case ENDSCREEN:
+
+		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+			state = GameState::TITLESCREEN;
+			LOG("Loading Title");
+		}
+
+		break;
 	}
+	
+	// ====================================================
+	//						Render Ground
+	// ====================================================
 
 	p2List_item<Cube>* c = ground.getFirst();
 	while (c != NULL) {
