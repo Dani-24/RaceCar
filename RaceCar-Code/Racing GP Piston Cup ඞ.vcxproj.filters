@@ -22,9 +22,6 @@
     <Filter Include="Resource files">
       <UniqueIdentifier>{f5ac66b2-42fd-4b9b-a767-2cf2835a910b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sources\Modules\OBJ Loader">
-      <UniqueIdentifier>{685447c0-6ea0-45af-9e38-e22d1454d969}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Module.h">
@@ -93,9 +90,6 @@
     <ClInclude Include="resource.h">
       <Filter>Resource files</Filter>
     </ClInclude>
-    <ClInclude Include="OBJLoader.h">
-      <Filter>Sources\Modules\OBJ Loader</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -151,9 +145,6 @@
     </ClCompile>
     <ClCompile Include="ModulePlayer.cpp">
       <Filter>Sources\Modules\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="OBJLoader.cpp">
-      <Filter>Sources\Modules\OBJ Loader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -189,7 +189,7 @@ update_status ModulePlayer::Update(float dt)
 
 	// Brake if there is no acceleration
 	if (app->input->GetKey(SDL_SCANCODE_S) != KEY_REPEAT && app->input->GetKey(SDL_SCANCODE_W) != KEY_REPEAT) {
-		brake = BRAKE_POWER / 200;
+		brake = BRAKE_POWER / 100;
 
 		if (vehicle->GetKmh() > 100) {
 			brake = BRAKE_POWER / 20;
