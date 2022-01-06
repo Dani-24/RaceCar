@@ -46,7 +46,7 @@ public:
 	GameState state;
 
 private:
-	uint winFx;
+	uint winFx, turboFx;
 
 	SDL_Texture* HighSpeedSprite;
 

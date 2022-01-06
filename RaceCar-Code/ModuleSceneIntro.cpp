@@ -26,7 +26,8 @@ bool ModuleSceneIntro::Start()
 	app->camera->LookAt(vec3(app->player->position.getX(), app->player->position.getY(), app->player->position.getZ()));
 
 	// Audios
-	winFx = app->audio->LoadFx("Assets/audio/fx/win.wav");
+	winFx = app->audio->LoadFx("Assets/audio/fx/gameplay_win.wav");
+	turboFx = app->audio->LoadFx("Assets/audio/fx/gameplay_turbo.wav");
 
 	// ===================================
 	//				Physbodys
@@ -252,6 +253,10 @@ update_status ModuleSceneIntro::Update(float dt)
 
 		if (app->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
 			app->audio->PlayFx(winFx);
+		}
+
+		if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN) {
+			app->audio->PlayFx(turboFx);
 		}
 
 		break;
