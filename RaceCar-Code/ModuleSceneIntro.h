@@ -41,9 +41,9 @@ public:
 	// X, Y, Z and {sizeX, sizeY, sizeZ}
 	void AddWall(int X, int Y, int Z, vec3 size);
 
-	bool debug = false;
+	bool debug = false, freeCam;
 
-	GameState state = GameState::TITLESCREEN;
+	GameState state;
 
 private:
 	uint winFx;

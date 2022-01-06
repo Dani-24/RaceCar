@@ -18,6 +18,9 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
+	state = GameState::TITLESCREEN;
+	freeCam = false;
+
 	// Set camera al player:
 	app->camera->Move(vec3(app->player->position.getX(), app->player->position.getY() + 7, app->player->position.getZ() - 20));
 	app->camera->LookAt(vec3(app->player->position.getX(), app->player->position.getY(), app->player->position.getZ()));
@@ -30,7 +33,7 @@ bool ModuleSceneIntro::Start()
 	// ===================================
 
 	// Map ground
-	AddGround(-200, -2, 0, { 500, 1, 1000 }, Green);
+	AddGround(-200, -6, 0, { 500, 10, 1000 }, Green);
 
 	// River
 
@@ -162,7 +165,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		//			INPUT
 		// ==========================
 
-		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN || app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
 			state = GameState::SELECTIONSCREEN;
 			LOG("Loading Selection screen");
 		}
@@ -176,7 +179,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		// ==========================
 
 		if (titleMusic == false) {
-			app->audio->PlayMusic("Assets/audio/music/menuBGmusic.ogg");
+			app->audio->PlayMusic("Assets/audio/music/titleScreen.ogg");
 			titleMusic = true;
 			endMusic = menuMusic = gameplayMusic = false;
 		}
@@ -193,7 +196,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		//			INPUT
 		// ==========================
 
-		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN) {
+		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN || app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
 			state = GameState::GAMEPLAY;
 			LOG("Loading Gameplay");
 		}
@@ -206,6 +209,12 @@ update_status ModuleSceneIntro::Update(float dt)
 		//			Update
 		// ==========================
 
+		if (menuMusic == false) {
+			app->audio->PlayMusic("Assets/audio/music/menu.ogg");
+			menuMusic = true;
+			endMusic = titleMusic = gameplayMusic = false;
+		}
+
 		break;
 	case GAMEPLAY:
 
@@ -214,7 +223,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		// ==========================
 
 		if (gameplayMusic == false) {
-			app->audio->PlayMusic("Assets/audio/music/coconutMall.ogg");
+			app->audio->PlayMusic("Assets/audio/music/tutorial.ogg");
 			gameplayMusic = true;
 			endMusic = menuMusic = titleMusic = false;
 		}
@@ -232,8 +241,12 @@ update_status ModuleSceneIntro::Update(float dt)
 			debug = !debug;
 		}
 
+		if (app->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN) {
+			freeCam = !freeCam;
+		}
+
 		// CAMERA
-		if (debug != true) {
+		if (freeCam == false) {
 			CameraPlayer();
 		}
 

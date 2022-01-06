@@ -7,20 +7,26 @@ Racing GP Piston Cup ඞ is the future of racing car games, forza horizon, mario
 
 Made by Dani Toledo ([Dani24](https://github.com/Dani-24))
 
-### Link to the Github Project:
+### Github Project:
 
 https://github.com/Dani-24/RaceCar
 
 ### Controls
 
 - A/S/D/W: Movement
+- Shift: Turbo
 - R: Reset
 
 ### Debug
 
 - F1: Debug mode
-    - Arrows: Camera movement
-    - Space: Jump
+	- Show Colliders & Hitboxes
+	- Space: Jump
+- F2: Free Camera movement mode
+	- Left/Right: Camera Horizontal movement
+	- Up/Down: Camera Zoom in/zoom out
+	- Mouse Right Click & Drag: Camera Angle
+	- M/N Camera Y axis
 
 ## Additional comments
 This game has been done thanks to [Bullet Physics](https://pybullet.org/wordpress/), [SDL](https://www.libsdl.org/index.php) and [OpenGL](https://www.opengl.org/)
