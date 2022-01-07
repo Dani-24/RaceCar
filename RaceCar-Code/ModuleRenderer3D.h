@@ -21,7 +21,16 @@ public:
 
 	void SetBGColor(int R, int G, int B);
 
+	// 2D Textures Render
+
+	uint LoadTexture(const char* path);
+	void UnloadTexture(uint id);
+
+	void DrawTexture(uint texture, int x, int y, int z, int size);
+
 public:
+
+	p2List<uint> textures;
 
 	Light lights[MAX_LIGHTS];
 	SDL_GLContext context;

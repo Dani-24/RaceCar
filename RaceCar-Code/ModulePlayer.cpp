@@ -21,7 +21,7 @@ bool ModulePlayer::Start()
 
 	// Variables :
 
-	engineFx = app->audio->LoadFx("Assets/audio/fx/kartEngine.wav");
+	engineFx = app->audio->LoadFx("Assets/audio/fx/gameplay_kartEngine.wav");
 
 	// ======================================================
 	//                         Vehicle
@@ -176,7 +176,7 @@ update_status ModulePlayer::Update(float dt)
 		{
 			// Same as forward movement but for backwards. Velocity capped at 25km/h
 			if (vehicle->GetKmh() > 0) {
-				brake = BRAKE_POWER / 20;
+				brake = BRAKE_POWER / 50;
 			}
 			else if (vehicle->GetKmh() > -25) {
 				acceleration = -MAX_ACCELERATION;

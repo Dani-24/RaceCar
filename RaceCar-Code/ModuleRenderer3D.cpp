@@ -8,6 +8,9 @@
 #pragma comment (lib, "glu32.lib")    /* link OpenGL Utility lib     */
 #pragma comment (lib, "opengl32.lib") /* link Microsoft OpenGL lib   */
 
+#include "SDL_image/include/SDL_image.h"
+#pragma comment( lib, "SDL_image/libx86/SDL2_image.lib" )
+
 ModuleRenderer3D::ModuleRenderer3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 }
@@ -82,6 +85,12 @@ bool ModuleRenderer3D::Init()
 		lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
 		lights[0].SetPos(0.0f, 0.0f, 2.5f);
 		lights[0].Init();
+
+		lights[1].ref = GL_LIGHT1;
+		lights[1].ambient.Set(0.25f, 0.25f, 0.25f, 1.0f);
+		lights[1].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
+		lights[1].SetPos(0.0f, 100.0f, 0.0f);
+		lights[1].Init();
 		
 		GLfloat MaterialAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
@@ -92,6 +101,7 @@ bool ModuleRenderer3D::Init()
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		lights[0].Active(true);
+		lights[1].Active(true);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
 	}
@@ -134,9 +144,10 @@ bool ModuleRenderer3D::CleanUp()
 
 	SDL_GL_DeleteContext(context);
 
+	//IMG_Quit();
+
 	return true;
 }
-
 
 void ModuleRenderer3D::OnResize(int width, int height)
 {
@@ -154,4 +165,47 @@ void ModuleRenderer3D::OnResize(int width, int height)
 void ModuleRenderer3D::SetBGColor(int R, int G, int B)
 {
 	glClearColor(R, G, B, 1.f);
+}
+
+uint ModuleRenderer3D::LoadTexture(const char* path) {
+	SDL_Surface* surface = IMG_Load(path);
+
+	if (surface == NULL)
+	{
+		LOG("error loading image %s", IMG_GetError());
+		return 0;
+	}
+
+	Uint32 texture;
+
+	glGenTextures(1, &texture);
+
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
+	int ret = glGetError();
+	if (ret != GL_NO_ERROR)
+	{
+		LOG("GL Error in loadTexture: %i", ret);
+	}
+
+	SDL_FreeSurface(surface);
+	return texture;
+}
+
+void ModuleRenderer3D::DrawTexture(uint texture, int x, int y, int z, int size) {
+	
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glBegin(GL_QUADS);
+	glTexCoord2f(0, 0); glVertex3f(x, y, z);
+	glTexCoord2f(0, 1); glVertex3f(x, y + size, z);
+	glTexCoord2f(1, 1); glVertex3f(x + size, y + size, z);
+	glTexCoord2f(1, 0); glVertex3f(x + size, y, z);
+	glEnd();
+
+	glDisable(GL_TEXTURE_2D);
 }

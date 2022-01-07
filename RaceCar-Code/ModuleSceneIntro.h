@@ -48,7 +48,7 @@ public:
 private:
 	uint winFx, turboFx;
 
-	SDL_Texture* HighSpeedSprite;
-
 	bool titleMusic = false, menuMusic = false, gameplayMusic = false, endMusic = false;
+
+	uint kartTexture;
 };

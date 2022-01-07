@@ -29,6 +29,9 @@ bool ModuleSceneIntro::Start()
 	winFx = app->audio->LoadFx("Assets/audio/fx/gameplay_win.wav");
 	turboFx = app->audio->LoadFx("Assets/audio/fx/gameplay_turbo.wav");
 
+	// Textures
+	kartTexture = app->renderer3D->LoadTexture("Assets/textures/amogus.png");
+
 	// ===================================
 	//				Physbodys
 	// ===================================
@@ -188,7 +191,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		app->camera->Position = { -300, 300, 100 };
 		app->camera->LookAt(vec3(-300, 0, 101));
 
-		LOG("%.2f %.2f %.2f", app->camera->Position.x, app->camera->Position.y, app->camera->Position.z)
+		//LOG("%.2f %.2f %.2f", app->camera->Position.x, app->camera->Position.y, app->camera->Position.z)
 
 		break;
 	case SELECTIONSCREEN:
@@ -258,6 +261,10 @@ update_status ModuleSceneIntro::Update(float dt)
 		if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN) {
 			app->audio->PlayFx(turboFx);
 		}
+
+		// Draw
+
+		app->renderer3D->DrawTexture(kartTexture, 0, 0, 0, 10);
 
 		break;
 	case ENDSCREEN:
