@@ -144,12 +144,7 @@ update_status ModulePlayer::Update(float dt)
 		if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 		{
 			// Max Velocity fixed to 100 km/h
-			// If velocity is negative the vehicle brakes instead of accelerating
-			if (vehicle->GetKmh() < 0) {
-				brake = BRAKE_POWER / 20;
-
-			}
-			else if (vehicle->GetKmh() <= 100) {
+			if (vehicle->GetKmh() <= 100) {
 				acceleration = MAX_ACCELERATION;
 
 				if (playingEngineFx == false) {
@@ -174,9 +169,8 @@ update_status ModulePlayer::Update(float dt)
 		// Move backwards
 		if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
 		{
-			// Same as forward movement but for backwards. Velocity capped at 25km/h
-			if (vehicle->GetKmh() > 0) {
-				brake = BRAKE_POWER / 50;
+			if (vehicle->GetKmh() > 10) {
+				acceleration = -MAX_ACCELERATION * 5;
 			}
 			else if (vehicle->GetKmh() > -25) {
 				acceleration = -MAX_ACCELERATION;

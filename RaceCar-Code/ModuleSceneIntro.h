@@ -46,9 +46,11 @@ public:
 	GameState state;
 
 private:
-	uint winFx, turboFx;
+	uint winFx, turboFx, kickFx;
 
 	bool titleMusic = false, menuMusic = false, gameplayMusic = false, endMusic = false;
 
-	uint kartTexture;
+	uint susTex;
+	vec3 susPos = {0, 0, 0};
+
 };
