@@ -30,5 +30,6 @@ extern Color Green;
 extern Color Blue;
 extern Color Black;
 extern Color White;
-extern Color Turquoise;
-extern Color DarkGreen;
+extern Color Cyan;
+extern Color Yellow;
+extern Color Magenta;

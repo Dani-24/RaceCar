@@ -8,6 +8,8 @@
 #define Vehicle_Fall_Dist -100
 #define Camera_Fall_Dist -10
 
+#define Circuit_Width 25
+
 struct PhysBody3D;
 struct PhysMotor3D;
 
@@ -34,14 +36,20 @@ public:
 
 public:
 	
-	p2List<Cube> ground;
+	p2List<Cube> scenery;
+
+	void AddGround();
 
 	// X, Y, Z and {sizeX, sizeY, sizeZ} and angle rotation
-	void AddGround(int X, int Y, int Z, vec3 size, Color RGB = Blue, int angle = 0, bool rotateX = false, bool rotateY = false, bool rotateZ = false );
-	// X, Y, Z and {sizeX, sizeY, sizeZ}
-	void AddWall(int X, int Y, int Z, vec3 size);
+	void AddCube(vec3 position, vec3 size, Color RGB = Blue, int angle = 0, bool rotateX = false, bool rotateY = false, bool rotateZ = false );
 
-	bool debug = false, freeCam;
+	void AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWalls);
+
+	void AddCircularCircuit(vec3 initPos, vec3 finalPos, int sideWalls);
+
+	void AddCheckPoint(vec3 position, float angle);
+
+	bool debug = true, freeCam;
 
 	GameState state;
 
@@ -53,4 +61,27 @@ private:
 	uint susTex;
 	vec3 susPos = {0, 0, 0};
 
+	// Ground Map 0 = Terrain, 1 = Water (The map is printed rotated 90 degrees)
+	int groundCoord[20][10] = {
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 1, 1, 0, 0, 0, 0, 1, 1, 1,
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	};
 };

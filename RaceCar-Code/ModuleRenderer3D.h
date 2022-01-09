@@ -26,7 +26,7 @@ public:
 	uint LoadTexture(const char* path);
 	void UnloadTexture(uint id);
 
-	void DrawTexture(uint texture, int x, int y, int z, int size);
+	void DrawTexture(uint texture, vec3 pos, float size);
 
 public:
 

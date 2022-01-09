@@ -21,10 +21,6 @@ bool ModuleSceneIntro::Start()
 	state = GameState::TITLESCREEN;
 	freeCam = false;
 
-	// Set camera al player:
-	app->camera->Move(vec3(app->player->position.getX(), app->player->position.getY() + 7, app->player->position.getZ() - 20));
-	app->camera->LookAt(vec3(app->player->position.getX(), app->player->position.getY(), app->player->position.getZ()));
-
 	// Audios
 	winFx = app->audio->LoadFx("Assets/audio/fx/gameplay_win.wav");
 	turboFx = app->audio->LoadFx("Assets/audio/fx/gameplay_turbo.wav");
@@ -38,69 +34,13 @@ bool ModuleSceneIntro::Start()
 	// ===================================
 
 	// Map ground
-	AddGround(-200, -6, 0, { 500, 10, 1000 }, Green);
+	AddGround();
 
-	// River
+	AddCube({ 0, 0, 50 }, { 10, 10, 10 }, Yellow);
 
-	// 0
-	AddGround(-25, -1, 0, { 10, 1, 25 });
-	AddGround(-25, -1, 25, { 10, 1, 25 });
-	AddGround(-25, -1, 50, { 10, 1, 25 });
-	AddGround(-25, -1, 75, { 10, 1, 25 });
-	AddGround(-25, -1, 100, { 10, 1, 25 });
-	AddGround(-25, -1, 125, { 10, 1, 25 });
-	AddGround(-25, -1, 150, { 10, 1, 25 });
-	AddGround(-25, -1, 175, { 10, 1, 25 });
-	AddGround(-25, -1, 200, { 10, 1, 25 });
-
-	AddGround(-42, -1, 200, { 25, 1, 25 });
-
-	// 1
-	AddGround(0, -1, 0, { 25, 1, 25 });
-	AddGround(0, -1, 25, { 25, 1, 25 });
-	AddGround(0, -1, 50, { 25, 1, 25 });
-	AddGround(0, -1, 75, { 25, 1, 25 });
-	AddGround(0, -1, 100, { 25, 1, 25 });
-	AddGround(0, -1, 125, { 25, 1, 25 });
-	AddGround(0, -1, 150, { 25, 1, 25 });
-	AddGround(0, -1, 175, { 25, 1, 25 });
-	AddGround(0, -1, 200, { 25, 1, 25 });
-
-	AddWall(13, 0, 100, { 1, 4, 200 });
-	AddWall(-13, 0, 100, { 1, 4, 200 });
-
-	// 2
-	AddGround(0, -1, 225, { 25, 1, 25 });
-	AddGround(0, -1, 250, { 25, 1, 25 });
-	AddGround(-25, -1, 225, { 25, 1, 25 });
-	AddGround(-25, -1, 250, { 25, 1, 25 });
-	AddGround(-50, -1, 225, { 25, 1, 25 });
-	AddGround(-50, -1, 250, { 25, 1, 25 });
-	AddGround(-75, -1, 225, { 25, 1, 25 });
-	AddGround(-75, -1, 250, { 25, 1, 25 });
-	AddGround(-100, -1, 225, { 25, 1, 25 });
-	AddGround(-100, -1, 250, { 25, 1, 25 });
-
-	// 3
-	AddGround(-100, -1, 200, { 25, 1, 25 });
-	AddGround(-100, -1, 175, { 25, 1, 25 });
-	AddGround(-100, -1, 150, { 25, 1, 25 });
-
-	// 4
-	AddGround(-100, -1, 125, { 25, 1, 25 });
-	AddGround(-100, -1, 100, { 25, 1, 25 });
-	AddGround(-75, -1, 125, { 25, 1, 25 });
-	AddGround(-75, -1, 100, { 25, 1, 25 });
-	AddGround(-75, -1, 75, { 25, 1, 25 });
-
-	// 5
-	AddGround(-75, -1, 50, { 25, 1, 25 });
-	AddGround(-100, -1, 50, { 25, 1, 25 });
-	AddGround(-125, -1, 50, { 25, 1, 25 });
-
-	// 6
-	AddGround(-150, -1, 75, { 25, 1, 50 }, Blue, -45, false, true);
-	AddGround(-175, -1, 100, { 25, 1, 25 }, Blue, -45, false, true);
+	AddLinearCircuit({ 0, 0, 0 }, { 0, 0, 50 }, 5);
+	
+	AddCircularCircuit({ 0, 0, 50 }, {-25, 0, 75 }, 10);
 
 	// BG Color
 	app->renderer3D->SetBGColor(255, 0, 153);
@@ -113,50 +53,196 @@ bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
 
-	ground.clear();
+	scenery.clear();
 
 	return true;
 }
 
-void ModuleSceneIntro::AddGround(int X, int Y, int Z, vec3 size, Color RGB, int angle, bool rotateX, bool rotateY, bool rotateZ)
-{
+void ModuleSceneIntro::AddGround() {
 	Cube groundToAdd;
 
-	groundToAdd.color = RGB;
+	groundToAdd.size = { 50, 1, 50 };
 
-	groundToAdd.SetPos(X, Y, Z);
+	int type = 0;
+	// X
+	for (int i = 0; i < 20; i++)
+	{
+		// Z
+		for (int j = 0; j < 10; j++) {
 
-	groundToAdd.size = size;
+			groundToAdd.SetPos(i * -50, 0, j * 50);
+
+			switch (groundCoord[i][j])
+			{
+			case 0:
+				groundToAdd.color = Green;
+				break;
+			case 1:
+				groundToAdd.color = Blue;
+				break;
+			}
+
+			app->physics->AddBody(groundToAdd, 0);
+			scenery.add(groundToAdd);
+		}
+	}
+
+}
+
+void ModuleSceneIntro::AddCube(vec3 position, vec3 size, Color RGB, int angle, bool rotateX, bool rotateY, bool rotateZ)
+{
+	Cube cubeToAdd;
+
+	cubeToAdd.color = RGB;
+
+	cubeToAdd.SetPos(position.x, position.y, position.z);
+
+	cubeToAdd.size = size;
 
 	// angle, XYZ
 	if (rotateX == true) {
-		groundToAdd.SetRotation(angle, { 1, 0, 0 });
+		cubeToAdd.SetRotation(angle, { 1, 0, 0 });
 	}
 	if (rotateY == true) {
-		groundToAdd.SetRotation(angle, { 0, 1, 0 });
+		cubeToAdd.SetRotation(angle, { 0, 1, 0 });
 	}
 	if (rotateZ == true) {
-		groundToAdd.SetRotation(angle, { 0, 0, 1 });
+		cubeToAdd.SetRotation(angle, { 0, 0, 1 });
 	}
 
-	app->physics->AddBody(groundToAdd, 0);
+	app->physics->AddBody(cubeToAdd, 0);
 
-	ground.add(groundToAdd);
+	scenery.add(cubeToAdd);
 }
 
-void ModuleSceneIntro::AddWall(int X, int Y, int Z, vec3 size)
-{
-	Cube wallToAdd;
+void ModuleSceneIntro::AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWalls) {
 
-	wallToAdd.color = Turquoise;
+	// Distance between the 2 points
+	float distance = sqrt(pow(finalPos.x - initPos.x, 2) + pow(finalPos.y - initPos.y, 2) + pow(finalPos.z - initPos.z, 2));
+	float cubeDistance = distance / sideWalls;
 
-	wallToAdd.SetPos(X, Y, Z);
+	// Direction
+	vec3 direction = finalPos - initPos;
+	float directionModule = sqrt((direction.x * direction.x) + (direction.y * direction.y) + (direction.z * direction.z));
+	direction /= directionModule;
 
-	wallToAdd.size = size;
+	// Something
+	vec3 noSeQueEsEstoHulio = { -direction.z, 0, direction.x };
+	float noSeQueEsEstoHulioModule = sqrt((noSeQueEsEstoHulio.x * noSeQueEsEstoHulio.x) + (noSeQueEsEstoHulio.y * noSeQueEsEstoHulio.y) + (noSeQueEsEstoHulio.z * noSeQueEsEstoHulio.z));
+	noSeQueEsEstoHulio /= noSeQueEsEstoHulioModule;
 
-	app->physics->AddBody(wallToAdd, 0);
+	vec3 pos;
 
-	ground.add(wallToAdd);
+	// Create Cube & assign size
+	Cube c;
+	c.size = { 1, 1, 2 };
+
+	for (uint j = 0; j < sideWalls; j++)
+	{
+		// Cube colors
+		c.color = (j % 2 == 0) ? Cyan : Magenta;
+
+		// Cube left
+		pos = (initPos + (direction * j * cubeDistance)) + ((Circuit_Width / 2) * noSeQueEsEstoHulio);
+		c.SetPos(pos.x, pos.y + 1, pos.z);
+		app->physics->AddBody(c, 0);
+		scenery.add(c);
+
+		// Cube right
+		pos = (initPos + (direction * j * cubeDistance)) + ((Circuit_Width / 2) * -noSeQueEsEstoHulio);
+		c.SetPos(pos.x, pos.y + 1, pos.z);
+		app->physics->AddBody(c, 0);
+		scenery.add(c);
+	}
+}
+
+void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, int sideWalls) {
+	int factor = 0.15f;
+	assert(factor < 1.0f && factor > -1.0f);
+	float distance = length(finalPos - initPos);
+	vec3 mid_point = (finalPos - initPos) / 2.0f + initPos;
+
+	vec3 direction = finalPos - initPos;
+	direction = normalize(direction);
+
+	vec3 hulio = { -direction.z, 0, direction.x };
+	hulio = normalize(hulio);
+
+	float max_radi = distance / 2.0f;
+	float seg_to_high_point = factor * max_radi;
+
+	vec3 h = mid_point + (seg_to_high_point * hulio);
+
+	float mFH = (h.z - finalPos.z) / (h.x - finalPos.x);
+	float mIH = (initPos.z - h.z) / (initPos.x - h.x);
+
+	vec3 center_circle = { 0, 0, 0 };
+	center_circle.x = (mFH * mIH * (initPos.z - finalPos.z) + mFH * (h.x + initPos.x) - mIH * (finalPos.x + h.x)) / (2.0f * (mFH - mIH));
+	center_circle.z = (-1 / mFH) * (center_circle.x - ((finalPos.x + h.x) / 2.0f)) + ((finalPos.z + h.z) / 2.0f);
+
+	vec3 c_to_i = normalize(initPos - center_circle);
+	vec3 c_to_f = normalize(finalPos - center_circle);
+	float theta = acos(dot(c_to_f, c_to_i));
+	float radius = length(finalPos - center_circle);
+
+	float angle_ref = 0.0f;
+	if (initPos.z >= center_circle.z && initPos.x < center_circle.x) {
+		angle_ref = acos(dot(c_to_i, { 1, 0, 0 }));
+	}
+	else if (initPos.z >= center_circle.z && initPos.x >= center_circle.x) {
+		angle_ref = acos(dot(c_to_i, { 1, 0, 0 }));
+	}
+	else if (initPos.z < center_circle.z && initPos.x >= center_circle.x) {
+		angle_ref = 2 * M_PI - acos(dot(c_to_i, { 1, 0, 0 }));
+	}
+	else if (initPos.z < center_circle.z && initPos.x < center_circle.x) {
+		angle_ref = 2 * M_PI - acos(dot(c_to_i, { 1, 0, 0 }));
+	}
+
+	vec3 pos;
+
+	// Create the cube & size
+	Cube c;
+	c.size = { 1, 1, 2 };
+
+	vec3 central_pos;
+	// Curve Exterior
+	for (uint j = 0; j < sideWalls; j++)
+	{
+		c.color = (j % 2 == 0) ? Yellow : Red;
+		float sub_angle = (factor > 0.0f) ? -(float)j / sideWalls * theta : (float)j / sideWalls * theta;
+
+		central_pos.x = center_circle.x + radius * cos(sub_angle + angle_ref);
+		central_pos.z = center_circle.z + radius * sin(sub_angle + angle_ref);
+
+		vec3 to_center = normalize(central_pos - center_circle);
+		pos = central_pos + ((Circuit_Width / 2.0f) * to_center);
+		c.SetPos(pos.x, pos.y + 1, pos.z);
+
+		app->physics->AddBody(c, 0);
+		scenery.add(c);
+	}
+
+	// Curve Interior
+	for (uint j = 0; j < sideWalls; j++)
+	{
+		c.color = (j % 2 == 0) ? Yellow : Red;
+		float sub_angle = (factor > 0.0f) ? -(float)j / sideWalls * theta : (float)j / sideWalls * theta;
+
+		central_pos.x = center_circle.x + radius * cos(sub_angle + angle_ref);
+		central_pos.z = center_circle.z + radius * sin(sub_angle + angle_ref);
+
+		vec3 to_center = normalize(central_pos - center_circle);
+		pos = central_pos + ((Circuit_Width / 2.0f) * -to_center);
+		c.SetPos(pos.x, pos.y + 1, pos.z);
+		
+		app->physics->AddBody(c, 0);
+		scenery.add(c);
+	}
+}
+
+void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle) {
+
 }
 
 // Update
@@ -189,8 +275,8 @@ update_status ModuleSceneIntro::Update(float dt)
 			endMusic = menuMusic = gameplayMusic = false;
 		}
 
-		app->camera->Position = { -300, 300, 100 };
-		app->camera->LookAt(vec3(-300, 0, 101));
+		app->camera->Position = { -450, 425, 225 };
+		app->camera->LookAt(vec3( -450, 0, 226));
 
 		break;
 	case SELECTIONSCREEN:
@@ -267,11 +353,11 @@ update_status ModuleSceneIntro::Update(float dt)
 
 		// Draw
 
-		susPos.x = app->player->position.getX();
-		susPos.y = app->player->position.getY();
+		susPos.x = app->player->position.getX() - 1.5f;
+		susPos.y = app->player->position.getY() + 2;
 		susPos.z = app->player->position.getZ();
 
-		app->renderer3D->DrawTexture(susTex, susPos.x, susPos.y, susPos.z, 10);
+		app->renderer3D->DrawTexture(susTex, susPos, 3.0f);
 
 		break;
 	case ENDSCREEN:
@@ -292,7 +378,7 @@ update_status ModuleSceneIntro::Update(float dt)
 	//						Render Ground
 	// ====================================================
 
-	p2List_item<Cube>* c = ground.getFirst();
+	p2List_item<Cube>* c = scenery.getFirst();
 	while (c != NULL) {
 		c->data.Render();
 		c = c->next;
