@@ -19,7 +19,14 @@ public:
 
 	void OnResize(int width, int height);
 
+	// Instantly Color Change
 	void SetBGColor(int R, int G, int B);
+
+	// Change by time
+	void ChangeColor(Color colorToChange);
+
+	// Updates color by dt
+	void ColorUpdate();
 
 	// 2D Textures Render
 
@@ -36,4 +43,11 @@ public:
 	SDL_GLContext context;
 	mat3x3 NormalMatrix;
 	mat4x4 ModelMatrix, ViewMatrix, ProjectionMatrix;
+
+private:
+	// Color
+	Timer colorChangeTimer;
+	Color currentColor, desiredColor;
+	bool colorChanged, redChanged, greenChanged, blueChanged;
+	float colorChangeSpeed = 0.005f;
 };

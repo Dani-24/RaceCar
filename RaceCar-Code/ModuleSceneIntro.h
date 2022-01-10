@@ -8,7 +8,7 @@
 #define Vehicle_Fall_Dist -100
 #define Camera_Fall_Dist -10
 
-#define Circuit_Width 25
+#define Circuit_Width 30
 
 struct PhysBody3D;
 struct PhysMotor3D;
@@ -18,6 +18,13 @@ enum GameState {
 	SELECTIONSCREEN,
 	GAMEPLAY,
 	ENDSCREEN
+};
+
+struct Sun {
+	Sphere SunBall;
+	float speed;
+	float movement_width;
+	float movement_height;
 };
 
 class ModuleSceneIntro : public Module
@@ -37,6 +44,9 @@ public:
 public:
 	
 	p2List<Cube> scenery;
+
+	Sun sun;
+	Timer sunTimer;
 
 	void AddGround();
 
@@ -61,25 +71,15 @@ private:
 	uint susTex;
 	vec3 susPos = {0, 0, 0};
 
-	// Ground Map 0 = Terrain, 1 = Water (The map is printed rotated 90 degrees)
-	int groundCoord[20][10] = {
+	// Ground Map 0 = Terrain, 1 = Water (The map is printed rotated 90 degrees), 2 = circuit
+	int groundCoord[10][10] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		1, 1, 1, 0, 0, 0, 0, 1, 1, 1,
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

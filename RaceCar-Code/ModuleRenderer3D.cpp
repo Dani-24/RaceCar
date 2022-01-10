@@ -24,7 +24,9 @@ bool ModuleRenderer3D::Init()
 {
 	LOG("Creating 3D Renderer context");
 	bool ret = true;
-	
+
+	colorChangeTimer.Start();
+
 	//Create context
 	context = SDL_GL_CreateContext(app->window->window);
 	if(context == NULL)
@@ -67,7 +69,7 @@ bool ModuleRenderer3D::Init()
 		glClearDepth(1.0f);
 		
 		//Initialize clear color
-		glClearColor(0.f, 0.f, 0.f, 1.f);
+		glClearColor(Cyan.r, Cyan.g, Cyan.b, 1.f);
 
 		//Check for error
 		error = glGetError();
@@ -81,13 +83,13 @@ bool ModuleRenderer3D::Init()
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
 		
 		lights[0].ref = GL_LIGHT0;
-		lights[0].ambient.Set(0.25f, 0.25f, 0.25f, 1.0f);
-		lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
+		lights[0].ambient.Set(0.05f, 0.05f, 0.05f, 1.0f);
+		lights[0].diffuse.Set(0.15f, 0.15f, 0.15f, 1.0f);
 		lights[0].SetPos(0.0f, 0.0f, 2.5f);
 		lights[0].Init();
 
 		lights[1].ref = GL_LIGHT1;
-		lights[1].ambient.Set(0.25f, 0.25f, 0.25f, 1.0f);
+		lights[1].ambient.Set(0.1f, 0.1f, 0.1f, 1.0f);
 		lights[1].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
 		lights[1].SetPos(0.0f, 100.0f, 0.0f);
 		lights[1].Init();
@@ -121,13 +123,79 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(app->camera->GetViewMatrix());
 
+	// ====================================
+	//				Lights	
+	// ====================================
+
 	// light 0 on cam pos
 	lights[0].SetPos(app->camera->Position.x, app->camera->Position.y, app->camera->Position.z);
 
-	for(uint i = 0; i < MAX_LIGHTS; ++i)
+	lights[1].SetPos(app->scene_intro->sun.SunBall.GetPos().x, app->scene_intro->sun.SunBall.GetPos().y, app->scene_intro->sun.SunBall.GetPos().z);
+
+	for (uint i = 0; i < MAX_LIGHTS; ++i) {
 		lights[i].Render();
+	}
+
+	// ====================================
+	//		   	 Color change
+	// ====================================
+
+	if (app->scene_intro->sun.SunBall.GetPos().y < 100 && app->scene_intro->sun.SunBall.GetPos().y > -50) {
+		ChangeColor(Orange);
+	}
+	if (app->scene_intro->sun.SunBall.GetPos().y < -50) {
+		ChangeColor(Black);
+	}
+	if (app->scene_intro->sun.SunBall.GetPos().y > 100) {
+		ChangeColor(Cyan);
+	}
+
+	if (colorChanged != true) {
+		ColorUpdate();
+	}
 
 	return UPDATE_CONTINUE;
+}
+
+void ModuleRenderer3D::ColorUpdate() {
+	// R
+	if (currentColor.r < desiredColor.r) {
+		currentColor.r += colorChangeSpeed;
+	}
+	else if (currentColor.r > desiredColor.r) {
+		currentColor.r -= colorChangeSpeed;
+	}
+	else {
+		redChanged = true;
+	}
+
+	// G
+	if (currentColor.g < desiredColor.g) {
+		currentColor.g += colorChangeSpeed;
+	}
+	else if (currentColor.g > desiredColor.g) {
+		currentColor.g -= colorChangeSpeed;
+	}
+	else {
+		greenChanged = true;
+	}
+
+	// B
+	if (currentColor.b < desiredColor.b) {
+		currentColor.b += colorChangeSpeed;
+	}
+	else if (currentColor.b > desiredColor.b) {
+		currentColor.b -= colorChangeSpeed;
+	}
+	else {
+		blueChanged = true;
+	}
+
+	glClearColor(currentColor.r,currentColor.g,currentColor.b, 1.0f);
+
+	if (redChanged == true && greenChanged == true && blueChanged == true) {
+		colorChanged = true;
+	}
 }
 
 // PostUpdate present buffer to screen
@@ -137,14 +205,14 @@ update_status ModuleRenderer3D::PostUpdate(float dt)
 	return UPDATE_CONTINUE;
 }
 
-// Called before quitting
+ //Called before quitting
 bool ModuleRenderer3D::CleanUp()
 {
 	LOG("Destroying 3D Renderer");
 
 	SDL_GL_DeleteContext(context);
 
-	//IMG_Quit();
+	IMG_Quit();
 
 	return true;
 }
@@ -157,14 +225,18 @@ void ModuleRenderer3D::OnResize(int width, int height)
 	glLoadIdentity();
 	ProjectionMatrix = perspective(60.0f, (float)width / (float)height, 0.125f, 512.0f);
 	glLoadMatrixf(&ProjectionMatrix);
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
 
 void ModuleRenderer3D::SetBGColor(int R, int G, int B)
 {
-	glClearColor(R, G, B, 1.f);
+	glClearColor(R, G, B, 1.0f);
+}
+
+void ModuleRenderer3D::ChangeColor(Color colorToChange) {
+	desiredColor = colorToChange;
+	colorChanged = redChanged = greenChanged = blueChanged = false;
 }
 
 uint ModuleRenderer3D::LoadTexture(const char* path) {

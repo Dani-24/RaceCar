@@ -33,3 +33,4 @@ extern Color White;
 extern Color Cyan;
 extern Color Yellow;
 extern Color Magenta;
+extern Color Orange;

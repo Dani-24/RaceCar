@@ -29,6 +29,15 @@ bool ModuleSceneIntro::Start()
 	// Textures
 	susTex = app->renderer3D->LoadTexture("Assets/textures/amogus.png");
 
+	// Sun
+	sun.SunBall.radius = 25;
+	sun.SunBall.color = Yellow;
+	sun.speed = 0.00001f;
+	sun.movement_height = 250.0f; 
+	sun.movement_width = 300.0f;
+
+	sunTimer.Start();
+
 	// ===================================
 	//				Physbodys
 	// ===================================
@@ -41,9 +50,6 @@ bool ModuleSceneIntro::Start()
 	AddLinearCircuit({ 0, 0, 0 }, { 0, 0, 50 }, 5);
 	
 	AddCircularCircuit({ 0, 0, 50 }, {-25, 0, 75 }, 10);
-
-	// BG Color
-	app->renderer3D->SetBGColor(255, 0, 153);
 
 	return ret;
 }
@@ -65,7 +71,7 @@ void ModuleSceneIntro::AddGround() {
 
 	int type = 0;
 	// X
-	for (int i = 0; i < 20; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		// Z
 		for (int j = 0; j < 10; j++) {
@@ -248,6 +254,19 @@ void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle) {
 // Update
 update_status ModuleSceneIntro::Update(float dt)
 {
+	// ====================================================
+	//			 Sun (independent from state)
+	// ====================================================
+
+	sun.SunBall.SetPos(-220 + cosf(sunTimer.Read() * sun.speed) * sun.movement_width, sinf(sunTimer.Read() * sun.speed) * sun.movement_height, 250);
+	sun.SunBall.Render();
+
+	// Sun Pos
+	//LOG("%.2f, %.2f, %.2f ", sun.SunBall.GetPos().x, sun.SunBall.GetPos().y, sun.SunBall.GetPos().z);
+
+	// ==========================
+	//			States
+	// ==========================
 	switch (state)
 	{
 	case TITLESCREEN:
@@ -275,8 +294,8 @@ update_status ModuleSceneIntro::Update(float dt)
 			endMusic = menuMusic = gameplayMusic = false;
 		}
 
-		app->camera->Position = { -450, 425, 225 };
-		app->camera->LookAt(vec3( -450, 0, 226));
+		app->camera->Position = { -250, 425, 225 };
+		app->camera->LookAt(vec3( -250, 0, 226));
 
 		break;
 	case SELECTIONSCREEN:
