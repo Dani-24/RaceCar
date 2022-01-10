@@ -53,11 +53,13 @@ public:
 	// X, Y, Z and {sizeX, sizeY, sizeZ} and angle rotation
 	void AddCube(vec3 position, vec3 size, Color RGB = Blue, int angle = 0, bool rotateX = false, bool rotateY = false, bool rotateZ = false );
 
-	void AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWalls);
+	void AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWalls, int circuitW = Circuit_Width);
 
-	void AddCircularCircuit(vec3 initPos, vec3 finalPos, int sideWalls);
+	void AddCircularCircuit(vec3 initPos, vec3 finalPos, float angle, int sideWalls, int sideWallsInt, int circuitW = Circuit_Width);
 
-	void AddCheckPoint(vec3 position, float angle);
+	void AddWallCircuit(vec3 initPos, vec3 finalPos, int walls, bool right);
+
+	void AddCheckPoint(vec3 position, float angle, int circuitW = Circuit_Width);
 
 	bool debug = true, freeCam;
 

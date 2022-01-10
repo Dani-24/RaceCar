@@ -32,7 +32,7 @@ bool ModuleSceneIntro::Start()
 	// Sun
 	sun.SunBall.radius = 25;
 	sun.SunBall.color = Yellow;
-	sun.speed = 0.00001f;
+	sun.speed = 0.00005f;
 	sun.movement_height = 250.0f; 
 	sun.movement_width = 300.0f;
 
@@ -45,11 +45,72 @@ bool ModuleSceneIntro::Start()
 	// Map ground
 	AddGround();
 
-	AddCube({ 0, 0, 50 }, { 10, 10, 10 }, Yellow);
+	// Map scenery details
+	AddCube({ -50, 25, 50 }, { 10, 50, 25 }, Yellow);
 
-	AddLinearCircuit({ 0, 0, 0 }, { 0, 0, 50 }, 5);
+	// ================
+	//  Circuit track:
+	// ================
+
+	// 1
+	AddLinearCircuit({ 0, 0, 25 }, { 0, 0, 425 }, 60);
 	
-	AddCircularCircuit({ 0, 0, 50 }, {-25, 0, 75 }, 10);
+	// 1.2
+	AddCircularCircuit({ 0, 0, 425 }, {-25, 0, 450 }, -0.45f, 10, 5);
+
+	// 2
+	AddLinearCircuit({ -25, 0, 450 }, { -50, 0, 450 }, 5);
+
+	// 2.1
+	AddCircularCircuit({ -50, 0, 450 }, { -75, 0, 425 }, -0.45f, 10, 5);
+
+	// 3
+	AddLinearCircuit({ -75, 0, 425 }, { -75, 0, 375 }, 10);
+
+	// 4
+	AddCircularCircuit({ -75, 0, 375 }, { -70, 0, 370 }, -0.225f, 5, 0);
+	AddLinearCircuit({ -65, 0, 365 }, { -45, 0, 350 }, 5);
+
+	// 5
+	AddCircularCircuit({ -45, 0, 350 }, { -45, 0, 325 }, 0.45f, 10, 2);
+	AddLinearCircuit({ -45, 0, 325 }, { -60, 0, 300 }, 5);
+	AddCircularCircuit({ -60, 0, 300 }, { -75, 0, 300 }, 0.45f, 10, 0);
+
+	// 6
+	AddLinearCircuit({ -80, 0, 302 }, { -165, 0, 365 }, 20);
+	AddWallCircuit({ -165, 0, 365 }, { -235, 0, 415 }, 15, false);
+
+	// 7
+	AddLinearCircuit({ -225, 0, 410 }, { -275, 0, 410 }, 10);
+
+	// 7 brigde
+	AddLinearCircuit({ -275, 0, 410 }, { -325, 0, 410 }, 20);
+
+	// 7.2
+	AddLinearCircuit({ -325, 0, 410 }, { -350, 0, 410 }, 5);
+	AddCircularCircuit({ -350, 0, 410 }, { -375, 0, 385 }, -0.45f, 10, 3);
+
+	// 8
+	AddWallCircuit({ -375, 0, 385 }, { -375, 0, 300 }, 15, false);
+
+	// 9
+	AddCircularCircuit({ -375, 0, 300 }, { -400, 0, 275 }, 0.45f, 10, 3);
+	AddLinearCircuit({ -400, 0, 275 }, { -425, 0, 275 }, 5);
+	AddCircularCircuit({ -425, 0, 275 }, { -450, 0, 300 }, 0.45f, 10, 3);
+
+	// 10
+	AddLinearCircuit({ -450, 0, 300 }, { -450, 0, 400 }, 20);
+
+	// 11
+	AddCircularCircuit({ -450, 0, 400 }, { -550, 0, 400 }, -0.99f, 40, 20);
+
+	// 12
+	AddLinearCircuit({ -550, 0, 400 }, { -550, 0, 300 }, 20);
+
+	// 13
+	AddWallCircuit({ -570, 0, 290 }, { -590, 0, 290 }, 4, false);
+	AddLinearCircuit({ -560, 0, 300 }, { -560, 0, 200 }, 20, 50);
+
 
 	return ret;
 }
@@ -121,7 +182,7 @@ void ModuleSceneIntro::AddCube(vec3 position, vec3 size, Color RGB, int angle, b
 	scenery.add(cubeToAdd);
 }
 
-void ModuleSceneIntro::AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWalls) {
+void ModuleSceneIntro::AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWalls, int circuitW) {
 
 	// Distance between the 2 points
 	float distance = sqrt(pow(finalPos.x - initPos.x, 2) + pow(finalPos.y - initPos.y, 2) + pow(finalPos.z - initPos.z, 2));
@@ -141,30 +202,29 @@ void ModuleSceneIntro::AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWal
 
 	// Create Cube & assign size
 	Cube c;
-	c.size = { 1, 1, 2 };
+	c.size = { 1, 2, 1 };
 
 	for (uint j = 0; j < sideWalls; j++)
 	{
 		// Cube colors
 		c.color = (j % 2 == 0) ? Cyan : Magenta;
 
-		// Cube left
-		pos = (initPos + (direction * j * cubeDistance)) + ((Circuit_Width / 2) * noSeQueEsEstoHulio);
+		// Cube right
+		pos = (initPos + (direction * j * cubeDistance)) + ((circuitW / 2) * noSeQueEsEstoHulio);
 		c.SetPos(pos.x, pos.y + 1, pos.z);
 		app->physics->AddBody(c, 0);
 		scenery.add(c);
 
-		// Cube right
-		pos = (initPos + (direction * j * cubeDistance)) + ((Circuit_Width / 2) * -noSeQueEsEstoHulio);
+		// Cube left
+		pos = (initPos + (direction * j * cubeDistance)) + ((circuitW / 2) * -noSeQueEsEstoHulio);
 		c.SetPos(pos.x, pos.y + 1, pos.z);
 		app->physics->AddBody(c, 0);
 		scenery.add(c);
 	}
 }
 
-void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, int sideWalls) {
-	int factor = 0.15f;
-	assert(factor < 1.0f && factor > -1.0f);
+void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, float angle, int sideWallsEx, int sideWallsInt, int circuitW) {
+	assert(angle < 1.0f && angle > -1.0f);
 	float distance = length(finalPos - initPos);
 	vec3 mid_point = (finalPos - initPos) / 2.0f + initPos;
 
@@ -175,7 +235,7 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, int sideW
 	hulio = normalize(hulio);
 
 	float max_radi = distance / 2.0f;
-	float seg_to_high_point = factor * max_radi;
+	float seg_to_high_point = angle * max_radi;
 
 	vec3 h = mid_point + (seg_to_high_point * hulio);
 
@@ -209,20 +269,20 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, int sideW
 
 	// Create the cube & size
 	Cube c;
-	c.size = { 1, 1, 2 };
+	c.size = { 1, 2, 1 };
 
 	vec3 central_pos;
 	// Curve Exterior
-	for (uint j = 0; j < sideWalls; j++)
+	for (uint j = 0; j < sideWallsEx; j++)
 	{
 		c.color = (j % 2 == 0) ? Yellow : Red;
-		float sub_angle = (factor > 0.0f) ? -(float)j / sideWalls * theta : (float)j / sideWalls * theta;
+		float sub_angle = (angle > 0.0f) ? -(float)j / sideWallsEx * theta : (float)j / sideWallsEx * theta;
 
 		central_pos.x = center_circle.x + radius * cos(sub_angle + angle_ref);
 		central_pos.z = center_circle.z + radius * sin(sub_angle + angle_ref);
 
 		vec3 to_center = normalize(central_pos - center_circle);
-		pos = central_pos + ((Circuit_Width / 2.0f) * to_center);
+		pos = central_pos + ((circuitW / 2.0f) * to_center);
 		c.SetPos(pos.x, pos.y + 1, pos.z);
 
 		app->physics->AddBody(c, 0);
@@ -230,16 +290,16 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, int sideW
 	}
 
 	// Curve Interior
-	for (uint j = 0; j < sideWalls; j++)
+	for (uint j = 0; j < sideWallsInt; j++)
 	{
 		c.color = (j % 2 == 0) ? Yellow : Red;
-		float sub_angle = (factor > 0.0f) ? -(float)j / sideWalls * theta : (float)j / sideWalls * theta;
+		float sub_angle = (angle > 0.0f) ? -(float)j / sideWallsInt * theta : (float)j / sideWallsInt * theta;
 
 		central_pos.x = center_circle.x + radius * cos(sub_angle + angle_ref);
 		central_pos.z = center_circle.z + radius * sin(sub_angle + angle_ref);
 
 		vec3 to_center = normalize(central_pos - center_circle);
-		pos = central_pos + ((Circuit_Width / 2.0f) * -to_center);
+		pos = central_pos + ((circuitW / 2.0f) * -to_center);
 		c.SetPos(pos.x, pos.y + 1, pos.z);
 		
 		app->physics->AddBody(c, 0);
@@ -247,7 +307,51 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, int sideW
 	}
 }
 
-void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle) {
+void ModuleSceneIntro::AddWallCircuit(vec3 initPos, vec3 finalPos, int walls, bool right) {
+
+	// Distance between the 2 points
+	float distance = sqrt(pow(finalPos.x - initPos.x, 2) + pow(finalPos.y - initPos.y, 2) + pow(finalPos.z - initPos.z, 2));
+	float cubeDistance = distance /walls;
+
+	// Direction
+	vec3 direction = finalPos - initPos;
+	float directionModule = sqrt((direction.x * direction.x) + (direction.y * direction.y) + (direction.z * direction.z));
+	direction /= directionModule;
+
+	// Something
+	vec3 formulasFisicasMagicosas = { -direction.z, 0, direction.x };
+	float formulasFisicasMagicosasModule = sqrt((formulasFisicasMagicosas.x * formulasFisicasMagicosas.x) + (formulasFisicasMagicosas.y * formulasFisicasMagicosas.y) + (formulasFisicasMagicosas.z * formulasFisicasMagicosas.z));
+	formulasFisicasMagicosas /= formulasFisicasMagicosasModule;
+
+	vec3 pos;
+
+	// Create Cube & assign size
+	Cube c;
+	c.size = { 1, 2, 1 };
+
+	for (uint j = 0; j < walls; j++)
+	{
+		// Cube colors
+		c.color = (j % 2 == 0) ? Cyan : Magenta;
+
+		if (right == true) {
+			// Cube right
+			pos = (initPos + (direction * j * cubeDistance)) + ((Circuit_Width / 2) * formulasFisicasMagicosas);
+			c.SetPos(pos.x, pos.y + 1, pos.z);
+			app->physics->AddBody(c, 0);
+			scenery.add(c);
+		}
+		else {
+			// Cube left
+			pos = (initPos + (direction * j * cubeDistance)) + ((Circuit_Width / 2) * -formulasFisicasMagicosas);
+			c.SetPos(pos.x, pos.y + 1, pos.z);
+			app->physics->AddBody(c, 0);
+			scenery.add(c);
+		}
+	}
+}
+
+void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, int circuitW) {
 
 }
 
