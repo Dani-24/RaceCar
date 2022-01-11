@@ -34,7 +34,7 @@ bool ModuleSceneIntro::Start()
 	sun.SunBall.color = Yellow;
 	sun.speed = 0.00005f;
 	sun.movement_height = 250.0f; 
-	sun.movement_width = 300.0f;
+	sun.movement_width = 450.0f;
 
 	sunTimer.Start();
 
@@ -46,7 +46,7 @@ bool ModuleSceneIntro::Start()
 	AddGround();
 
 	// Map scenery details
-	AddCube({ 30, 0, 200 }, { 25, 20, 50 }, Yellow);
+	AddCube({ 30, 10, 200 }, { 25, 20, 50 }, Yellow);
 
 	// ================
 	//  Circuit track:
@@ -72,7 +72,7 @@ bool ModuleSceneIntro::Start()
 	AddLinearCircuit({ -65, 0, 365 }, { -45, 0, 350 }, 5);
 
 	// 5
-	AddCircularCircuit({ -45, 0, 350 }, { -45, 0, 325 }, 0.45f, 10, 2);
+	AddCircularCircuit({ -45, 0, 350 }, { -45, 0, 325 }, 0.45f, 10, 1);
 	AddLinearCircuit({ -45, 0, 325 }, { -60, 0, 300 }, 5);
 	AddCircularCircuit({ -60, 0, 300 }, { -75, 0, 300 }, 0.45f, 10, 0);
 
@@ -84,7 +84,7 @@ bool ModuleSceneIntro::Start()
 	AddLinearCircuit({ -225, 0, 410 }, { -275, 0, 410 }, 10);
 
 	// 7 brigde
-	AddLinearCircuit({ -275, 0, 410 }, { -325, 0, 410 }, 20);
+	AddLinearCircuit({ -275, 0, 410 }, { -325, 0, 410 }, 10);
 
 	// 7.2
 	AddLinearCircuit({ -325, 0, 410 }, { -350, 0, 410 }, 5);
@@ -111,6 +111,30 @@ bool ModuleSceneIntro::Start()
 	AddWallCircuit({ -570, 0, 290 }, { -590, 0, 290 }, 4, false);
 	AddLinearCircuit({ -560, 0, 300 }, { -560, 0, 200 }, 20, 50);
 
+	// Rute 14 ================
+	AddLinearCircuit({ -543, 0, 190 }, { -520, 0, 170 }, 5);
+	
+	// 16 B
+	AddCircularCircuit({ -520, 0, 170 }, { -490, 0, 160 }, -0.225f, 10, 3);
+
+	AddCircularCircuit({ -490, 0, 160 }, { -465, 0, 135 }, 0.45f, 10, 3);
+
+	AddLinearCircuit({ -465, 0, 135 }, { -465, 0, 75}, 10);
+
+	AddCircularCircuit({ -490, 0, 160 }, { -465, 0, 135 }, 0.45f, 10, 3);
+
+	// 17 B
+
+
+	// Rute 15 ================
+	AddWallCircuit({ -570, 0, 200 }, { -570, 0, 175 }, 5, false);
+	AddLinearCircuit({ -570, 0, 175 }, { -570, 0, 125 }, 10);
+
+	// 16 A
+	AddCircularCircuit({ -570, 0, 125 }, { -545, 0, 100 }, -0.45f, 10, 3);
+
+	// 25
+	AddCircularCircuit({ -25, 0, 0 }, { 0, 0, 25 }, -0.45f , 10, 3);
 
 	return ret;
 }
@@ -121,6 +145,8 @@ bool ModuleSceneIntro::CleanUp()
 	LOG("Unloading Intro scene");
 
 	scenery.clear();
+
+	sunTimer.Stop();
 
 	return true;
 }
@@ -148,12 +174,20 @@ void ModuleSceneIntro::AddGround() {
 				groundToAdd.color = Green;
 				break;
 			case 1:
-				groundToAdd.color = Blue;
+				groundToAdd.color = { 0.0f, 0.0f, 1.0f, 0.5f};
 				break;
 			}
 
 			app->physics->AddBody(groundToAdd, 0);
 			scenery.add(groundToAdd);
+
+			if (groundToAdd.color.r ==  0.0f && groundToAdd.color.g ==  0.0f && groundToAdd.color.b == 1.0f) {
+
+				groundToAdd.SetPos(i * -size + size, -20, j * size);
+				groundToAdd.color = Green;
+				scenery.add(groundToAdd);
+
+			}
 		}
 	}
 }
@@ -277,7 +311,7 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, float ang
 	// Curve Exterior
 	for (uint j = 0; j < sideWallsEx; j++)
 	{
-		c.color = (j % 2 == 0) ? Yellow : Red;
+		c.color = (j % 2 == 0) ? White : Red;
 		float sub_angle = (angle > 0.0f) ? -(float)j / sideWallsEx * theta : (float)j / sideWallsEx * theta;
 
 		central_pos.x = center_circle.x + radius * cos(sub_angle + angle_ref);

@@ -101,7 +101,14 @@ bool ModuleRenderer3D::Init()
 		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse);
 		
 		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
+		//glEnable(GL_CULL_FACE);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glAlphaFunc(GL_GREATER, 0.5);
+		glEnable(GL_ALPHA_TEST);
+
 		lights[0].Active(true);
 		lights[1].Active(true);
 		glEnable(GL_LIGHTING);
