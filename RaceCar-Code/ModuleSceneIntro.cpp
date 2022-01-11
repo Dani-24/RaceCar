@@ -174,7 +174,7 @@ void ModuleSceneIntro::AddGround() {
 				groundToAdd.color = Green;
 				break;
 			case 1:
-				groundToAdd.color = { 0.0f, 0.0f, 1.0f, 0.5f};
+				groundToAdd.color = { 0.0f, 0.0f, 1.0f, 0.8f};
 				break;
 			}
 
