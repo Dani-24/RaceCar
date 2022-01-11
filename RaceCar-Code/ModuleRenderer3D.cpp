@@ -274,17 +274,29 @@ uint ModuleRenderer3D::LoadTexture(const char* path) {
 	return texture;
 }
 
-void ModuleRenderer3D::DrawTexture(uint texture, vec3 pos, float size) {
+void ModuleRenderer3D::DrawTexture(uint texture, vec3 pos, float size, bool orientationY) {
 	
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
 	glBegin(GL_QUADS);
-	glTexCoord2f(0, 0); glVertex3f(pos.x, pos.y, pos.z);
-	glTexCoord2f(0, 1); glVertex3f(pos.x, pos.y + size, pos.z);
-	glTexCoord2f(1, 1); glVertex3f(pos.x + size, pos.y + size, pos.z);
-	glTexCoord2f(1, 0); glVertex3f(pos.x + size, pos.y, pos.z);
+	if (orientationY == true) {
+		glTexCoord2f(0, 0); glVertex3f(pos.x, pos.y, pos.z);
+		glTexCoord2f(0, 1); glVertex3f(pos.x, pos.y + size, pos.z);
+		glTexCoord2f(1, 1); glVertex3f(pos.x + size, pos.y + size, pos.z);
+		glTexCoord2f(1, 0); glVertex3f(pos.x + size, pos.y, pos.z);
+	}
+	else {
+		pos.x -= 37.5;
+		pos.y += 0;
+		pos.z -= 37.5;
+		glTexCoord2f(0, 0); glVertex3f(pos.x, pos.y, pos.z);
+		glTexCoord2f(0, 1); glVertex3f(pos.x, pos.y, pos.z + size);
+		glTexCoord2f(1, 1); glVertex3f(pos.x + size, pos.y, pos.z + size);
+		glTexCoord2f(1, 0); glVertex3f(pos.x + size, pos.y, pos.z);
+	}
 	glEnd();
 
 	glDisable(GL_TEXTURE_2D);
+
 }

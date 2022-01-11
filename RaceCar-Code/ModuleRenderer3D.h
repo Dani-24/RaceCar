@@ -33,7 +33,7 @@ public:
 	uint LoadTexture(const char* path);
 	void UnloadTexture(uint id);
 
-	void DrawTexture(uint texture, vec3 pos, float size);
+	void DrawTexture(uint texture, vec3 pos, float size, bool orientationY = true);
 
 public:
 
@@ -50,4 +50,6 @@ private:
 	Color currentColor, desiredColor;
 	bool colorChanged, redChanged, greenChanged, blueChanged;
 	float colorChangeSpeed = 0.005f;
+
+	float lightIntensity = 0.9f;
 };

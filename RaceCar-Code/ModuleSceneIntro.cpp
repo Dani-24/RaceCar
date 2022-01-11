@@ -15,7 +15,7 @@ ModuleSceneIntro::~ModuleSceneIntro()
 // Load assets
 bool ModuleSceneIntro::Start()
 {
-	LOG("Loading Intro assets");
+	LOG("Loading Scene assets");
 	bool ret = true;
 
 	state = GameState::TITLESCREEN;
@@ -28,6 +28,9 @@ bool ModuleSceneIntro::Start()
 
 	// Textures
 	susTex = app->renderer3D->LoadTexture("Assets/textures/amogus.png");
+	waterTex = app->renderer3D->LoadTexture("Assets/textures/water.png");
+	sandTex = app->renderer3D->LoadTexture("Assets/textures/sand.png");
+	grassTex = app->renderer3D->LoadTexture("Assets/textures/grass.png");
 
 	// Sun
 	sun.SunBall.radius = 25;
@@ -133,8 +136,18 @@ bool ModuleSceneIntro::Start()
 	// 16 A
 	AddCircularCircuit({ -570, 0, 125 }, { -545, 0, 100 }, -0.45f, 10, 3);
 
+	// 21 A
+
+
 	// 25
+	AddLinearCircuit({ -50, 0, 0 }, { -25, 0, 0 }, 5);
+
 	AddCircularCircuit({ -25, 0, 0 }, { 0, 0, 25 }, -0.45f , 10, 3);
+
+	// 0 
+	AddLinearCircuit({ 50, 0, 75 }, { 50, 0, 425 }, 60, 15);
+	AddCircularCircuit({ 50, 0, 425 }, { 25, 0, 450 }, -0.45f, 10, 5, 15);
+	AddCircularCircuit({ 25, 0, 50 }, { 50, 0, 75 }, -0.45f, 10, 3, 15);
 
 	return ret;
 }
@@ -172,21 +185,28 @@ void ModuleSceneIntro::AddGround() {
 			{
 			case 0:
 				groundToAdd.color = Green;
+
+				grassCoord.add({ i * -size + size, 0, j * size });
+
 				break;
 			case 1:
 				groundToAdd.color = { 0.0f, 0.0f, 1.0f, 0.8f};
+
+				waterCoord.add({ i * -size + size, 0, j * size });
+
 				break;
 			}
 
 			app->physics->AddBody(groundToAdd, 0);
-			scenery.add(groundToAdd);
+			ground.add(groundToAdd);
 
 			if (groundToAdd.color.r ==  0.0f && groundToAdd.color.g ==  0.0f && groundToAdd.color.b == 1.0f) {
 
 				groundToAdd.SetPos(i * -size + size, -20, j * size);
-				groundToAdd.color = Green;
-				scenery.add(groundToAdd);
+				groundToAdd.color = Yellow;
+				ground.add(groundToAdd);
 
+				sandCoord.add({ i * -size + size, 0, j * size });
 			}
 		}
 	}
@@ -538,6 +558,24 @@ update_status ModuleSceneIntro::Update(float dt)
 	while (c != NULL) {
 		c->data.Render();
 		c = c->next;
+	}
+
+	p2List_item<vec3>* w = waterCoord.getFirst();
+	while (w != NULL) {
+		app->renderer3D->DrawTexture(waterTex, w->data, 75, false);
+		w = w->next;
+	}
+
+	p2List_item<vec3>* g = grassCoord.getFirst();
+	while (g != NULL) {
+		app->renderer3D->DrawTexture(grassTex, g->data, 75, false);
+		g = g->next;
+	}
+
+	p2List_item<vec3>* s = sandCoord.getFirst();
+	while (s != NULL) {
+		app->renderer3D->DrawTexture(sandTex, s->data, 75, false);
+		s = s->next;
 	}
 
 	return UPDATE_CONTINUE;

@@ -45,6 +45,8 @@ public:
 	
 	p2List<Cube> scenery;
 
+	p2List<Cube> ground;
+
 	Sun sun;
 	Timer sunTimer;
 
@@ -70,8 +72,20 @@ private:
 
 	bool titleMusic = false, menuMusic = false, gameplayMusic = false, endMusic = false;
 
+
+	// Textures
+
 	uint susTex;
 	vec3 susPos = {0, 0, 0};
+
+	uint waterTex;
+	p2List<vec3> waterCoord;
+
+	uint grassTex;
+	p2List<vec3> grassCoord;
+
+	uint sandTex;
+	p2List<vec3> sandCoord;
 
 	// Ground Map 0 = Terrain, 1 = Water (The map is printed rotated 90 degrees), 2 = circuit
 	int groundCoord[10][10] = {
