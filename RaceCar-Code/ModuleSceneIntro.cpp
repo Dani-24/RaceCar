@@ -46,7 +46,7 @@ bool ModuleSceneIntro::Start()
 	AddGround();
 
 	// Map scenery details
-	AddCube({ -50, 25, 50 }, { 10, 50, 25 }, Yellow);
+	AddCube({ 30, 0, 200 }, { 25, 20, 50 }, Yellow);
 
 	// ================
 	//  Circuit track:
@@ -128,7 +128,9 @@ bool ModuleSceneIntro::CleanUp()
 void ModuleSceneIntro::AddGround() {
 	Cube groundToAdd;
 
-	groundToAdd.size = { 50, 1, 50 };
+	float size = 75;
+
+	groundToAdd.size = { size, 1, size };
 
 	int type = 0;
 	// X
@@ -137,7 +139,8 @@ void ModuleSceneIntro::AddGround() {
 		// Z
 		for (int j = 0; j < 10; j++) {
 
-			groundToAdd.SetPos(i * -50, 0, j * 50);
+			// Last +size is to move map ground 75 pixels to left
+			groundToAdd.SetPos(i * - size + size, 0, j * size);
 
 			switch (groundCoord[i][j])
 			{
@@ -153,7 +156,6 @@ void ModuleSceneIntro::AddGround() {
 			scenery.add(groundToAdd);
 		}
 	}
-
 }
 
 void ModuleSceneIntro::AddCube(vec3 position, vec3 size, Color RGB, int angle, bool rotateX, bool rotateY, bool rotateZ)
@@ -364,9 +366,6 @@ update_status ModuleSceneIntro::Update(float dt)
 
 	sun.SunBall.SetPos(-220 + cosf(sunTimer.Read() * sun.speed) * sun.movement_width, sinf(sunTimer.Read() * sun.speed) * sun.movement_height, 250);
 	sun.SunBall.Render();
-
-	// Sun Pos
-	//LOG("%.2f, %.2f, %.2f ", sun.SunBall.GetPos().x, sun.SunBall.GetPos().y, sun.SunBall.GetPos().z);
 
 	// ==========================
 	//			States
