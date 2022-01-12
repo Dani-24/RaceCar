@@ -25,7 +25,7 @@ bool ModuleSceneIntro::Start()
 	winFx = app->audio->LoadFx("Assets/audio/fx/gameplay_win.wav");
 	turboFx = app->audio->LoadFx("Assets/audio/fx/gameplay_turbo.wav");
 	kickFx = app->audio->LoadFx("Assets/audio/fx/zas.wav");
-
+	
 	// Textures
 	susTex = app->renderer3D->LoadTexture("Assets/textures/amogus.png");
 	//waterTex = app->renderer3D->LoadTexture("Assets/textures/water.png");
@@ -237,23 +237,30 @@ void ModuleSceneIntro::AddGround() {
 			case 0:
 				groundToAdd.color = Green;
 
+				app->physics->AddBody(groundToAdd, 0);
+				scenery.add(groundToAdd);
+
 				break;
 			case 1:
-				groundToAdd.color = { 0.0f, 0.0f, 1.0f, 0.8f};
+				groundToAdd.color = { 0.0f, 0.0f, 1.0f, 0.8f };
 
 				//waterCoord.add({ i * -size + size, 1, j * size });
+				//app->physics->AddBody(groundToAdd, 0);
 
-				break;
-			}
+				scenery.add(groundToAdd);
 
-			app->physics->AddBody(groundToAdd, 0);
-			scenery.add(groundToAdd);
-
-			if (groundToAdd.color.r ==  0.0f && groundToAdd.color.g ==  0.0f && groundToAdd.color.b == 1.0f) {
-
+				// Sand platform under water
 				groundToAdd.SetPos(i * -size + size, -20, j * size);
 				groundToAdd.color = Yellow;
+				app->physics->AddBody(groundToAdd, 0);
 				scenery.add(groundToAdd);
+
+				break;
+			case 2:
+				groundToAdd.color = { 0.0f, 0.0f, 1.0f, 0.8f };
+
+				scenery.add(groundToAdd);
+				break;
 			}
 		}
 	}

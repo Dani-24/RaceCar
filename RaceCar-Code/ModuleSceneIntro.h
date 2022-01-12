@@ -5,8 +5,8 @@
 #include "Primitive.h"
 #include "Bullet/include/LinearMath/btVector3.h"
 
-#define Vehicle_Fall_Dist -100
-#define Camera_Fall_Dist -10
+#define Vehicle_Fall_Dist -80
+#define Camera_Fall_Dist -25
 
 #define Circuit_Width 30
 
@@ -79,14 +79,14 @@ private:
 	uint waterTex;
 	p2List<vec3> waterCoord;
 
-	// Ground Map 0 = Terrain, 1 = Water (The map is printed rotated 90 degrees)
+	// Ground Map 0 = Terrain, 1 = Water with sand, 2 = Water (The map is printed rotated 90 degrees)
 	int groundCoord[10][10] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-		1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+		1, 1, 1, 2, 2, 2, 2, 2, 2, 2,
 		1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
 		1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
 		0, 1, 0, 0, 0, 0, 0, 0, 0, 0,

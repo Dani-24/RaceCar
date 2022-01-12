@@ -22,6 +22,7 @@ bool ModulePlayer::Start()
 	// Variables :
 
 	engineFx = app->audio->LoadFx("Assets/audio/fx/gameplay_kartEngine.wav");
+	fallFx = app->audio->LoadFx("Assets/audio/fx/gameplay_fallFromMap.wav");
 
 	// ======================================================
 	//                         Vehicle
@@ -124,6 +125,18 @@ update_status ModulePlayer::Update(float dt)
 {
 	if (app->scene_intro->state == GameState::GAMEPLAY) {
 		position = vehicle->GetPos();
+
+		if (position.getY() < Camera_Fall_Dist) {
+			if (fallFxPlayed == false) {
+				app->audio->PlayFx(fallFx);
+				fallFxPlayed = true;
+			}
+		}
+		else {
+			if (fallFxPlayed == true) {
+				fallFxPlayed = false;
+			}
+		}
 
 		if (position.getY() < Vehicle_Fall_Dist || app->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
 			vehicle->SetPos(0, 0, 0);

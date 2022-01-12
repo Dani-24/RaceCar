@@ -32,4 +32,7 @@ public:
 private:
 	uint engineFx;
 	bool playingEngineFx = false;
+
+	uint fallFx;
+	bool fallFxPlayed = false;
 };

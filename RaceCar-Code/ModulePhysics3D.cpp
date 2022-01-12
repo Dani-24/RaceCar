@@ -56,7 +56,7 @@ bool ModulePhysics3D::Start()
 	vehicle_raycaster = new btDefaultVehicleRaycaster(world);
 
 	// Big plane as ground
-	{
+	//{
 		/*btCollisionShape* colShape = new btStaticPlaneShape(btVector3(0, 1, 0), 0);
 
 		btDefaultMotionState* myMotionState = new btDefaultMotionState();
@@ -64,7 +64,9 @@ bool ModulePhysics3D::Start()
 
 		btRigidBody* body = new btRigidBody(rbInfo);
 		world->addRigidBody(body);*/
-	}
+	//}
+
+	ballThrowFx = app->audio->LoadFx("Assets/audio/fx/gameplay_item_ballThrow.wav");
 
 	return true;
 }
@@ -129,13 +131,15 @@ update_status ModulePhysics3D::Update(float dt)
 
 		// Add sphere by pressing 1
 
-		/*if(app->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+		if(app->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 		{
+			app->audio->PlayFx(ballThrowFx);
+
 			Sphere s(1);
-			s.SetPos(app->camera->Position.x, app->camera->Position.y, app->camera->Position.z);
+			s.SetPos(app->camera->Reference.x, app->camera->Reference.y + 5, app->camera->Reference.z);
 			float force = 30.0f;
 			AddBody(s)->Push(-(app->camera->Z.x * force), -(app->camera->Z.y * force), -(app->camera->Z.z * force));
-		}*/
+		}
 	}
 
 	return UPDATE_CONTINUE;
