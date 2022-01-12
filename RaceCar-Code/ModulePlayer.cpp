@@ -134,8 +134,8 @@ update_status ModulePlayer::Update(float dt)
 		// =========================================================
 
 		// Jump bc yes
-		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN && app->scene_intro->debug == true) {
-			vehicle->Push(0, 3000, 0);
+		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && app->scene_intro->debug == true) {
+			vehicle->Push(0, 300, 0);
 		}
 
 		// Reset Variables (more or less like !Key_Down)

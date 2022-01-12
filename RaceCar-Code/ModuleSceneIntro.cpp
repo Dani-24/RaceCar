@@ -28,9 +28,7 @@ bool ModuleSceneIntro::Start()
 
 	// Textures
 	susTex = app->renderer3D->LoadTexture("Assets/textures/amogus.png");
-	waterTex = app->renderer3D->LoadTexture("Assets/textures/water.png");
-	sandTex = app->renderer3D->LoadTexture("Assets/textures/sand.png");
-	grassTex = app->renderer3D->LoadTexture("Assets/textures/grass.png");
+	//waterTex = app->renderer3D->LoadTexture("Assets/textures/water.png");
 
 	// Sun
 	sun.SunBall.radius = 25;
@@ -124,30 +122,84 @@ bool ModuleSceneIntro::Start()
 
 	AddLinearCircuit({ -465, 0, 135 }, { -465, 0, 75}, 10);
 
-	AddCircularCircuit({ -490, 0, 160 }, { -465, 0, 135 }, 0.45f, 10, 3);
-
 	// 17 B
+	AddCircularCircuit({ -465, 0, 75 }, { -495, 0, 50 }, 0.35f, 10, 3);
 
+	// 18 B
+	AddLinearCircuit({ -495, 0, 50 }, { -550, 0, 50 }, 10);
+
+	// 19 B
+	AddCircularCircuit({ -550, 0, 50 }, { -550, 0, 0 }, -0.99f, 25, 8);
+
+	// 20 B
+	AddLinearCircuit({ -550, 0, 0 }, { -425, 0, 0 }, 25);
+
+	// 21 B
+	AddCircularCircuit({ -425, 0, 0 }, { -400, 0, 25 }, -0.45f, 10, 3);
+	AddCircularCircuit({ -400, 0, 25 }, { -375, 0, 50 }, 0.45f, 10, 3);
+
+	// 22 B ====
+	AddWallCircuit({ -375, 0, 50 }, { -340, 0, 50 }, 5, true);
+	AddLinearCircuit({ -340, 0, 50 }, { -90, 0, 50 }, 40);
+
+	// 22 C ====
+	AddCircularCircuit({ -360, 0, 30 }, { -335, 0, 5 }, -0.45f, 15, 3, 40);
+	AddLinearCircuit({ -335, 0, 5 }, { -300, 0, 5 }, 5, 40);
 
 	// Rute 15 ================
-	AddWallCircuit({ -570, 0, 200 }, { -570, 0, 175 }, 5, false);
-	AddLinearCircuit({ -570, 0, 175 }, { -570, 0, 125 }, 10);
+	AddWallCircuit({ -570, 0, 200 }, { -570, 0, 165 }, 5, false);
+	AddLinearCircuit({ -570, 0, 165 }, { -570, 0, 115 }, 10);
 
 	// 16 A
-	AddCircularCircuit({ -570, 0, 125 }, { -545, 0, 100 }, -0.45f, 10, 3);
+	AddCircularCircuit({ -570, 0, 115 }, { -545, 0, 90 }, -0.45f, 10, 3);
+
+	AddLinearCircuit({ -545, 0, 90 }, { -350, 0, 90 }, 30);
+
+	// 17 A
+	AddCircularCircuit({ -350, 0, 90 }, { -325, 0, 115 }, -0.45f, 10, 3);
+
+	// 18
+	AddCircularCircuit({ -325, 0, 115 }, { -300, 0, 140 }, 0.45f, 10, 3);
+
+	// 19 A (Loop)
+	AddLinearCircuit({ -300, 0, 140 }, { -250, 0, 140 }, 10);
+
+	AddLinearCircuit({ -250, 0, 100 }, { -200, 0, 100 }, 10);
+
+	// 20 A
+	AddLinearCircuit({ -200, 0, 100 }, { -100, 0, 100 }, 20);
 
 	// 21 A
+	AddCircularCircuit({ -100, 0, 100 }, { -75, 0, 75 }, 0.45f, 10, 3);
 
+	// === Rute Union ===
+	// 25 Pre
+
+	// boxes - 21A
+	AddCurveWallCircuit({ -75, 0, 75 }, { -50, 0, 42 }, -0.45f, 4, false);
+
+	// boxes - 25
+	AddCurveWallCircuit({ -75, 0, 25 }, { -50, 0, 58 }, 0.45f, 5, false);
+
+	// 22B - 21A
+	AddCurveWallCircuit({ -92, 0, 51 }, { -78, 0, 85 }, -0.45f, 3, false);
+
+	// 22B - 25
+	AddCurveWallCircuit({ -92, 0, 50 }, { -77, 0, 20 }, 0.45f, 3, false);
 
 	// 25
+	AddCircularCircuit({ -75, 0, 25 }, { -50, 0, 0 }, -0.45f, 10, 3);
+
 	AddLinearCircuit({ -50, 0, 0 }, { -25, 0, 0 }, 5);
 
 	AddCircularCircuit({ -25, 0, 0 }, { 0, 0, 25 }, -0.45f , 10, 3);
 
 	// 0 
+	AddLinearCircuit({ -50, 0, 50 }, { 25, 0, 50 }, 10, 15);
+
+	AddCircularCircuit({ 25, 0, 50 }, { 50, 0, 75 }, -0.45f, 10, 3, 15);
 	AddLinearCircuit({ 50, 0, 75 }, { 50, 0, 425 }, 60, 15);
 	AddCircularCircuit({ 50, 0, 425 }, { 25, 0, 450 }, -0.45f, 10, 5, 15);
-	AddCircularCircuit({ 25, 0, 50 }, { 50, 0, 75 }, -0.45f, 10, 3, 15);
 
 	return ret;
 }
@@ -158,7 +210,6 @@ bool ModuleSceneIntro::CleanUp()
 	LOG("Unloading Intro scene");
 
 	scenery.clear();
-
 	sunTimer.Stop();
 
 	return true;
@@ -168,7 +219,7 @@ void ModuleSceneIntro::AddGround() {
 	Cube groundToAdd;
 
 	float size = 75;
-
+	
 	groundToAdd.size = { size, 1, size };
 
 	int type = 0;
@@ -186,27 +237,23 @@ void ModuleSceneIntro::AddGround() {
 			case 0:
 				groundToAdd.color = Green;
 
-				grassCoord.add({ i * -size + size, 0, j * size });
-
 				break;
 			case 1:
 				groundToAdd.color = { 0.0f, 0.0f, 1.0f, 0.8f};
 
-				waterCoord.add({ i * -size + size, 0, j * size });
+				//waterCoord.add({ i * -size + size, 1, j * size });
 
 				break;
 			}
 
 			app->physics->AddBody(groundToAdd, 0);
-			ground.add(groundToAdd);
+			scenery.add(groundToAdd);
 
 			if (groundToAdd.color.r ==  0.0f && groundToAdd.color.g ==  0.0f && groundToAdd.color.b == 1.0f) {
 
 				groundToAdd.SetPos(i * -size + size, -20, j * size);
 				groundToAdd.color = Yellow;
-				ground.add(groundToAdd);
-
-				sandCoord.add({ i * -size + size, 0, j * size });
+				scenery.add(groundToAdd);
 			}
 		}
 	}
@@ -407,6 +454,95 @@ void ModuleSceneIntro::AddWallCircuit(vec3 initPos, vec3 finalPos, int walls, bo
 	}
 }
 
+void ModuleSceneIntro::AddCurveWallCircuit(vec3 initPos, vec3 finalPos, float angle, int walls, bool exterior) {
+	assert(angle < 1.0f && angle > -1.0f);
+	float distance = length(finalPos - initPos);
+	vec3 mid_point = (finalPos - initPos) / 2.0f + initPos;
+
+	vec3 direction = finalPos - initPos;
+	direction = normalize(direction);
+
+	vec3 hulio = { -direction.z, 0, direction.x };
+	hulio = normalize(hulio);
+
+	float max_radi = distance / 2.0f;
+	float seg_to_high_point = angle * max_radi;
+
+	vec3 h = mid_point + (seg_to_high_point * hulio);
+
+	float mFH = (h.z - finalPos.z) / (h.x - finalPos.x);
+	float mIH = (initPos.z - h.z) / (initPos.x - h.x);
+
+	vec3 center_circle = { 0, 0, 0 };
+	center_circle.x = (mFH * mIH * (initPos.z - finalPos.z) + mFH * (h.x + initPos.x) - mIH * (finalPos.x + h.x)) / (2.0f * (mFH - mIH));
+	center_circle.z = (-1 / mFH) * (center_circle.x - ((finalPos.x + h.x) / 2.0f)) + ((finalPos.z + h.z) / 2.0f);
+
+	vec3 c_to_i = normalize(initPos - center_circle);
+	vec3 c_to_f = normalize(finalPos - center_circle);
+	float theta = acos(dot(c_to_f, c_to_i));
+	float radius = length(finalPos - center_circle);
+
+	float angle_ref = 0.0f;
+	if (initPos.z >= center_circle.z && initPos.x < center_circle.x) {
+		angle_ref = acos(dot(c_to_i, { 1, 0, 0 }));
+	}
+	else if (initPos.z >= center_circle.z && initPos.x >= center_circle.x) {
+		angle_ref = acos(dot(c_to_i, { 1, 0, 0 }));
+	}
+	else if (initPos.z < center_circle.z && initPos.x >= center_circle.x) {
+		angle_ref = 2 * M_PI - acos(dot(c_to_i, { 1, 0, 0 }));
+	}
+	else if (initPos.z < center_circle.z && initPos.x < center_circle.x) {
+		angle_ref = 2 * M_PI - acos(dot(c_to_i, { 1, 0, 0 }));
+	}
+
+	vec3 pos;
+
+	// Create the cube & size
+	Cube c;
+	c.size = { 1, 2, 1 };
+
+	vec3 central_pos;
+
+	if (exterior == true) {
+		// Curve Exterior
+		for (uint j = 0; j < walls; j++)
+		{
+			c.color = (j % 2 == 0) ? White : Red;
+			float sub_angle = (angle > 0.0f) ? -(float)j / walls * theta : (float)j / walls * theta;
+
+			central_pos.x = center_circle.x + radius * cos(sub_angle + angle_ref);
+			central_pos.z = center_circle.z + radius * sin(sub_angle + angle_ref);
+
+			vec3 to_center = normalize(central_pos - center_circle);
+			pos = central_pos + ((Circuit_Width / 2.0f) * to_center);
+			c.SetPos(pos.x, pos.y + 1, pos.z);
+
+			app->physics->AddBody(c, 0);
+			scenery.add(c);
+		}
+	}
+	else {
+		// Curve Interior
+		for (uint j = 0; j < walls; j++)
+		{
+			c.color = (j % 2 == 0) ? Yellow : Red;
+			float sub_angle = (angle > 0.0f) ? -(float)j / walls * theta : (float)j / walls * theta;
+
+			central_pos.x = center_circle.x + radius * cos(sub_angle + angle_ref);
+			central_pos.z = center_circle.z + radius * sin(sub_angle + angle_ref);
+
+			vec3 to_center = normalize(central_pos - center_circle);
+			pos = central_pos + ((Circuit_Width / 2.0f) * -to_center);
+			c.SetPos(pos.x, pos.y + 1, pos.z);
+
+			app->physics->AddBody(c, 0);
+			scenery.add(c);
+		}
+	}
+}
+
+
 void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, int circuitW) {
 
 }
@@ -560,23 +696,11 @@ update_status ModuleSceneIntro::Update(float dt)
 		c = c->next;
 	}
 
-	p2List_item<vec3>* w = waterCoord.getFirst();
+	/*p2List_item<vec3>* w = waterCoord.getFirst();
 	while (w != NULL) {
 		app->renderer3D->DrawTexture(waterTex, w->data, 75, false);
 		w = w->next;
-	}
-
-	p2List_item<vec3>* g = grassCoord.getFirst();
-	while (g != NULL) {
-		app->renderer3D->DrawTexture(grassTex, g->data, 75, false);
-		g = g->next;
-	}
-
-	p2List_item<vec3>* s = sandCoord.getFirst();
-	while (s != NULL) {
-		app->renderer3D->DrawTexture(sandTex, s->data, 75, false);
-		s = s->next;
-	}
+	}*/
 
 	return UPDATE_CONTINUE;
 }

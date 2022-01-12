@@ -44,9 +44,6 @@ public:
 public:
 	
 	p2List<Cube> scenery;
-
-	p2List<Cube> ground;
-
 	Sun sun;
 	Timer sunTimer;
 
@@ -61,6 +58,8 @@ public:
 
 	void AddWallCircuit(vec3 initPos, vec3 finalPos, int walls, bool right);
 
+	void AddCurveWallCircuit(vec3 initPos, vec3 finalPos, float angle, int walls, bool exterior);
+
 	void AddCheckPoint(vec3 position, float angle, int circuitW = Circuit_Width);
 
 	bool debug = true, freeCam;
@@ -72,7 +71,6 @@ private:
 
 	bool titleMusic = false, menuMusic = false, gameplayMusic = false, endMusic = false;
 
-
 	// Textures
 
 	uint susTex;
@@ -81,22 +79,16 @@ private:
 	uint waterTex;
 	p2List<vec3> waterCoord;
 
-	uint grassTex;
-	p2List<vec3> grassCoord;
-
-	uint sandTex;
-	p2List<vec3> sandCoord;
-
-	// Ground Map 0 = Terrain, 1 = Water (The map is printed rotated 90 degrees), 2 = circuit
+	// Ground Map 0 = Terrain, 1 = Water (The map is printed rotated 90 degrees)
 	int groundCoord[10][10] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
 		1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 		1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
-		0, 1, 1, 0, 0, 0, 0, 0, 0, 0,
+		1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
 		0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 1, 0, 0, 0, 0, 0, 0, 0, 0,
 	};
