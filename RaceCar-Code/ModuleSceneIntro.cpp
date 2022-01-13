@@ -25,7 +25,7 @@ bool ModuleSceneIntro::Start()
 	//				Audio
 	// ===================================
 	winFx = app->audio->LoadFx("Assets/audio/fx/gameplay_win.wav");
-	kickFx = app->audio->LoadFx("Assets/audio/fx/zas.wav");
+	respawnFx = app->audio->LoadFx("Assets/audio/fx/zas.wav");
 	lapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lap.wav");
 	finalLapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lastLap.wav");
 	checkpointFx = app->audio->LoadFx("Assets/audio/fx/gameplay_checkpoint.wav");
@@ -710,7 +710,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		}
 
 		if (app->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN) {
-			app->audio->PlayFx(kickFx);
+			app->audio->PlayFx(respawnFx);
 		}
 
 		// Draw

@@ -20,6 +20,7 @@ public:
 	bool CleanUp();
 
 	vec3 GetVehicleForwardVec();
+	void Respawn(vec3 position, float angle);
 
 public:
 	PhysVehicle3D* vehicle;

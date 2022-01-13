@@ -5,8 +5,6 @@
 // ----------------------------------------------------------------------------
 VehicleInfo::~VehicleInfo()
 {
-	//if(wheels != NULL)
-		//delete wheels;
 }
 
 // ----------------------------------------------------------------------------
@@ -100,4 +98,26 @@ vec3 PhysVehicle3D::GetForwardVector() const
 	vec3 ret;
 	ret.Set(h.getX(), h.getY(), h.getZ());
 	return ret;
+}
+
+void PhysVehicle3D::Orient(float angle)
+{
+	float matrix[16];
+	memset(matrix, 0.0f, sizeof(matrix));
+
+	// Keep position
+	vec3 p = { GetPos().getX(), GetPos().getY(), GetPos().getZ() };
+	matrix[12] = p.x;
+	matrix[13] = p.y;
+	matrix[14] = p.z;
+	matrix[15] = 1;
+
+	// Rotate the body by angle
+	matrix[0] = cos(angle);
+	matrix[2] = -sin(angle);
+	matrix[5] = 1;
+	matrix[8] = sin(angle);
+	matrix[10] = cos(angle);
+
+	SetTransform(matrix);
 }

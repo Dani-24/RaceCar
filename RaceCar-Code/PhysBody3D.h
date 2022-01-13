@@ -19,7 +19,10 @@ public:
 	void GetTransform(float* matrix) const;
 	void SetTransform(const float* matrix) const;
 	void SetPos(float x, float y, float z);
+
 	btVector3 GetPos();
+	void SetLinearVelocity(float x, float y, float z);
+	void SetAngularVelocity(float x, float y, float z);
 
 private:
 	btRigidBody* body = nullptr;

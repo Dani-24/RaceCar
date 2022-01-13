@@ -138,6 +138,11 @@ update_status ModuleEnemies::Update(float dt)
 {
 	p2List_item<PhysVehicle3D*>* c = vehicles.getFirst();
 
+	//if (app->input->GetKey(SDL_SCANCODE_2) == KEY_REPEAT) {
+	//	// Create infinity carsssssssssssssssssssss
+	//	AddKart({app->camera->Reference.x, app->camera->Reference.y, app->camera->Reference.z});
+	//}
+
 	while (c != NULL) {
 		if (app->scene_intro->state == GameState::GAMEPLAY) {
 			if (c->data->GetPos().getY() < Camera_Fall_Dist) {

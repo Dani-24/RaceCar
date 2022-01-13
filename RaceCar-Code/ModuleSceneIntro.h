@@ -71,8 +71,10 @@ public:
 
 	GameState state;
 
+	uint respawnFx;
+
 private:
-	uint winFx, kickFx, lapFx, finalLapFx, checkpointFx;
+	uint winFx, lapFx, finalLapFx, checkpointFx;
 
 	bool titleMusic = false, menuMusic = false, gameplayMusic = false, endMusic = false;
 

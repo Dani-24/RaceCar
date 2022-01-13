@@ -140,7 +140,8 @@ update_status ModulePlayer::Update(float dt)
 		}
 
 		if (position.getY() < Vehicle_Fall_Dist || app->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-			vehicle->SetPos(0, 1, 0);
+			Respawn({ app->scene_intro->checkPoints.getFirst()->data->GetPos().getX(), 1, app->scene_intro->checkPoints.getFirst()->data->GetPos().getZ()}, -1.55f);
+			app->audio->PlayFx(app->scene_intro->respawnFx);
 		}
 
 		// =========================================================
@@ -282,6 +283,13 @@ update_status ModulePlayer::Update(float dt)
 	app->window->SetTitle(title);
 
 	return UPDATE_CONTINUE;
+}
+
+void ModulePlayer::Respawn(vec3 position, float angle) {
+	vehicle->SetPos(position.x, position.y, position.z);
+	vehicle->SetAngularVelocity(0, 0, 0);
+	vehicle->Orient(angle + M_PI / 2);
+	vehicle->SetLinearVelocity(0, 0, 0);
 }
 
 vec3 ModulePlayer::GetVehicleForwardVec() {

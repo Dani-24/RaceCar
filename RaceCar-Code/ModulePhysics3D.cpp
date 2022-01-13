@@ -429,7 +429,7 @@ void DebugDrawer::setDebugMode(int debugMode)
 	mode = (DebugDrawModes) debugMode;
 }
 
-int	 DebugDrawer::getDebugMode() const
+int DebugDrawer::getDebugMode() const
 {
 	return mode;
 }
