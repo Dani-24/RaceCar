@@ -20,17 +20,25 @@ bool ModuleSceneIntro::Start()
 
 	state = GameState::TITLESCREEN;
 	freeCam = false;
-
-	// Audios
-	winFx = app->audio->LoadFx("Assets/audio/fx/gameplay_win.wav");
-	turboFx = app->audio->LoadFx("Assets/audio/fx/gameplay_turbo.wav");
-	kickFx = app->audio->LoadFx("Assets/audio/fx/zas.wav");
 	
-	// Textures
+	// ===================================
+	//				Audio
+	// ===================================
+	winFx = app->audio->LoadFx("Assets/audio/fx/gameplay_win.wav");
+	kickFx = app->audio->LoadFx("Assets/audio/fx/zas.wav");
+	lapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lap.wav");
+	finalLapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lastLap.wav");
+	checkpointFx = app->audio->LoadFx("Assets/audio/fx/gameplay_checkpoint.wav");
+	
+	// ===================================
+	//				Textures
+	// ===================================
 	susTex = app->renderer3D->LoadTexture("Assets/textures/amogus.png");
 	//waterTex = app->renderer3D->LoadTexture("Assets/textures/water.png");
 
-	// Sun
+	// ===================================
+	//				 Sun
+	// ===================================
 	sun.SunBall.radius = 25;
 	sun.SunBall.color = Yellow;
 	sun.speed = 0.00005f;
@@ -49,15 +57,23 @@ bool ModuleSceneIntro::Start()
 	// Map scenery details
 	AddCube({ 30, 10, 200 }, { 25, 20, 50 }, Yellow);
 
+	// Circuit
+	CreateCircuit();
+
+	return ret;
+}
+
+void ModuleSceneIntro::CreateCircuit() {
 	// ================
 	//  Circuit track:
 	// ================
 
 	// 1
+	AddCheckPoint({ 0, 0, 210 }, 90, 30, Black); // meta
 	AddLinearCircuit({ 0, 0, 25 }, { 0, 0, 425 }, 60);
-	
+
 	// 1.2
-	AddCircularCircuit({ 0, 0, 425 }, {-25, 0, 450 }, -0.45f, 10, 5);
+	AddCircularCircuit({ 0, 0, 425 }, { -25, 0, 450 }, -0.45f, 10, 5);
 
 	// 2
 	AddLinearCircuit({ -25, 0, 450 }, { -50, 0, 450 }, 5);
@@ -114,13 +130,13 @@ bool ModuleSceneIntro::Start()
 
 	// Rute 14 ================
 	AddLinearCircuit({ -543, 0, 190 }, { -520, 0, 170 }, 5);
-	
+
 	// 16 B
 	AddCircularCircuit({ -520, 0, 170 }, { -490, 0, 160 }, -0.225f, 10, 3);
 
 	AddCircularCircuit({ -490, 0, 160 }, { -465, 0, 135 }, 0.45f, 10, 3);
 
-	AddLinearCircuit({ -465, 0, 135 }, { -465, 0, 75}, 10);
+	AddLinearCircuit({ -465, 0, 135 }, { -465, 0, 75 }, 10);
 
 	// 17 B
 	AddCircularCircuit({ -465, 0, 75 }, { -495, 0, 50 }, 0.35f, 10, 3);
@@ -192,7 +208,7 @@ bool ModuleSceneIntro::Start()
 
 	AddLinearCircuit({ -50, 0, 0 }, { -25, 0, 0 }, 5);
 
-	AddCircularCircuit({ -25, 0, 0 }, { 0, 0, 25 }, -0.45f , 10, 3);
+	AddCircularCircuit({ -25, 0, 0 }, { 0, 0, 25 }, -0.45f, 10, 3);
 
 	// 0 
 	AddLinearCircuit({ -50, 0, 50 }, { 25, 0, 50 }, 10, 15);
@@ -200,16 +216,13 @@ bool ModuleSceneIntro::Start()
 	AddCircularCircuit({ 25, 0, 50 }, { 50, 0, 75 }, -0.45f, 10, 3, 15);
 	AddLinearCircuit({ 50, 0, 75 }, { 50, 0, 425 }, 60, 15);
 	AddCircularCircuit({ 50, 0, 425 }, { 25, 0, 450 }, -0.45f, 10, 5, 15);
-
-	return ret;
 }
 
-// Load assets
 bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
 
-	scenery.clear();
+	sceneryCubes.clear();
 	sunTimer.Stop();
 
 	return true;
@@ -238,7 +251,7 @@ void ModuleSceneIntro::AddGround() {
 				groundToAdd.color = Green;
 
 				app->physics->AddBody(groundToAdd, 0);
-				scenery.add(groundToAdd);
+				sceneryCubes.add(groundToAdd);
 
 				break;
 			case 1:
@@ -247,19 +260,19 @@ void ModuleSceneIntro::AddGround() {
 				//waterCoord.add({ i * -size + size, 1, j * size });
 				//app->physics->AddBody(groundToAdd, 0);
 
-				scenery.add(groundToAdd);
+				sceneryCubes.add(groundToAdd);
 
 				// Sand platform under water
 				groundToAdd.SetPos(i * -size + size, -20, j * size);
 				groundToAdd.color = Yellow;
 				app->physics->AddBody(groundToAdd, 0);
-				scenery.add(groundToAdd);
+				sceneryCubes.add(groundToAdd);
 
 				break;
 			case 2:
 				groundToAdd.color = { 0.0f, 0.0f, 1.0f, 0.8f };
 
-				scenery.add(groundToAdd);
+				sceneryCubes.add(groundToAdd);
 				break;
 			}
 		}
@@ -289,7 +302,7 @@ void ModuleSceneIntro::AddCube(vec3 position, vec3 size, Color RGB, int angle, b
 
 	app->physics->AddBody(cubeToAdd, 0);
 
-	scenery.add(cubeToAdd);
+	sceneryCubes.add(cubeToAdd);
 }
 
 void ModuleSceneIntro::AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWalls, int circuitW) {
@@ -323,13 +336,13 @@ void ModuleSceneIntro::AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWal
 		pos = (initPos + (direction * j * cubeDistance)) + ((circuitW / 2) * noSeQueEsEstoHulio);
 		c.SetPos(pos.x, pos.y + 1, pos.z);
 		app->physics->AddBody(c, 0);
-		scenery.add(c);
+		sceneryCubes.add(c);
 
 		// Cube left
 		pos = (initPos + (direction * j * cubeDistance)) + ((circuitW / 2) * -noSeQueEsEstoHulio);
 		c.SetPos(pos.x, pos.y + 1, pos.z);
 		app->physics->AddBody(c, 0);
-		scenery.add(c);
+		sceneryCubes.add(c);
 	}
 }
 
@@ -396,7 +409,7 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, float ang
 		c.SetPos(pos.x, pos.y + 1, pos.z);
 
 		app->physics->AddBody(c, 0);
-		scenery.add(c);
+		sceneryCubes.add(c);
 	}
 
 	// Curve Interior
@@ -413,7 +426,7 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, float ang
 		c.SetPos(pos.x, pos.y + 1, pos.z);
 		
 		app->physics->AddBody(c, 0);
-		scenery.add(c);
+		sceneryCubes.add(c);
 	}
 }
 
@@ -449,14 +462,14 @@ void ModuleSceneIntro::AddWallCircuit(vec3 initPos, vec3 finalPos, int walls, bo
 			pos = (initPos + (direction * j * cubeDistance)) + ((Circuit_Width / 2) * formulasFisicasMagicosas);
 			c.SetPos(pos.x, pos.y + 1, pos.z);
 			app->physics->AddBody(c, 0);
-			scenery.add(c);
+			sceneryCubes.add(c);
 		}
 		else {
 			// Cube left
 			pos = (initPos + (direction * j * cubeDistance)) + ((Circuit_Width / 2) * -formulasFisicasMagicosas);
 			c.SetPos(pos.x, pos.y + 1, pos.z);
 			app->physics->AddBody(c, 0);
-			scenery.add(c);
+			sceneryCubes.add(c);
 		}
 	}
 }
@@ -526,7 +539,7 @@ void ModuleSceneIntro::AddCurveWallCircuit(vec3 initPos, vec3 finalPos, float an
 			c.SetPos(pos.x, pos.y + 1, pos.z);
 
 			app->physics->AddBody(c, 0);
-			scenery.add(c);
+			sceneryCubes.add(c);
 		}
 	}
 	else {
@@ -544,14 +557,48 @@ void ModuleSceneIntro::AddCurveWallCircuit(vec3 initPos, vec3 finalPos, float an
 			c.SetPos(pos.x, pos.y + 1, pos.z);
 
 			app->physics->AddBody(c, 0);
-			scenery.add(c);
+			sceneryCubes.add(c);
 		}
 	}
 }
 
+void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW, Color color) {
+	// Sensor
+	Cube sensor;
+	sensor.size = { 5, 5, circuitW };
+	sensor.SetPos(position.x, position.y + 3, position.z);
+	sensor.SetRotation(angle, { 0, 1, 0 });
 
-void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, int circuitW) {
+	PhysBody3D* sensorBody = app->physics->AddSensor(sensor, this, 0.0f);
+	checkPoints.add(sensorBody);
 
+	// Visual sensor
+	float radius = circuitW / 2;
+	vec3 positionLeftFlag(0, position.y + 2.9, radius);
+	vec3 positionRightFlag(0, position.y + 2.9, -radius);
+	float theta = angle * M_PI / 180;
+	positionLeftFlag.x += radius * sin(theta); positionLeftFlag.z = positionLeftFlag.z * cos(theta);
+	positionRightFlag.x -= radius * sin(theta); positionRightFlag.z = positionRightFlag.z * cos(theta);
+
+	Cylinder leftFlag;
+	leftFlag.radius = 2;
+	leftFlag.height = 5;
+	leftFlag.color = color;
+	leftFlag.SetPos(positionLeftFlag.x + position.x, positionLeftFlag.y, positionLeftFlag.z + position.z);
+	leftFlag.SetRotation(angle, { 0, 0, 1 });
+
+	sceneryCylinders.add(leftFlag);
+	app->physics->AddBody(leftFlag, 0);
+
+	Cylinder rightFlag;
+	rightFlag.radius = 2;
+	rightFlag.height = 5;
+	rightFlag.color = color;
+	rightFlag.SetPos(positionRightFlag.x + position.x, positionRightFlag.y, positionRightFlag.z + position.z);
+	rightFlag.SetRotation(angle, { 0, 0, 1 });
+
+	sceneryCylinders.add(rightFlag);
+	app->physics->AddBody(rightFlag, 0);
 }
 
 // Update
@@ -565,7 +612,7 @@ update_status ModuleSceneIntro::Update(float dt)
 	sun.SunBall.Render();
 
 	// ==========================
-	//			States
+	//	   	  Game states
 	// ==========================
 	switch (state)
 	{
@@ -666,10 +713,6 @@ update_status ModuleSceneIntro::Update(float dt)
 			app->audio->PlayFx(kickFx);
 		}
 
-		if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_DOWN) {
-			app->audio->PlayFx(turboFx);
-		}
-
 		// Draw
 
 		susPos.x = app->player->position.getX() - 1.5f;
@@ -697,10 +740,16 @@ update_status ModuleSceneIntro::Update(float dt)
 	//						Render Ground
 	// ====================================================
 
-	p2List_item<Cube>* c = scenery.getFirst();
+	p2List_item<Cube>* c = sceneryCubes.getFirst();
 	while (c != NULL) {
 		c->data.Render();
 		c = c->next;
+	}
+
+	p2List_item<Cylinder>* cy = sceneryCylinders.getFirst();
+	while (cy != NULL) {
+		cy->data.Render();
+		cy = cy->next;
 	}
 
 	/*p2List_item<vec3>* w = waterCoord.getFirst();
@@ -745,4 +794,15 @@ void ModuleSceneIntro::CameraPlayer() {
 
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
+	if (body1->is_sensor == true) {
+		if (body1 == checkPoints.getFirst()->data) {
+			// reset checkpoint // lap
+			app->audio->PlayFx(lapFx);
+		}
+		for (p2List_item<PhysBody3D*>* ch = checkPoints.getFirst()->next; ch != NULL; ch = ch->next) {
+			if (body1 == ch->data) {
+				app->audio->PlayFx(checkpointFx);
+			}
+		}
+	}
 }

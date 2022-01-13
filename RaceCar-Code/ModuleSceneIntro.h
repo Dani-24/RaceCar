@@ -5,7 +5,7 @@
 #include "Primitive.h"
 #include "Bullet/include/LinearMath/btVector3.h"
 
-#define Vehicle_Fall_Dist -80
+#define Vehicle_Fall_Dist -100
 #define Camera_Fall_Dist -25
 
 #define Circuit_Width 30
@@ -41,9 +41,14 @@ public:
 
 	void CameraPlayer();
 
+	void CreateCircuit();
+
 public:
 	
-	p2List<Cube> scenery;
+	p2List<Cube> sceneryCubes;
+	p2List<Cylinder> sceneryCylinders;
+	p2List<PhysBody3D*> checkPoints;
+
 	Sun sun;
 	Timer sunTimer;
 
@@ -60,14 +65,14 @@ public:
 
 	void AddCurveWallCircuit(vec3 initPos, vec3 finalPos, float angle, int walls, bool exterior);
 
-	void AddCheckPoint(vec3 position, float angle, int circuitW = Circuit_Width);
+	void AddCheckPoint(vec3 position, float angle, float circuitW = Circuit_Width, Color color = White);
 
 	bool debug = true, freeCam;
 
 	GameState state;
 
 private:
-	uint winFx, turboFx, kickFx;
+	uint winFx, kickFx, lapFx, finalLapFx, checkpointFx;
 
 	bool titleMusic = false, menuMusic = false, gameplayMusic = false, endMusic = false;
 

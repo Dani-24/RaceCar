@@ -22,6 +22,7 @@ bool ModulePlayer::Start()
 	// Variables :
 
 	engineFx = app->audio->LoadFx("Assets/audio/fx/gameplay_kartEngine.wav");
+	turboFx = app->audio->LoadFx("Assets/audio/fx/gameplay_turbo.wav");
 	fallFx = app->audio->LoadFx("Assets/audio/fx/gameplay_fallFromMap.wav");
 
 	// ======================================================
@@ -107,8 +108,8 @@ bool ModulePlayer::Start()
 	car.wheels[3].steering = false;
 
 	vehicle = app->physics->AddVehicle(car);
-	vehicle->SetPos(0, 0, 0);
-	
+	vehicle->SetPos(-5, 1, 145);
+
 	return true;
 }
 
@@ -139,7 +140,7 @@ update_status ModulePlayer::Update(float dt)
 		}
 
 		if (position.getY() < Vehicle_Fall_Dist || app->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-			vehicle->SetPos(0, 0, 0);
+			vehicle->SetPos(0, 1, 0);
 		}
 
 		// =========================================================
@@ -169,9 +170,16 @@ update_status ModulePlayer::Update(float dt)
 			if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
 				if (vehicle->GetKmh() < 150) {
 					acceleration = MAX_ACCELERATION * 10;
+					if (turboFxPlayed == false) {
+						app->audio->PlayFx(turboFx);
+						turboFxPlayed = true;
+					}
 				}
 			}
 			else {
+				if (turboFxPlayed == true) {
+					turboFxPlayed = false;
+				}
 				if (vehicle->GetKmh() > 100) {
 					brake = BRAKE_POWER / 20;
 				}
