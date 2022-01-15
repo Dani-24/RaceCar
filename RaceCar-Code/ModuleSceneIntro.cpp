@@ -20,6 +20,8 @@ bool ModuleSceneIntro::Start()
 
 	state = GameState::TITLESCREEN;
 	freeCam = false;
+
+	currentLap = RaceState::FIRSTLAP;
 	
 	// ===================================
 	//				Audio
@@ -794,6 +796,7 @@ void ModuleSceneIntro::CameraPlayer() {
 
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
+	LOG("A");
 	if (body1->is_sensor == true) {
 		if (body1 == checkPoints.getFirst()->data) {
 			// reset checkpoint // lap

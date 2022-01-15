@@ -20,6 +20,12 @@ enum GameState {
 	ENDSCREEN
 };
 
+enum RaceState {
+	FIRSTLAP,
+	SECONDLAP,
+	LASTLAP
+};
+
 struct Sun {
 	Sphere SunBall;
 	float speed;
@@ -70,6 +76,8 @@ public:
 	bool debug = true, freeCam;
 
 	GameState state;
+
+	RaceState currentLap;
 
 	uint respawnFx;
 

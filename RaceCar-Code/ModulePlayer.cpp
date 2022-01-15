@@ -20,7 +20,6 @@ bool ModulePlayer::Start()
 	LOG("Loading player");
 
 	// Variables :
-
 	engineFx = app->audio->LoadFx("Assets/audio/fx/gameplay_kartEngine.wav");
 	turboFx = app->audio->LoadFx("Assets/audio/fx/gameplay_turbo.wav");
 	fallFx = app->audio->LoadFx("Assets/audio/fx/gameplay_fallFromMap.wav");
@@ -279,9 +278,18 @@ update_status ModulePlayer::Update(float dt)
 	// =========================================================
 
 	char title[80];
-	sprintf_s(title, "Racing GP Piston Cup ඞ || Car Speed: %.1f Km/h", vehicle->GetKmh());
-	app->window->SetTitle(title);
-
+	if (app->scene_intro->currentLap == RaceState::FIRSTLAP) {
+		sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3", vehicle->GetKmh());
+		app->window->SetTitle(title);
+	}
+	else if (app->scene_intro->currentLap == RaceState::SECONDLAP) {
+		sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3", vehicle->GetKmh());
+		app->window->SetTitle(title);
+	}
+	else if (app->scene_intro->currentLap == RaceState::LASTLAP) {
+		sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3", vehicle->GetKmh());
+		app->window->SetTitle(title);
+	}
 	return UPDATE_CONTINUE;
 }
 
