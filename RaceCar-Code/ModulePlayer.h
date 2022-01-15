@@ -19,6 +19,8 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
+	void CreateCar();
+
 	vec3 GetVehicleForwardVec();
 	void Respawn(vec3 position, float angle);
 
@@ -31,6 +33,10 @@ public:
 
 	btVector3 position;
 
+	vec3 initialPos = { 0, 1, 200 };
+
+	bool allowPlayerControl = false;
+
 private:
 	uint engineFx;
 	bool playingEngineFx = false;
@@ -40,4 +46,6 @@ private:
 
 	uint turboFx;
 	bool turboFxPlayed = false;
+
+	uint respawnFx;
 };

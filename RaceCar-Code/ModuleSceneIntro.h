@@ -19,10 +19,16 @@ enum GameState {
 	ENDSCREEN
 };
 
-enum RaceState {
+enum LapState {
 	FIRSTLAP,
 	SECONDLAP,
 	LASTLAP
+};
+
+enum RaceState {
+	WIN,
+	LOSE,
+	DEFAULT
 };
 
 struct Sun {
@@ -30,6 +36,14 @@ struct Sun {
 	float speed;
 	float movement_width;
 	float movement_height;
+};
+
+struct CheckPoint {
+	PhysBody3D* body;
+	Cylinder leftC, rightC;
+	float angle;
+	bool checked;
+	int laps = 0;
 };
 
 class ModuleSceneIntro : public Module
@@ -52,7 +66,7 @@ public:
 	
 	p2List<Cube> sceneryCubes;
 	p2List<Cylinder> sceneryCylinders;
-	p2List<PhysBody3D*> checkPoints;
+	p2List<CheckPoint> checkPoints;
 
 	Sun sun;
 	Timer sunTimer;
@@ -76,17 +90,20 @@ public:
 
 	GameState state;
 
-	RaceState currentLap;
+	LapState currentLap;
 
-	uint respawnFx;
+	RaceState areYouWinningSon;
+
+	bool playerUnderWater = false, salpicadura = false;
 
 private:
-	uint winFx, lapFx, finalLapFx, checkpointFx;
+	uint winFx, loseFx, lapFx, finalLapFx, checkpointFx;
 
-	bool titleMusic = false, menuMusic = false, gameplayMusic = false, endMusic = false;
+	float lastPlayerPosY;
+
+	bool playingMusic;
 
 	// Textures
-
 	uint susTex;
 	vec3 susPos = {0, 0, 0};
 

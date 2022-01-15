@@ -19,15 +19,19 @@ bool ModuleSceneIntro::Start()
 	bool ret = true;
 
 	state = GameState::TITLESCREEN;
-	freeCam = false;
 
-	currentLap = RaceState::FIRSTLAP;
+	currentLap = LapState::FIRSTLAP;
+
+	areYouWinningSon = RaceState::DEFAULT;
+
+	playingMusic = false;
+	freeCam = false;
 	
 	// ===================================
 	//				Audio
 	// ===================================
 	winFx = app->audio->LoadFx("Assets/audio/fx/gameplay_win.wav");
-	respawnFx = app->audio->LoadFx("Assets/audio/fx/zas.wav");
+	loseFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lose.wav");
 	lapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lap.wav");
 	finalLapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lastLap.wav");
 	checkpointFx = app->audio->LoadFx("Assets/audio/fx/gameplay_checkpoint.wav");
@@ -92,6 +96,9 @@ void ModuleSceneIntro::CreateCircuit() {
 	// 5
 	AddCircularCircuit({ -45, 0, 350 }, { -45, 0, 325 }, 0.45f, 10, 1);
 	AddLinearCircuit({ -45, 0, 325 }, { -60, 0, 300 }, 5);
+
+	AddCheckPoint({ -51, 0, 315 }, -58, 30, Red);
+
 	AddCircularCircuit({ -60, 0, 300 }, { -75, 0, 300 }, 0.45f, 10, 0);
 
 	// 6
@@ -245,6 +252,10 @@ void ModuleSceneIntro::AddGround() {
 
 			// Last +size is to move map ground 75 pixels to left
 			groundToAdd.SetPos(i * - size + size, 0, j * size);
+
+			if (debug == true) {
+				LOG("Adding ground at x: %.2f, z: %.2f", i * -size + size, j * size);
+			}
 
 			switch (groundCoord[i][j])
 			{
@@ -570,10 +581,7 @@ void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW,
 	sensor.SetPos(position.x, position.y + 3, position.z);
 	sensor.SetRotation(angle, { 0, 1, 0 });
 
-	PhysBody3D* sensorBody = app->physics->AddSensor(sensor, this, 0.0f);
-	checkPoints.add(sensorBody);
-
-	// Visual sensor
+	// Variable to position the visual sensor
 	float radius = circuitW / 2;
 	vec3 positionLeftFlag(0, position.y + 2.9, radius);
 	vec3 positionRightFlag(0, position.y + 2.9, -radius);
@@ -581,25 +589,36 @@ void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW,
 	positionLeftFlag.x += radius * sin(theta); positionLeftFlag.z = positionLeftFlag.z * cos(theta);
 	positionRightFlag.x -= radius * sin(theta); positionRightFlag.z = positionRightFlag.z * cos(theta);
 
+	// Sensor left mark
 	Cylinder leftFlag;
 	leftFlag.radius = 2;
 	leftFlag.height = 5;
 	leftFlag.color = color;
 	leftFlag.SetPos(positionLeftFlag.x + position.x, positionLeftFlag.y, positionLeftFlag.z + position.z);
-	leftFlag.SetRotation(angle, { 0, 0, 1 });
+	leftFlag.SetRotation(90, { 0, 0, 1 });
 
-	sceneryCylinders.add(leftFlag);
-	app->physics->AddBody(leftFlag, 0);
-
+	// Sensor right mark
 	Cylinder rightFlag;
 	rightFlag.radius = 2;
 	rightFlag.height = 5;
 	rightFlag.color = color;
 	rightFlag.SetPos(positionRightFlag.x + position.x, positionRightFlag.y, positionRightFlag.z + position.z);
-	rightFlag.SetRotation(angle, { 0, 0, 1 });
+	rightFlag.SetRotation(90, { 0, 0, 1 });
 
-	sceneryCylinders.add(rightFlag);
-	app->physics->AddBody(rightFlag, 0);
+	// Create Checkpoint
+	CheckPoint sensorCP;
+	sensorCP.body = app->physics->AddSensor(sensor, this, 0.0f);
+	sensorCP.angle = angle;
+	sensorCP.checked = false;
+	sensorCP.leftC = leftFlag;
+	sensorCP.rightC = rightFlag;
+
+	sceneryCylinders.add(sensorCP.leftC);
+	app->physics->AddBody(sensorCP.leftC, 0);
+	sceneryCylinders.add(sensorCP.rightC);
+	app->physics->AddBody(sensorCP.rightC, 0);
+
+	checkPoints.add(sensorCP);
 }
 
 // Update
@@ -618,6 +637,12 @@ update_status ModuleSceneIntro::Update(float dt)
 	switch (state)
 	{
 	case TITLESCREEN:
+		
+		// Check Music
+		if (playingMusic == false) {
+			app->audio->PlayMusic("Assets/audio/music/titleScreen.ogg");
+			playingMusic = true;
+		}
 
 		// ==========================
 		//			INPUT
@@ -627,6 +652,7 @@ update_status ModuleSceneIntro::Update(float dt)
 			state = GameState::GAMEPLAY;
 			LOG("Loading Gameplay screen");
 
+			playingMusic = false;
 			// Aqui deberia resetear la scena para hacer loop
 
 		}
@@ -639,36 +665,43 @@ update_status ModuleSceneIntro::Update(float dt)
 		//			Update
 		// ==========================
 
-		if (titleMusic == false) {
-			app->audio->PlayMusic("Assets/audio/music/titleScreen.ogg");
-			titleMusic = true;
-			endMusic = menuMusic = gameplayMusic = false;
-		}
-
 		app->camera->Position = { -250, 425, 225 };
 		app->camera->LookAt(vec3( -250, 0, 226));
 
 		break;
 	case GAMEPLAY:
 
+		// Check Music
+		if (playingMusic == false) {
+			if (playerUnderWater != true) {
+				if (currentLap != LapState::LASTLAP) {
+					app->audio->PlayMusic("Assets/audio/music/gameplay_coconutMall.ogg");
+				}
+				else {
+					app->audio->PlayMusic("Assets/audio/music/gameplay_coconutMall_lastLap.ogg");
+				}
+			}
+			else {
+				if (currentLap != LapState::LASTLAP) {
+					app->audio->PlayMusic("Assets/audio/music/gameplay_underwater_coconutMall.ogg");
+				}
+				else {
+					app->audio->PlayMusic("Assets/audio/music/gameplay_underwater_coconutMall_lastLap.ogg");
+				}
+			}
+			playingMusic = true;
+		}
+
 		// ==========================
 		//			INPUT
 		// ==========================
 
-		if (gameplayMusic == false) {
-			app->audio->PlayMusic("Assets/audio/music/tutorial.ogg");
-			gameplayMusic = true;
-			endMusic = menuMusic = titleMusic = false;
-		}
-
 		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 			state = GameState::TITLESCREEN;
 			LOG("Exiting to Title");
-		}
 
-		// ==========================
-		//			Update
-		// ==========================
+			playingMusic = false;
+		}
 
 		if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) {
 			debug = !debug;
@@ -678,21 +711,42 @@ update_status ModuleSceneIntro::Update(float dt)
 			freeCam = !freeCam;
 		}
 
-		// CAMERA
-		if (freeCam == false) {
-			CameraPlayer();
-		}
-
 		if (app->input->GetKey(SDL_SCANCODE_E) == KEY_DOWN) {
 			app->audio->PlayFx(winFx);
 		}
 
-		if (app->input->GetKey(SDL_SCANCODE_Q) == KEY_DOWN) {
-			app->audio->PlayFx(respawnFx);
+		// ==========================
+		//			Update
+		// ==========================
+
+		if (app->player->allowPlayerControl != true) {
+			app->player->allowPlayerControl = true;
 		}
 
-		// Draw
+		LOG("X: %.2f, Y: %.2f, Z: %.2f", app->player->position.getX(), app->player->position.getY(), app->player->position.getZ());
 
+		// Underwater control
+		if (app->player->position.getX() > -637.5f && app->player->position.getX() < 110) {
+			if (app->player->position.getZ() > -37.5f && app->player->position.getZ() < 710) {
+				if (app->player->position.getY() < 0 && lastPlayerPosY > 0) {
+					playingMusic = false;
+					playerUnderWater = true;
+					app->physics->SetGravity({ 0, -5, 0 });
+				}
+				else if(app->player->position.getY() > 0 && lastPlayerPosY < 0){
+					playingMusic = false;
+					playerUnderWater = false;
+					app->physics->SetGravity({ 0, -10, 0 });
+				}
+			}
+		}
+
+		lastPlayerPosY = app->player->position.getY();
+
+		// Camera
+		CameraPlayer();
+
+		// Draw
 		susPos.x = app->player->position.getX() - 1.5f;
 		susPos.y = app->player->position.getY() + 2;
 		susPos.z = app->player->position.getZ();
@@ -710,6 +764,47 @@ update_status ModuleSceneIntro::Update(float dt)
 			state = GameState::TITLESCREEN;
 			LOG("Exiting to Title");
 		}
+
+		// ===============================
+		//    DO shit, i mean, UPDATE()
+		// ===============================
+
+		switch (areYouWinningSon)
+		{
+		case WIN:
+			if (playingMusic == false) {
+				playingMusic = true;
+				app->audio->PlayMusic("Assets/audio/music/end_win.ogg");
+				app->audio->PlayFx(winFx);
+			}
+
+			break;
+		case LOSE:
+			if (playingMusic == false) {
+				playingMusic = true;
+				app->audio->PlayMusic("Assets/audio/music/end_lose.ogg");
+				app->audio->PlayFx(loseFx);
+			}
+
+			break;
+		case DEFAULT:
+			//               ª
+			break;
+		}
+
+		if (app->player->allowPlayerControl == true) {
+			app->player->allowPlayerControl = false;
+		}
+
+		// Camera
+		CameraPlayer();
+
+		// Draw
+		susPos.x = app->player->position.getX() - 1.5f;
+		susPos.y = app->player->position.getY() + 2;
+		susPos.z = app->player->position.getZ();
+
+		app->renderer3D->DrawTexture(susTex, susPos, 3.0f);
 
 		break;
 	}
@@ -734,48 +829,98 @@ update_status ModuleSceneIntro::Update(float dt)
 }
 
 void ModuleSceneIntro::CameraPlayer() {
+	if (freeCam == false) {
+		if (app->player->position.getY() > Camera_Fall_Dist || areYouWinningSon == RaceState::DEFAULT) {
+			// Camera following player
+			float cameraDistance = 15;
 
-	if (app->player->position.getY() > Camera_Fall_Dist) {
-		// Camera following player
-		float cameraDistance = 15;
+			// Get player position + forward vec3 from X and Z axis
+			float camX = app->player->position.getX() - cameraDistance * app->player->GetVehicleForwardVec().x;
+			float camY = app->player->position.getY() + 6;
+			float camZ = app->player->position.getZ() - cameraDistance * app->player->GetVehicleForwardVec().z;
 
-		// Get player position + forward vec3 from X and Z axis
-		float camX = app->player->position.getX() - cameraDistance * app->player->GetVehicleForwardVec().x;
-		float camY = app->player->position.getY() + 6;
-		float camZ = app->player->position.getZ() - cameraDistance * app->player->GetVehicleForwardVec().z;
+			// Set camera
+			app->camera->Position = { camX, camY, camZ };
 
-		// Set camera
-		app->camera->Position = { camX, camY, camZ };
+			// Get player position
+			float posX = app->player->position.getX();
+			float posY = app->player->position.getY();
+			float posZ = app->player->position.getZ();
 
-		// Get player position
-		float posX = app->player->position.getX();
-		float posY = app->player->position.getY();
-		float posZ = app->player->position.getZ();
+			app->camera->LookAt(vec3(posX, posY, posZ));
+		}
+		else {
+			// Get player position (Camera stop moving)
+			float posX = app->player->position.getX();
+			float posY = app->player->position.getY();
+			float posZ = app->player->position.getZ();
 
-		app->camera->LookAt(vec3(posX, posY, posZ));
-	}
-	else {
-		// Get player position (Camera stop moving)
-		float posX = app->player->position.getX();
-		float posY = app->player->position.getY();
-		float posZ = app->player->position.getZ();
-
-		app->camera->LookAt(vec3(posX, posY, posZ));
+			app->camera->LookAt(vec3(posX, posY, posZ));
+		}
 	}
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
-	LOG("A");
 	if (body1->is_sensor == true) {
-		if (body1 == checkPoints.getFirst()->data) {
-			// reset checkpoint // lap
-			app->audio->PlayFx(lapFx);
-		}
-		for (p2List_item<PhysBody3D*>* ch = checkPoints.getFirst()->next; ch != NULL; ch = ch->next) {
-			if (body1 == ch->data) {
-				app->audio->PlayFx(checkpointFx);
+		LOG("A");
+		if (body1 == checkPoints.getFirst()->data.body) {
+
+			// Check if all circuit checkpoints are checked
+			bool allCheckPointsDone;
+			for (p2List_item<CheckPoint>* ch = checkPoints.getFirst()->next; ch != NULL; ch = ch->next) {
+				if (ch->data.checked == true) {
+					allCheckPointsDone = true;
+				}
+				else {
+					allCheckPointsDone = false;
+					break;
+				}
 			}
+
+			// Only check a lap if we start the race or if all circuit checkpoints are checked
+			if (checkPoints.getFirst()->data.laps == 0 || allCheckPointsDone == true) {
+
+				checkPoints.getFirst()->data.laps += 1;
+
+				// Mark checkpoint as checked
+				checkPoints.getFirst()->data.checked = true;
+
+				checkPoints.getFirst()->data.leftC.color = checkPoints.getFirst()->data.rightC.color = White;
+
+				if (checkPoints.getFirst()->data.laps == 1) {
+					currentLap = LapState::FIRSTLAP;
+					app->audio->PlayFx(lapFx);
+				}
+				else if (checkPoints.getFirst()->data.laps == 2) {
+					currentLap = LapState::SECONDLAP;
+					app->audio->PlayFx(lapFx);
+				}
+				else if (checkPoints.getFirst()->data.laps == 3) {
+					currentLap = LapState::LASTLAP;
+					app->audio->PlayFx(finalLapFx);
+					playingMusic = false;
+				}
+			}
+
+			for (p2List_item<CheckPoint>* ch = checkPoints.getFirst()->next; ch != NULL; ch = ch->next) {
+				ch->data.checked = false;
+			}
+		}
+		for (p2List_item<CheckPoint>* ch = checkPoints.getFirst()->next; ch != NULL; ch = ch->next) {
+			if (body1 == ch->data.body) {
+				app->audio->PlayFx(checkpointFx);
+				ch->data.checked = true;
+				ch->data.leftC.color = ch->data.rightC.color = Green;
+			}
+			else {
+				ch->data.leftC.color = ch->data.rightC.color = Red;
+			}
+
+			if (body1 == checkPoints.getLast()->data.body) {
+				checkPoints.getFirst()->data.leftC.color = checkPoints.getFirst()->data.rightC.color = Black;
+			}
+
 		}
 	}
 }

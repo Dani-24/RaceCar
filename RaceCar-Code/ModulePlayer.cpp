@@ -23,7 +23,14 @@ bool ModulePlayer::Start()
 	engineFx = app->audio->LoadFx("Assets/audio/fx/gameplay_kartEngine.wav");
 	turboFx = app->audio->LoadFx("Assets/audio/fx/gameplay_turbo.wav");
 	fallFx = app->audio->LoadFx("Assets/audio/fx/gameplay_fallFromMap.wav");
+	respawnFx = app->audio->LoadFx("Assets/audio/fx/zas.wav");
 
+	CreateCar();
+
+	return true;
+}
+
+void ModulePlayer::CreateCar() {
 	// ======================================================
 	//                         Vehicle
 	// ======================================================
@@ -49,12 +56,12 @@ bool ModulePlayer::Start()
 
 	// Don't change anything below this line ------------------
 
-	float half_width = car.chassis_size.x*0.5f;
-	float half_length = car.chassis_size.z*0.5f;
-	
-	vec3 direction(0,-1,0);
-	vec3 axis(-1,0,0);
-	
+	float half_width = car.chassis_size.x * 0.5f;
+	float half_length = car.chassis_size.z * 0.5f;
+
+	vec3 direction(0, -1, 0);
+	vec3 axis(-1, 0, 0);
+
 	car.num_wheels = 4;
 	car.wheels = new Wheel[4];
 
@@ -107,9 +114,7 @@ bool ModulePlayer::Start()
 	car.wheels[3].steering = false;
 
 	vehicle = app->physics->AddVehicle(car);
-	vehicle->SetPos(0, 1, 200);
-
-	return true;
+	vehicle->SetPos(initialPos.x, initialPos.y, initialPos.z);
 }
 
 // Unload assets
@@ -123,7 +128,7 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
-	if (app->scene_intro->state == GameState::GAMEPLAY) {
+	if (app->scene_intro->state != GameState::TITLESCREEN) {
 		position = vehicle->GetPos();
 
 		if (position.getY() < Camera_Fall_Dist) {
@@ -139,8 +144,7 @@ update_status ModulePlayer::Update(float dt)
 		}
 
 		if (position.getY() < Vehicle_Fall_Dist || app->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-			Respawn({ app->scene_intro->checkPoints.getFirst()->data->GetPos().getX(), 1, app->scene_intro->checkPoints.getFirst()->data->GetPos().getZ()}, -1.55f);
-			app->audio->PlayFx(app->scene_intro->respawnFx);
+			Respawn({ app->scene_intro->checkPoints.getFirst()->data.body->GetPos().getX(), 1, app->scene_intro->checkPoints.getFirst()->data.body->GetPos().getZ()}, app->scene_intro->checkPoints.getFirst()->data.angle +2.68f);
 		}
 
 		// =========================================================
@@ -154,51 +158,104 @@ update_status ModulePlayer::Update(float dt)
 
 		// Reset Variables (more or less like !Key_Down)
 		turn = acceleration = brake = 0.0f;
-		// Move forward
-		if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
-		{
-			// Max Velocity fixed to 100 km/h
-			if (vehicle->GetKmh() <= 100) {
-				acceleration = MAX_ACCELERATION;
 
-				if (playingEngineFx == false) {
-					app->audio->PlayFx(engineFx);
-					playingEngineFx = true;
+		if (allowPlayerControl == true) {
+			// Move forward
+			if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
+			{
+				// Max Velocity fixed to 100 km/h
+				if (vehicle->GetKmh() <= 100) {
+					acceleration = MAX_ACCELERATION;
+
+					if (playingEngineFx == false) {
+						app->audio->PlayFx(engineFx);
+						playingEngineFx = true;
+					}
 				}
+
+				if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
+					if (vehicle->GetKmh() < 150) {
+						acceleration = MAX_ACCELERATION * 10;
+						if (turboFxPlayed == false) {
+							app->audio->PlayFx(turboFx);
+							turboFxPlayed = true;
+						}
+					}
+				}
+				else {
+					if (turboFxPlayed == true) {
+						turboFxPlayed = false;
+					}
+					if (vehicle->GetKmh() > 100) {
+						brake = BRAKE_POWER / 20;
+					}
+				}
+
 			}
 
-			if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-				if (vehicle->GetKmh() < 150) {
-					acceleration = MAX_ACCELERATION * 10;
-					if (turboFxPlayed == false) {
-						app->audio->PlayFx(turboFx);
-						turboFxPlayed = true;
+			// Move backwards
+			if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
+			{
+				if (vehicle->GetKmh() > 10) {
+					acceleration = -MAX_ACCELERATION * 5;
+				}
+				else if (vehicle->GetKmh() > -25) {
+					acceleration = -MAX_ACCELERATION;
+
+					if (playingEngineFx == false) {
+						app->audio->PlayFx(engineFx);
+						playingEngineFx = true;
 					}
 				}
 			}
-			else {
-				if (turboFxPlayed == true) {
-					turboFxPlayed = false;
+
+			// Turn left
+			if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+			{
+				if (vehicle->GetKmh() > 110) {
+					if (turn < TURN_DEGREES) {
+						turn += TURN_DEGREES / 5;
+					}
 				}
-				if (vehicle->GetKmh() > 100) {
-					brake = BRAKE_POWER / 20;
+				else if (vehicle->GetKmh() > 98) {
+					if (turn < TURN_DEGREES) {
+						turn += TURN_DEGREES / 3;
+					}
+				}
+				else if (vehicle->GetKmh() > 75) {
+					if (turn < TURN_DEGREES) {
+						turn += TURN_DEGREES / 1.5;
+					}
+				}
+				else {
+					if (turn < TURN_DEGREES) {
+						turn += TURN_DEGREES;
+					}
 				}
 			}
 
-		}
-
-		// Move backwards
-		if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
-		{
-			if (vehicle->GetKmh() > 10) {
-				acceleration = -MAX_ACCELERATION * 5;
-			}
-			else if (vehicle->GetKmh() > -25) {
-				acceleration = -MAX_ACCELERATION;
-
-				if (playingEngineFx == false) {
-					app->audio->PlayFx(engineFx);
-					playingEngineFx = true;
+			// Turn Right
+			if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+			{
+				if (vehicle->GetKmh() > 110) {
+					if (turn < TURN_DEGREES) {
+						turn -= TURN_DEGREES / 5;
+					}
+				}
+				else if (vehicle->GetKmh() > 98) {
+					if (turn < TURN_DEGREES) {
+						turn -= TURN_DEGREES / 3;
+					}
+				}
+				else if (vehicle->GetKmh() > 75) {
+					if (turn < TURN_DEGREES) {
+						turn -= TURN_DEGREES / 1.5;
+					}
+				}
+				else {
+					if (turn < TURN_DEGREES) {
+						turn -= TURN_DEGREES;
+					}
 				}
 			}
 		}
@@ -209,56 +266,6 @@ update_status ModulePlayer::Update(float dt)
 
 			if (vehicle->GetKmh() > 100) {
 				brake = BRAKE_POWER / 20;
-			}
-		}
-
-		// Turn left
-		if (app->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
-		{
-			if (vehicle->GetKmh() > 110) {
-				if (turn < TURN_DEGREES) {
-					turn += TURN_DEGREES / 5;
-				}
-			}
-			else if (vehicle->GetKmh() > 98) {
-				if (turn < TURN_DEGREES) {
-					turn += TURN_DEGREES / 3;
-				}
-			}
-			else if (vehicle->GetKmh() > 75) {
-				if (turn < TURN_DEGREES) {
-					turn += TURN_DEGREES / 1.5;
-				}
-			}
-			else {
-				if (turn < TURN_DEGREES) {
-					turn += TURN_DEGREES;
-				}
-			}
-		}
-
-		// Turn Right
-		if (app->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
-		{
-			if (vehicle->GetKmh() > 110) {
-				if (turn < TURN_DEGREES) {
-					turn -= TURN_DEGREES / 5;
-				}
-			}
-			else if (vehicle->GetKmh() > 98) {
-				if (turn < TURN_DEGREES) {
-					turn -= TURN_DEGREES / 3;
-				}
-			}
-			else if (vehicle->GetKmh() > 75) {
-				if (turn < TURN_DEGREES) {
-					turn -= TURN_DEGREES / 1.5;
-				}
-			}
-			else {
-				if (turn < TURN_DEGREES) {
-					turn -= TURN_DEGREES;
-				}
 			}
 		}
 
@@ -278,18 +285,37 @@ update_status ModulePlayer::Update(float dt)
 	// =========================================================
 
 	char title[80];
-	if (app->scene_intro->currentLap == RaceState::FIRSTLAP) {
-		sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3", vehicle->GetKmh());
-		app->window->SetTitle(title);
+	if (app->scene_intro->currentLap == LapState::FIRSTLAP) {
+		if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
+			sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3", vehicle->GetKmh());
+		}
+		else {
+			sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || YOU LOSE", vehicle->GetKmh());
+		}
 	}
-	else if (app->scene_intro->currentLap == RaceState::SECONDLAP) {
-		sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3", vehicle->GetKmh());
-		app->window->SetTitle(title);
+	else if (app->scene_intro->currentLap == LapState::SECONDLAP) {
+		if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
+			sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3", vehicle->GetKmh());
+		}
+		else {
+			sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || YOU LOSE", vehicle->GetKmh());
+		}
 	}
-	else if (app->scene_intro->currentLap == RaceState::LASTLAP) {
-		sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3", vehicle->GetKmh());
-		app->window->SetTitle(title);
+	else if (app->scene_intro->currentLap == LapState::LASTLAP) {
+		if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
+			if (app->scene_intro->areYouWinningSon == RaceState::WIN) {
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || YOU WIN", vehicle->GetKmh());
+			}
+			else {
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3", vehicle->GetKmh());
+			}
+		}
+		else {
+			sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || YOU LOSE", vehicle->GetKmh());
+		}
 	}
+	app->window->SetTitle(title);
+
 	return UPDATE_CONTINUE;
 }
 
@@ -298,6 +324,8 @@ void ModulePlayer::Respawn(vec3 position, float angle) {
 	vehicle->SetAngularVelocity(0, 0, 0);
 	vehicle->Orient(angle + M_PI / 2);
 	vehicle->SetLinearVelocity(0, 0, 0);
+
+	app->audio->PlayFx(respawnFx);
 }
 
 vec3 ModulePlayer::GetVehicleForwardVec() {

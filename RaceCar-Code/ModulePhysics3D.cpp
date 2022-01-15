@@ -72,6 +72,10 @@ bool ModulePhysics3D::Start()
 	return true;
 }
 
+void ModulePhysics3D::SetGravity(vec3 g) {
+	world->setGravity({ g.x, g.y, g.z });
+}
+
 // ---------------------------------------------------------
 update_status ModulePhysics3D::PreUpdate(float dt)
 {

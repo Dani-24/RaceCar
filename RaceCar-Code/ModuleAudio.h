@@ -4,7 +4,7 @@
 #include "Module.h"
 #include "SDL_mixer\include\SDL_mixer.h"
 
-#define DEFAULT_MUSIC_FADE_TIME 0.5f
+#define DEFAULT_MUSIC_FADE_TIME 0
 
 class ModuleAudio : public Module
 {
