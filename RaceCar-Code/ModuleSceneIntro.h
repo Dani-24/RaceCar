@@ -15,7 +15,6 @@ struct PhysMotor3D;
 
 enum GameState {
 	TITLESCREEN,
-	SELECTIONSCREEN,
 	GAMEPLAY,
 	ENDSCREEN
 };
@@ -90,9 +89,6 @@ private:
 
 	uint susTex;
 	vec3 susPos = {0, 0, 0};
-
-	uint waterTex;
-	p2List<vec3> waterCoord;
 
 	// Ground Map 0 = Terrain, 1 = Water with sand, 2 = Water (The map is printed rotated 90 degrees)
 	int groundCoord[10][10] = {

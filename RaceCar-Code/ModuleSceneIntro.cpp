@@ -36,7 +36,6 @@ bool ModuleSceneIntro::Start()
 	//				Textures
 	// ===================================
 	susTex = app->renderer3D->LoadTexture("Assets/textures/amogus.png");
-	//waterTex = app->renderer3D->LoadTexture("Assets/textures/water.png");
 
 	// ===================================
 	//				 Sun
@@ -625,8 +624,11 @@ update_status ModuleSceneIntro::Update(float dt)
 		// ==========================
 
 		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN || app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
-			state = GameState::SELECTIONSCREEN;
-			LOG("Loading Selection screen");
+			state = GameState::GAMEPLAY;
+			LOG("Loading Gameplay screen");
+
+			// Aqui deberia resetear la scena para hacer loop
+
 		}
 
 		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
@@ -645,32 +647,6 @@ update_status ModuleSceneIntro::Update(float dt)
 
 		app->camera->Position = { -250, 425, 225 };
 		app->camera->LookAt(vec3( -250, 0, 226));
-
-		break;
-	case SELECTIONSCREEN:
-
-		// ==========================
-		//			INPUT
-		// ==========================
-
-		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN || app->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN) {
-			state = GameState::GAMEPLAY;
-			LOG("Loading Gameplay");
-		}
-		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
-			state = GameState::TITLESCREEN;
-			LOG("Exiting to Title");
-		}
-
-		// ==========================
-		//			Update
-		// ==========================
-
-		if (menuMusic == false) {
-			app->audio->PlayMusic("Assets/audio/music/menu.ogg");
-			menuMusic = true;
-			endMusic = titleMusic = gameplayMusic = false;
-		}
 
 		break;
 	case GAMEPLAY:
@@ -753,12 +729,6 @@ update_status ModuleSceneIntro::Update(float dt)
 		cy->data.Render();
 		cy = cy->next;
 	}
-
-	/*p2List_item<vec3>* w = waterCoord.getFirst();
-	while (w != NULL) {
-		app->renderer3D->DrawTexture(waterTex, w->data, 75, false);
-		w = w->next;
-	}*/
 
 	return UPDATE_CONTINUE;
 }
