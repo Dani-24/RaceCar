@@ -23,9 +23,47 @@ struct Wheel
 struct VehicleInfo
 {
 	~VehicleInfo();
-	
-	vec3 chassis_size;
-	vec3 chassis_offset;
+
+	vec3 chassis1_size;
+	vec3 chassis2_size;
+	vec3 chassis3_size;
+	vec3 chassis4_size;
+	vec3 chassis5_size;
+	vec3 chassis6_size;
+	vec3 chassis7_size;
+	vec3 chassis8_size;
+	vec3 chassis9_size;
+	vec3 chassis10_size;
+	vec3 chassis11_size;
+	vec3 chassis12_size;
+	vec3 chassis13_size;
+	vec3 chassis14_size;
+	vec3 chassis15_size;
+	vec3 chassis16_size;
+	vec3 chassis17_size;
+	vec3 chassis18_size;
+	vec3 chassis19_size;
+
+	vec3 chassis1_offset;
+	vec3 chassis2_offset;
+	vec3 chassis3_offset;
+	vec3 chassis4_offset;
+	vec3 chassis5_offset;
+	vec3 chassis6_offset;
+	vec3 chassis7_offset;
+	vec3 chassis8_offset;
+	vec3 chassis9_offset;
+	vec3 chassis10_offset;
+	vec3 chassis11_offset;
+	vec3 chassis12_offset;
+	vec3 chassis13_offset;
+	vec3 chassis14_offset;
+	vec3 chassis15_offset;
+	vec3 chassis16_offset;
+	vec3 chassis17_offset;
+	vec3 chassis18_offset;
+	vec3 chassis19_offset;
+
 	float mass;
 	float suspensionStiffness; // default to 5.88 / 10.0 offroad / 50.0 sports car / 200.0 F1 car
 	float suspensionCompression; // default to 0.83

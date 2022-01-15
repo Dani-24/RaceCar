@@ -82,8 +82,7 @@ update_status ModulePhysics3D::PreUpdate(float dt)
 	if (app->scene_intro->state == GameState::GAMEPLAY) {
 		world->stepSimulation(dt, 15);
 
-		int numManifolds = world->getDispatcher()->getNumManifolds();
-		for (int i = 0; i < numManifolds; i++)
+		for (int i = 0; i < world->getDispatcher()->getNumManifolds(); i++)
 		{
 			btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
 			btCollisionObject* obA = (btCollisionObject*)(contactManifold->getBody0());
@@ -317,12 +316,12 @@ PhysVehicle3D* ModulePhysics3D::AddVehicle(const VehicleInfo& info)
 	btCompoundShape* comShape = new btCompoundShape();
 	shapes.add(comShape);
 
-	btCollisionShape* colShape = new btBoxShape(btVector3(info.chassis_size.x*0.5f, info.chassis_size.y*0.5f, info.chassis_size.z*0.5f));
+	btCollisionShape* colShape = new btBoxShape(btVector3(info.chassis1_size.x*0.5f, info.chassis1_size.y*0.5f, info.chassis1_size.z*0.5f));
 	shapes.add(colShape);
 
 	btTransform trans;
 	trans.setIdentity();
-	trans.setOrigin(btVector3(info.chassis_offset.x, info.chassis_offset.y, info.chassis_offset.z));
+	trans.setOrigin(btVector3(info.chassis1_offset.x, info.chassis1_offset.y, info.chassis1_offset.z));
 
 	comShape->addChildShape(trans, colShape);
 

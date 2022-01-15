@@ -748,8 +748,8 @@ update_status ModuleSceneIntro::Update(float dt)
 
 		// Draw
 		susPos.x = app->player->position.getX() - 1.5f;
-		susPos.y = app->player->position.getY() + 2;
-		susPos.z = app->player->position.getZ();
+		susPos.y = app->player->position.getY() + 0.25;
+		susPos.z = app->player->position.getZ() - 0.5f;
 
 		app->renderer3D->DrawTexture(susTex, susPos, 3.0f);
 
