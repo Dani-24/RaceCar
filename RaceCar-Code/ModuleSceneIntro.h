@@ -96,6 +96,8 @@ public:
 
 	bool playerUnderWater = false, salpicadura = false;
 
+	Timer cronometro;
+
 private:
 	uint winFx, loseFx, lapFx, finalLapFx, checkpointFx;
 

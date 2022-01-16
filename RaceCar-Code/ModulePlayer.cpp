@@ -204,6 +204,8 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
+	int time = app->scene_intro->cronometro.Read() / 1000;
+
 	if (app->scene_intro->state != GameState::TITLESCREEN) {
 		position.setValue(vehicle->GetPos().getX(), vehicle->GetPos().getY(), vehicle->GetPos().getZ());
 
@@ -407,33 +409,38 @@ update_status ModulePlayer::Update(float dt)
 	// =========================================================
 
 	char title[80];
-	if (app->scene_intro->currentLap == LapState::FIRSTLAP) {
-		if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
-			sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3", vehicle->GetKmh());
-		}
-		else {
-			sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || YOU LOSE", vehicle->GetKmh());
-		}
+	if(app->scene_intro->state == GameState::TITLESCREEN) {
+		sprintf_s(title, "Racing GP Piston Cup || Press Space/Enter to start");
 	}
-	else if (app->scene_intro->currentLap == LapState::SECONDLAP) {
-		if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
-			sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3", vehicle->GetKmh());
-		}
-		else {
-			sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || YOU LOSE", vehicle->GetKmh());
-		}
-	}
-	else if (app->scene_intro->currentLap == LapState::LASTLAP) {
-		if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
-			if (app->scene_intro->areYouWinningSon == RaceState::WIN) {
-				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || YOU WIN", vehicle->GetKmh());
+	else {
+		if (app->scene_intro->currentLap == LapState::FIRSTLAP) {
+			if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || Time: %d seconds", vehicle->GetKmh(), time);
 			}
 			else {
-				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3", vehicle->GetKmh());
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || YOU LOSE", vehicle->GetKmh());
 			}
 		}
-		else {
-			sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || YOU LOSE", vehicle->GetKmh());
+		else if (app->scene_intro->currentLap == LapState::SECONDLAP) {
+			if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || Time: %d seconds", vehicle->GetKmh(), time);
+			}
+			else {
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || YOU LOSE", vehicle->GetKmh());
+			}
+		}
+		else if (app->scene_intro->currentLap == LapState::LASTLAP) {
+			if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
+				if (app->scene_intro->areYouWinningSon == RaceState::WIN) {
+					sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || YOU WIN", vehicle->GetKmh());
+				}
+				else {
+					sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || Time: %d seconds", vehicle->GetKmh(), time);
+				}
+			}
+			else {
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || YOU LOSE", vehicle->GetKmh());
+			}
 		}
 	}
 	app->window->SetTitle(title);
@@ -447,7 +454,7 @@ void ModulePlayer::Respawn(vec3 position, float angle) {
 	vehicle->Orient(angle + M_PI / 2);
 	vehicle->SetLinearVelocity(0, 0, 0);
 
-	app->audio->PlayFx(respawnFx);
+	//app->audio->PlayFx(respawnFx);
 }
 
 vec3 ModulePlayer::GetVehicleForwardVec() {

@@ -93,7 +93,7 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddLinearCircuit({ -55.5f, -20, 480 }, { -55.5f, -20, 300 }, 50);
 
-	AddCircularCircuit({ -60, -20, 301 }, { -120, -20, 241 }, 0.45f, 30, 15);
+	AddCircularCircuit({ -50, -20, 300 }, { -150, -20, 300 }, 0.99f, 30, 15);
 
 	AddCube({ -300, -17.5f, 264 }, { Circuit_Width * 1.5f , 10, 300}, Red, -5, true);
 
@@ -674,6 +674,8 @@ update_status ModuleSceneIntro::Update(float dt)
 			state = GameState::GAMEPLAY;
 			LOG("Loading Gameplay screen");
 
+			cronometro.Start();
+
 			playingMusic = false;
 			// Aqui deberia resetear la scena para hacer loop
 
@@ -687,8 +689,8 @@ update_status ModuleSceneIntro::Update(float dt)
 		//			Update
 		// ==========================
 
-		app->camera->Position = { -250, 475, 400 };
-		app->camera->LookAt(vec3( -250, 0, 401));
+		app->camera->Position = { -250, 475, 250 };
+		app->camera->LookAt(vec3( -250, 0, 251));
 
 		break;
 	case GAMEPLAY:
@@ -721,8 +723,9 @@ update_status ModuleSceneIntro::Update(float dt)
 		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 			state = GameState::TITLESCREEN;
 			LOG("Exiting to Title");
-
+			cronometro.Stop();
 			playingMusic = false;
+			app->player->Respawn(app->player->initialPos, -1.57f);
 		}
 
 		if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) {
