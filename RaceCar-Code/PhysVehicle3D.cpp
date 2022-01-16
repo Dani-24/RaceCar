@@ -163,7 +163,7 @@ void PhysVehicle3D::Render()
 	btQuaternion q13 = vehicle->getChassisWorldTransform().getRotation();
 	btVector3 offset13(info.chassis13_offset.x, info.chassis13_offset.y, info.chassis13_offset.z);
 	offset13 = offset13.rotate(q13.getAxis(), q13.getAngle());
-	chassis13.color = Black;
+	chassis13.color = Grey;
 	chassis13.transform.M[12] += offset13.getX();
 	chassis13.transform.M[13] += offset13.getY();
 	chassis13.transform.M[14] += offset13.getZ();
@@ -173,7 +173,7 @@ void PhysVehicle3D::Render()
 	btQuaternion q14 = vehicle->getChassisWorldTransform().getRotation();
 	btVector3 offset14(info.chassis14_offset.x, info.chassis14_offset.y, info.chassis14_offset.z);
 	offset14 = offset14.rotate(q14.getAxis(), q14.getAngle());
-	chassis14.color = Black;
+	chassis14.color = Grey;
 	chassis14.transform.M[12] += offset14.getX();
 	chassis14.transform.M[13] += offset14.getY();
 	chassis14.transform.M[14] += offset14.getZ();
@@ -213,7 +213,7 @@ void PhysVehicle3D::Render()
 	btQuaternion q18 = vehicle->getChassisWorldTransform().getRotation();
 	btVector3 offset18(info.chassis18_offset.x, info.chassis18_offset.y, info.chassis18_offset.z);
 	offset18 = offset18.rotate(q18.getAxis(), q18.getAngle());
-	chassis18.color = Black;
+	chassis18.color = Grey;
 	chassis18.transform.M[12] += offset18.getX();
 	chassis18.transform.M[13] += offset18.getY();
 	chassis18.transform.M[14] += offset18.getZ();
@@ -223,7 +223,7 @@ void PhysVehicle3D::Render()
 	btQuaternion q19 = vehicle->getChassisWorldTransform().getRotation();
 	btVector3 offset19(info.chassis19_offset.x, info.chassis19_offset.y, info.chassis19_offset.z);
 	offset19 = offset19.rotate(q19.getAxis(), q19.getAngle());
-	chassis19.color = Black;
+	chassis19.color = Grey;
 	chassis19.transform.M[12] += offset19.getX();
 	chassis19.transform.M[13] += offset19.getY();
 	chassis19.transform.M[14] += offset19.getZ();

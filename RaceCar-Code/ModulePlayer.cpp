@@ -39,7 +39,7 @@ void ModulePlayer::CreateCar() {
 
 	// Car properties ----------------------------------------
 	// Hitbox
-	car.chassis1_size.Set(3, 3, 6);
+	car.chassis1_size.Set(3.5f, 3, 7);
 	// Respaldo
 	car.chassis2_size.Set(2, 2, 0.5f);
 	// Asiento
@@ -119,7 +119,7 @@ void ModulePlayer::CreateCar() {
 	car.mass = 500.0f;
 	car.suspensionStiffness = 15.88f;
 	car.suspensionCompression = 0.83f;
-	car.suspensionDamping = 0.88f;
+	car.suspensionDamping = 10.88f;
 	car.maxSuspensionTravelCm = 1000.0f;
 	car.frictionSlip = 50.5;
 	car.maxSuspensionForce = 6000.0f;
@@ -166,7 +166,7 @@ void ModulePlayer::CreateCar() {
 	car.wheels[1].steering = true;
 
 	// REAR-LEFT ------------------------
-	car.wheels[2].connection.Set(half_width + 0.7f * wheel_width, connection_height, -half_length + wheel_radius);
+	car.wheels[2].connection.Set(half_width + 0.6f * wheel_width, connection_height, -half_length + wheel_radius);
 	car.wheels[2].direction = direction;
 	car.wheels[2].axis = axis;
 	car.wheels[2].suspensionRestLength = suspensionRestLength;
@@ -178,7 +178,7 @@ void ModulePlayer::CreateCar() {
 	car.wheels[2].steering = false;
 
 	// REAR-RIGHT ------------------------
-	car.wheels[3].connection.Set(-half_width - 0.7f * wheel_width, connection_height, -half_length + wheel_radius);
+	car.wheels[3].connection.Set(-half_width - 0.6f * wheel_width, connection_height, -half_length + wheel_radius);
 	car.wheels[3].direction = direction;
 	car.wheels[3].axis = axis;
 	car.wheels[3].suspensionRestLength = suspensionRestLength;
@@ -239,31 +239,62 @@ update_status ModulePlayer::Update(float dt)
 			// Move forward
 			if (app->input->GetKey(SDL_SCANCODE_W) == KEY_REPEAT)
 			{
-				// Max Velocity fixed to 100 km/h
-				if (vehicle->GetKmh() <= 100) {
-					acceleration = MAX_ACCELERATION;
+				if (app->scene_intro->playerUnderWater == false) {
+					// Max Velocity fixed
+					if (vehicle->GetKmh() <= MAX_SPEED) {
+						acceleration = MAX_ACCELERATION * 2;
 
-					if (playingEngineFx == false) {
-						app->audio->PlayFx(engineFx);
-						playingEngineFx = true;
+						if (playingEngineFx == false) {
+							app->audio->PlayFx(engineFx);
+							playingEngineFx = true;
+						}
 					}
-				}
 
-				if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
-					if (vehicle->GetKmh() < 150) {
-						acceleration = MAX_ACCELERATION * 10;
-						if (turboFxPlayed == false) {
-							app->audio->PlayFx(turboFx);
-							turboFxPlayed = true;
+					if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
+						if (vehicle->GetKmh() < MAX_TURBO_SPEED) {
+							acceleration = MAX_ACCELERATION * 10;
+							if (turboFxPlayed == false) {
+								app->audio->PlayFx(turboFx);
+								turboFxPlayed = true;
+							}
+						}
+					}
+					else {
+						if (turboFxPlayed == true) {
+							turboFxPlayed = false;
+						}
+						if (vehicle->GetKmh() > MAX_SPEED) {
+							brake = BRAKE_POWER / 20;
 						}
 					}
 				}
 				else {
-					if (turboFxPlayed == true) {
-						turboFxPlayed = false;
+					// Max Velocity fixed
+					if (vehicle->GetKmh() <= MAX_SPEED / 1.5f) {
+						acceleration = MAX_ACCELERATION / 1.25f;
+
+						if (playingEngineFx == false) {
+							app->audio->PlayFx(engineFx);
+							playingEngineFx = true;
+						}
 					}
-					if (vehicle->GetKmh() > 100) {
-						brake = BRAKE_POWER / 20;
+
+					if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
+						if (vehicle->GetKmh() < MAX_TURBO_SPEED / 1.5f) {
+							acceleration = MAX_ACCELERATION * 2;
+							if (turboFxPlayed == false) {
+								app->audio->PlayFx(turboFx);
+								turboFxPlayed = true;
+							}
+						}
+					}
+					else {
+						if (turboFxPlayed == true) {
+							turboFxPlayed = false;
+						}
+						if (vehicle->GetKmh() > MAX_SPEED / 1.5f) {
+							brake = BRAKE_POWER / 30;
+						}
 					}
 				}
 
@@ -272,15 +303,30 @@ update_status ModulePlayer::Update(float dt)
 			// Move backwards
 			if (app->input->GetKey(SDL_SCANCODE_S) == KEY_REPEAT)
 			{
-				if (vehicle->GetKmh() > 10) {
-					acceleration = -MAX_ACCELERATION * 5;
-				}
-				else if (vehicle->GetKmh() > -25) {
-					acceleration = -MAX_ACCELERATION;
+				if (app->scene_intro->playerUnderWater == false) {
+					if (vehicle->GetKmh() > 10) {
+						acceleration = -MAX_ACCELERATION * 5;
+					}
+					else if (vehicle->GetKmh() > -MAX_SPEED_BACKWARDS) {
+						acceleration = -MAX_ACCELERATION;
 
-					if (playingEngineFx == false) {
-						app->audio->PlayFx(engineFx);
-						playingEngineFx = true;
+						if (playingEngineFx == false) {
+							app->audio->PlayFx(engineFx);
+							playingEngineFx = true;
+						}
+					}
+				}
+				else {
+					if (vehicle->GetKmh() > 10) {
+						acceleration = -MAX_ACCELERATION * 10;
+					}
+					else if (vehicle->GetKmh() > -MAX_SPEED_BACKWARDS / 1.5f) {
+						acceleration = -MAX_ACCELERATION;
+
+						if (playingEngineFx == false) {
+							app->audio->PlayFx(engineFx);
+							playingEngineFx = true;
+						}
 					}
 				}
 			}

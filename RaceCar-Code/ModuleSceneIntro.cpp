@@ -60,7 +60,7 @@ bool ModuleSceneIntro::Start()
 	AddGround();
 
 	// Map scenery details
-	AddCube({ 30, 10, 200 }, { 25, 20, 50 }, Yellow);
+	//AddCube({ 30, 10, 200 }, { 25, 20, 50 }, Yellow);
 
 	// Circuit
 	CreateCircuit();
@@ -73,7 +73,32 @@ void ModuleSceneIntro::CreateCircuit() {
 	//  Circuit track:
 	// ================
 
-	// 1
+	AddLinearCircuit({ 50, 0, 100 }, { 50, 0, 600 }, 100);
+
+	AddCheckPoint({ 50, 1, 300 }, 90, 30, Black); // meta
+
+	AddCircularCircuit({ 50, 1, 600 }, { -25, 1, 675 }, -0.4f, 60, 30);
+
+	AddLinearCircuit({ -25, 0, 675 }, { -425, 0, 675 }, 100);
+
+	AddCircularCircuit({ -425, 1, 675 }, { -425, 1, 525 }, -0.99f, 120, 60);
+
+	AddLinearCircuit({ -425, 0, 525 }, { -335, 0, 525 }, 50);
+
+	AddCube({ -189, -17.5f, 525 }, { 300, 10, Circuit_Width*1.5f }, Red, -5, false, false, true);
+
+	AddLinearCircuit({ -335, 0, 525 }, { -100, -21, 525 }, 50);
+
+	AddCircularCircuit({ -100, -20, 521 }, { -60, -20, 471 }, 0.45f, 30, 15);
+
+	AddLinearCircuit({ -55.5f, -20, 480 }, { -55.5f, -20, 300 }, 50);
+
+	AddCircularCircuit({ -60, -20, 301 }, { -120, -20, 241 }, 0.45f, 30, 15);
+
+	AddCube({ -300, -17.5f, 264 }, { Circuit_Width * 1.5f , 10, 300}, Red, -5, true);
+
+	//Old Circuit
+	/*// 1
 	AddCheckPoint({ 0, 0, 210 }, 90, 30, Black); // meta
 	AddLinearCircuit({ 0, 0, 25 }, { 0, 0, 425 }, 60);
 
@@ -223,7 +248,7 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddCircularCircuit({ 25, 0, 50 }, { 50, 0, 75 }, -0.45f, 10, 3, 15);
 	AddLinearCircuit({ 50, 0, 75 }, { 50, 0, 425 }, 60, 15);
-	AddCircularCircuit({ 50, 0, 425 }, { 25, 0, 450 }, -0.45f, 10, 5, 15);
+	AddCircularCircuit({ 50, 0, 425 }, { 25, 0, 450 }, -0.45f, 10, 5, 15);*/
 }
 
 bool ModuleSceneIntro::CleanUp()
@@ -268,11 +293,7 @@ void ModuleSceneIntro::AddGround() {
 				break;
 			case 1:
 				groundToAdd.color = { 0.0f, 0.0f, 1.0f, 0.8f };
-
-				//waterCoord.add({ i * -size + size, 1, j * size });
-				//app->physics->AddBody(groundToAdd, 0);
-
-				sceneryCubes.add(groundToAdd);
+				//sceneryCubes.add(groundToAdd);
 
 				// Sand platform under water
 				groundToAdd.SetPos(i * -size + size, -20, j * size);
@@ -404,12 +425,12 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, float ang
 
 	// Create the cube & size
 	Cube c;
-	c.size = { 1, 2, 1 };
 
 	vec3 central_pos;
 	// Curve Exterior
 	for (uint j = 0; j < sideWallsEx; j++)
 	{
+		c.size = { 1, 3, 1 };
 		c.color = (j % 2 == 0) ? White : Red;
 		float sub_angle = (angle > 0.0f) ? -(float)j / sideWallsEx * theta : (float)j / sideWallsEx * theta;
 
@@ -418,7 +439,7 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, float ang
 
 		vec3 to_center = normalize(central_pos - center_circle);
 		pos = central_pos + ((circuitW / 2.0f) * to_center);
-		c.SetPos(pos.x, pos.y + 1, pos.z);
+		c.SetPos(pos.x, initPos.y + 1, pos.z);
 
 		app->physics->AddBody(c, 0);
 		sceneryCubes.add(c);
@@ -427,7 +448,8 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, float ang
 	// Curve Interior
 	for (uint j = 0; j < sideWallsInt; j++)
 	{
-		c.color = (j % 2 == 0) ? Yellow : Red;
+		c.size = { 1, 2, 1 };
+		c.color = (j % 2 == 0) ? Orange : Red;
 		float sub_angle = (angle > 0.0f) ? -(float)j / sideWallsInt * theta : (float)j / sideWallsInt * theta;
 
 		central_pos.x = center_circle.x + radius * cos(sub_angle + angle_ref);
@@ -435,7 +457,7 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, float ang
 
 		vec3 to_center = normalize(central_pos - center_circle);
 		pos = central_pos + ((circuitW / 2.0f) * -to_center);
-		c.SetPos(pos.x, pos.y + 1, pos.z);
+		c.SetPos(pos.x, initPos.y + 1, pos.z);
 		
 		app->physics->AddBody(c, 0);
 		sceneryCubes.add(c);
@@ -665,8 +687,8 @@ update_status ModuleSceneIntro::Update(float dt)
 		//			Update
 		// ==========================
 
-		app->camera->Position = { -250, 425, 225 };
-		app->camera->LookAt(vec3( -250, 0, 226));
+		app->camera->Position = { -250, 475, 400 };
+		app->camera->LookAt(vec3( -250, 0, 401));
 
 		break;
 	case GAMEPLAY:
@@ -830,13 +852,13 @@ update_status ModuleSceneIntro::Update(float dt)
 
 void ModuleSceneIntro::CameraPlayer() {
 	if (freeCam == false) {
-		if (app->player->position.getY() > Camera_Fall_Dist || areYouWinningSon == RaceState::DEFAULT) {
+		if (app->player->position.getY() > Camera_Fall_Dist) {
 			// Camera following player
-			float cameraDistance = 15;
+			float cameraDistance = 20;
 
 			// Get player position + forward vec3 from X and Z axis
 			float camX = app->player->position.getX() - cameraDistance * app->player->GetVehicleForwardVec().x;
-			float camY = app->player->position.getY() + 6;
+			float camY = app->player->position.getY() + 8;
 			float camZ = app->player->position.getZ() - cameraDistance * app->player->GetVehicleForwardVec().z;
 
 			// Set camera

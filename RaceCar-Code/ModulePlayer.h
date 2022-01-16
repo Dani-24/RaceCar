@@ -9,6 +9,10 @@ struct PhysVehicle3D;
 #define TURN_DEGREES 15.0f * DEGTORAD
 #define BRAKE_POWER 1000.0f
 
+#define MAX_SPEED 200.0f
+#define MAX_SPEED_BACKWARDS 50.0f
+#define MAX_TURBO_SPEED 300.0f
+
 class ModulePlayer : public Module
 {
 public:
@@ -33,7 +37,7 @@ public:
 
 	btVector3 position;
 
-	vec3 initialPos = { 0, 1, 200 };
+	vec3 initialPos = { 50, 1, 200 };
 
 	bool allowPlayerControl = false;
 
