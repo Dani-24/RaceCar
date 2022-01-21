@@ -1,4 +1,4 @@
-﻿#include "Globals.h"
+#include "Globals.h"
 #include "Application.h"
 #include "ModulePlayer.h"
 #include "Primitive.h"
@@ -8,7 +8,6 @@
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled), vehicle(NULL)
 {
 	turn = acceleration = brake = 0.0f;
-	position.setValue( 0, 0, 0 );
 }
 
 ModulePlayer::~ModulePlayer()
@@ -26,6 +25,14 @@ bool ModulePlayer::Start()
 	respawnFx = app->audio->LoadFx("Assets/audio/fx/zas.wav");
 
 	CreateCar();
+
+	return true;
+}
+
+// Unload assets
+bool ModulePlayer::CleanUp()
+{
+	LOG("Unloading player");
 
 	return true;
 }
@@ -191,14 +198,11 @@ void ModulePlayer::CreateCar() {
 
 	vehicle = app->physics->AddVehicle(car);
 	vehicle->SetPos(initialPos.x, initialPos.y, initialPos.z);
-}
 
-// Unload assets
-bool ModulePlayer::CleanUp()
-{
-	LOG("Unloading player");
+	vehicle->collision_listeners.add(this);
+	vehicle->SetId(1);
+	vehicle->SetAsSensor(true);
 
-	return true;
 }
 
 // Update: draw background
@@ -222,7 +226,7 @@ update_status ModulePlayer::Update(float dt)
 		}
 
 		if (position.getY() < Vehicle_Fall_Dist || app->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-			Respawn({ app->scene_intro->checkPoints.getFirst()->data.body->GetPos().getX(), 1, app->scene_intro->checkPoints.getFirst()->data.body->GetPos().getZ() }, app->scene_intro->checkPoints.getFirst()->data.angle +2.68f);
+			Respawn({ app->scene_intro->checkPoints.getFirst()->data.body->GetPos().getX(), 1, app->scene_intro->checkPoints.getFirst()->data.body->GetPos().getZ() }, app->scene_intro->checkPoints.getFirst()->data.angle + 2.68f);
 		}
 
 		// =========================================================
@@ -409,7 +413,7 @@ update_status ModulePlayer::Update(float dt)
 	// =========================================================
 
 	char title[80];
-	if(app->scene_intro->state == GameState::TITLESCREEN) {
+	if (app->scene_intro->state == GameState::TITLESCREEN) {
 		sprintf_s(title, "Racing GP Piston Cup || Press Space/Enter to start");
 	}
 	else {
@@ -444,8 +448,15 @@ update_status ModulePlayer::Update(float dt)
 		}
 	}
 	app->window->SetTitle(title);
-
 	return UPDATE_CONTINUE;
+}
+
+void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
+{
+	if (body2->id == 2)
+	{
+		LOG("PUTO");
+	}
 }
 
 void ModulePlayer::Respawn(vec3 position, float angle) {

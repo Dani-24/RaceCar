@@ -1,10 +1,14 @@
 #include "PhysVehicle3D.h"
 #include "Primitive.h"
 #include "Bullet/include/btBulletDynamicsCommon.h"
+#include "Application.h"
+#include "ModulePlayer.h"
 
 // ----------------------------------------------------------------------------
 VehicleInfo::~VehicleInfo()
 {
+	//if(wheels != NULL)
+		//delete wheels;
 }
 
 // ----------------------------------------------------------------------------
@@ -25,7 +29,7 @@ void PhysVehicle3D::Render()
 
 	wheel.color = Black;
 
-	for(int i = 0; i < vehicle->getNumWheels(); ++i)
+	for (int i = 0; i < vehicle->getNumWheels(); ++i)
 	{
 		wheel.radius = info.wheels[0].radius;
 		wheel.height = info.wheels[0].width;
@@ -291,6 +295,7 @@ float PhysVehicle3D::GetKmh() const
 {
 	return vehicle->getCurrentSpeedKmHour();
 }
+
 
 vec3 PhysVehicle3D::GetForwardVector() const
 {

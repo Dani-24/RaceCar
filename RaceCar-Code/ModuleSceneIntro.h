@@ -3,7 +3,6 @@
 #include "p2DynArray.h"
 #include "Globals.h"
 #include "Primitive.h"
-#include "Bullet/include/LinearMath/btVector3.h"
 
 #define Vehicle_Fall_Dist -100
 #define Camera_Fall_Dist -25
@@ -63,7 +62,6 @@ public:
 	void CreateCircuit();
 
 public:
-	
 	p2List<Cube> sceneryCubes;
 	p2List<Cylinder> sceneryCylinders;
 	p2List<CheckPoint> checkPoints;
@@ -74,7 +72,7 @@ public:
 	void AddGround();
 
 	// X, Y, Z and {sizeX, sizeY, sizeZ} and angle rotation
-	void AddCube(vec3 position, vec3 size, Color RGB = Blue, int angle = 0, bool rotateX = false, bool rotateY = false, bool rotateZ = false );
+	void AddCube(vec3 position, vec3 size, Color RGB = Blue, int angle = 0, bool rotateX = false, bool rotateY = false, bool rotateZ = false);
 
 	void AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWalls, int circuitW = Circuit_Width);
 
@@ -107,7 +105,7 @@ private:
 
 	// Textures
 	uint susTex;
-	vec3 susPos = {0, 0, 0};
+	vec3 susPos = { 0, 0, 0 };
 
 	// Ground Map 0 = Terrain, 1 = Water with sand, 2 = Water (The map is printed rotated 90 degrees)
 	int groundCoord[10][10] = {

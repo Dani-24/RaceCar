@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Archivo de inclusión generado de Microsoft Visual C++.
-// Usado por Racing Car.rc
+// Usado por RaceCar-v2.rc
 //
 #define IDI_ICON1                       101
 

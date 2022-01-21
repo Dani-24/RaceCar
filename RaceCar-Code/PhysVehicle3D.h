@@ -23,7 +23,7 @@ struct Wheel
 struct VehicleInfo
 {
 	~VehicleInfo();
-
+	
 	vec3 chassis1_size;
 	vec3 chassis2_size;
 	vec3 chassis3_size;

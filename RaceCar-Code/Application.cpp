@@ -2,6 +2,7 @@
 
 Application::Application()
 {
+
 	window = new ModuleWindow(this);
 	input = new ModuleInput(this);
 	audio = new ModuleAudio(this, true);
@@ -72,6 +73,16 @@ bool Application::Init()
 void Application::PrepareUpdate()
 {
 	dt = (float)ms_timer.Read() / 1000.0f;
+	float desiredDt = 0.016;
+
+	if (dt < desiredDt)
+	{
+		
+		float difDt = (desiredDt - dt)*1000;
+		SDL_Delay(difDt);
+		
+		dt = desiredDt;
+	}
 	ms_timer.Start();
 }
 

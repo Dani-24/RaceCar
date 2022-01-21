@@ -28,6 +28,8 @@ public:
 	vec3 GetVehicleForwardVec();
 	void Respawn(vec3 position, float angle);
 
+	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
+
 public:
 	PhysVehicle3D* vehicle;
 

@@ -114,10 +114,6 @@ update_status ModuleInput::PreUpdate(float dt)
 		}
 	}
 
-	if (quit == true) {
-		return UPDATE_STOP;
-	}
-
 	return UPDATE_CONTINUE;
 }
 

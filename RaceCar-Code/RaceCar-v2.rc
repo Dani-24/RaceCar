@@ -47,12 +47,22 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "icon1.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // Version
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,5,0,0
- PRODUCTVERSION 0,5,0,0
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -67,14 +77,14 @@ BEGIN
     BEGIN
         BLOCK "0c0a04b0"
         BEGIN
-            VALUE "CompanyName", "Dani24 - Dani Toledo"
-            VALUE "FileDescription", "No puedes tocar lo que no puedes ver"
-            VALUE "FileVersion", "0.5.0.0"
-            VALUE "InternalName", "Racing.exe"
-            VALUE "LegalCopyright", "Copyright (C) 2021"
-            VALUE "OriginalFilename", "Racing.exe"
+            VALUE "CompanyName", "Dani Toledo"
+            VALUE "FileDescription", "Best race car game EVER"
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "InternalName", "RaceCar.exe"
+            VALUE "LegalCopyright", "Copyright (C) 2022"
+            VALUE "OriginalFilename", "RaceCar.exe"
             VALUE "ProductName", "Racing GP Piston Cup ?"
-            VALUE "ProductVersion", "0.5.0.0"
+            VALUE "ProductVersion", "1.0.0.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -82,16 +92,6 @@ BEGIN
         VALUE "Translation", 0xc0a, 1200
     END
 END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_ICON1               ICON                    "icon1.ico"
 
 #endif    // Español (España, alfabetización internacional) resources
 /////////////////////////////////////////////////////////////////////////////

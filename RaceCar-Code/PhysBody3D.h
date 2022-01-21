@@ -4,8 +4,14 @@
 #include "p2List.h"
 #include "Bullet/include/LinearMath/btVector3.h"
 
+class btQuaternion;
 class btRigidBody;
 class Module;
+
+struct Euler
+{
+	float roll, pitch, yaw;
+};
 
 // =================================================
 struct PhysBody3D
@@ -19,17 +25,23 @@ public:
 	void GetTransform(float* matrix) const;
 	void SetTransform(const float* matrix) const;
 	void SetPos(float x, float y, float z);
+	void SetRotation(btQuaternion q);
+	Euler GetEulerAngles(btQuaternion q);
+	void SetAsSensor(bool is_sensor);
+	void SetId(int id);
 
 	btVector3 GetPos();
+
 	void SetLinearVelocity(float x, float y, float z);
 	void SetAngularVelocity(float x, float y, float z);
 
-private:
+public:
 	btRigidBody* body = nullptr;
 
-public:
 	p2List<Module*> collision_listeners;
-	bool			is_sensor;
+
+	int id;
+	bool is_sensor;
 };
 
 #endif // __PhysBody3D_H__

@@ -3,11 +3,11 @@
 #include "ModuleSceneIntro.h"
 #include "Primitive.h"
 #include "PhysBody3D.h"
-#include "ModulePlayer.h"
-#include "Timer.h"
+#include "ModulePhysics3D.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
-{}
+{
+}
 
 ModuleSceneIntro::~ModuleSceneIntro()
 {}
@@ -26,7 +26,7 @@ bool ModuleSceneIntro::Start()
 
 	playingMusic = false;
 	freeCam = false;
-	
+
 	// ===================================
 	//				Audio
 	// ===================================
@@ -35,7 +35,7 @@ bool ModuleSceneIntro::Start()
 	lapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lap.wav");
 	finalLapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lastLap.wav");
 	checkpointFx = app->audio->LoadFx("Assets/audio/fx/gameplay_checkpoint.wav");
-	
+
 	// ===================================
 	//				Textures
 	// ===================================
@@ -47,7 +47,7 @@ bool ModuleSceneIntro::Start()
 	sun.SunBall.radius = 25;
 	sun.SunBall.color = Yellow;
 	sun.speed = 0.00005f;
-	sun.movement_height = 250.0f; 
+	sun.movement_height = 250.0f;
 	sun.movement_width = 450.0f;
 
 	sunTimer.Start();
@@ -68,6 +68,16 @@ bool ModuleSceneIntro::Start()
 	return ret;
 }
 
+bool ModuleSceneIntro::CleanUp()
+{
+	LOG("Unloading Intro scene");
+
+	sceneryCubes.clear();
+	sunTimer.Stop();
+
+	return true;
+}
+
 void ModuleSceneIntro::CreateCircuit() {
 	// ================
 	//  Circuit track:
@@ -85,7 +95,7 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddLinearCircuit({ -425, 0, 525 }, { -335, 0, 525 }, 50);
 
-	AddCube({ -189, -17.5f, 525 }, { 300, 10, Circuit_Width*1.5f }, Red, -5, false, false, true);
+	AddCube({ -189, -17.5f, 525 }, { 300, 10, Circuit_Width * 1.5f }, Red, -5, false, false, true);
 
 	AddLinearCircuit({ -335, 0, 525 }, { -100, -21, 525 }, 50);
 
@@ -95,7 +105,7 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddCircularCircuit({ -50, -20, 300 }, { -150, -20, 300 }, 0.99f, 30, 15);
 
-	AddCube({ -300, -17.5f, 264 }, { Circuit_Width * 1.5f , 10, 300}, Red, -5, true);
+	AddCube({ -300, -17.5f, 264 }, { Circuit_Width * 1.5f , 10, 300 }, Red, -5, true);
 
 	//Old Circuit
 	/*// 1
@@ -243,7 +253,7 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddCircularCircuit({ -25, 0, 0 }, { 0, 0, 25 }, -0.45f, 10, 3);
 
-	// 0 
+	// 0
 	AddLinearCircuit({ -50, 0, 50 }, { 25, 0, 50 }, 10, 15);
 
 	AddCircularCircuit({ 25, 0, 50 }, { 50, 0, 75 }, -0.45f, 10, 3, 15);
@@ -251,21 +261,11 @@ void ModuleSceneIntro::CreateCircuit() {
 	AddCircularCircuit({ 50, 0, 425 }, { 25, 0, 450 }, -0.45f, 10, 5, 15);*/
 }
 
-bool ModuleSceneIntro::CleanUp()
-{
-	LOG("Unloading Intro scene");
-
-	sceneryCubes.clear();
-	sunTimer.Stop();
-
-	return true;
-}
-
 void ModuleSceneIntro::AddGround() {
 	Cube groundToAdd;
 
 	float size = 75;
-	
+
 	groundToAdd.size = { size, 1, size };
 
 	int type = 0;
@@ -276,7 +276,7 @@ void ModuleSceneIntro::AddGround() {
 		for (int j = 0; j < 10; j++) {
 
 			// Last +size is to move map ground 75 pixels to left
-			groundToAdd.SetPos(i * - size + size, 0, j * size);
+			groundToAdd.SetPos(i * -size + size, 0, j * size);
 
 			if (debug == true) {
 				LOG("Adding ground at x: %.2f, z: %.2f", i * -size + size, j * size);
@@ -458,7 +458,7 @@ void ModuleSceneIntro::AddCircularCircuit(vec3 initPos, vec3 finalPos, float ang
 		vec3 to_center = normalize(central_pos - center_circle);
 		pos = central_pos + ((circuitW / 2.0f) * -to_center);
 		c.SetPos(pos.x, initPos.y + 1, pos.z);
-		
+
 		app->physics->AddBody(c, 0);
 		sceneryCubes.add(c);
 	}
@@ -468,7 +468,7 @@ void ModuleSceneIntro::AddWallCircuit(vec3 initPos, vec3 finalPos, int walls, bo
 
 	// Distance between the 2 points
 	float distance = sqrt(pow(finalPos.x - initPos.x, 2) + pow(finalPos.y - initPos.y, 2) + pow(finalPos.z - initPos.z, 2));
-	float cubeDistance = distance /walls;
+	float cubeDistance = distance / walls;
 
 	// Direction
 	vec3 direction = finalPos - initPos;
@@ -629,7 +629,9 @@ void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW,
 
 	// Create Checkpoint
 	CheckPoint sensorCP;
-	sensorCP.body = app->physics->AddSensor(sensor, this, 0.0f);
+	sensorCP.body = app->physics->AddBody(sensor, 0.0f);
+	sensorCP.body->SetAsSensor(true);
+	sensorCP.body->SetId(2);
 	sensorCP.angle = angle;
 	sensorCP.checked = false;
 	sensorCP.leftC = leftFlag;
@@ -647,8 +649,8 @@ void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW,
 update_status ModuleSceneIntro::Update(float dt)
 {
 	// ====================================================
-	//			 Sun (independent from state)
-	// ====================================================
+		//			 Sun (independent from state)
+		// ====================================================
 
 	sun.SunBall.SetPos(-220 + cosf(sunTimer.Read() * sun.speed) * sun.movement_width, sinf(sunTimer.Read() * sun.speed) * sun.movement_height, 250);
 	sun.SunBall.Render();
@@ -659,7 +661,7 @@ update_status ModuleSceneIntro::Update(float dt)
 	switch (state)
 	{
 	case TITLESCREEN:
-		
+
 		// Check Music
 		if (playingMusic == false) {
 			app->audio->PlayMusic("Assets/audio/music/titleScreen.ogg");
@@ -690,7 +692,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		// ==========================
 
 		app->camera->Position = { -250, 475, 250 };
-		app->camera->LookAt(vec3( -250, 0, 251));
+		app->camera->LookAt(vec3(-250, 0, 251));
 
 		break;
 	case GAMEPLAY:
@@ -748,7 +750,7 @@ update_status ModuleSceneIntro::Update(float dt)
 			app->player->allowPlayerControl = true;
 		}
 
-		LOG("X: %.2f, Y: %.2f, Z: %.2f", app->player->position.getX(), app->player->position.getY(), app->player->position.getZ());
+		//LOG("X: %.2f, Y: %.2f, Z: %.2f", app->player->position.getX(), app->player->position.getY(), app->player->position.getZ());
 
 		// Underwater control
 		if (app->player->position.getX() > -637.5f && app->player->position.getX() < 110) {
@@ -758,7 +760,7 @@ update_status ModuleSceneIntro::Update(float dt)
 					playerUnderWater = true;
 					app->physics->SetGravity({ 0, -5, 0 });
 				}
-				else if(app->player->position.getY() > 0 && lastPlayerPosY < 0){
+				else if (app->player->position.getY() > 0 && lastPlayerPosY < 0) {
 					playingMusic = false;
 					playerUnderWater = false;
 					app->physics->SetGravity({ 0, -10, 0 });
@@ -833,7 +835,7 @@ update_status ModuleSceneIntro::Update(float dt)
 
 		break;
 	}
-	
+
 	// ====================================================
 	//						Render Ground
 	// ====================================================
@@ -887,65 +889,5 @@ void ModuleSceneIntro::CameraPlayer() {
 
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
-	if (body1->is_sensor == true) {
-		LOG("A");
-		if (body1 == checkPoints.getFirst()->data.body) {
 
-			// Check if all circuit checkpoints are checked
-			bool allCheckPointsDone;
-			for (p2List_item<CheckPoint>* ch = checkPoints.getFirst()->next; ch != NULL; ch = ch->next) {
-				if (ch->data.checked == true) {
-					allCheckPointsDone = true;
-				}
-				else {
-					allCheckPointsDone = false;
-					break;
-				}
-			}
-
-			// Only check a lap if we start the race or if all circuit checkpoints are checked
-			if (checkPoints.getFirst()->data.laps == 0 || allCheckPointsDone == true) {
-
-				checkPoints.getFirst()->data.laps += 1;
-
-				// Mark checkpoint as checked
-				checkPoints.getFirst()->data.checked = true;
-
-				checkPoints.getFirst()->data.leftC.color = checkPoints.getFirst()->data.rightC.color = White;
-
-				if (checkPoints.getFirst()->data.laps == 1) {
-					currentLap = LapState::FIRSTLAP;
-					app->audio->PlayFx(lapFx);
-				}
-				else if (checkPoints.getFirst()->data.laps == 2) {
-					currentLap = LapState::SECONDLAP;
-					app->audio->PlayFx(lapFx);
-				}
-				else if (checkPoints.getFirst()->data.laps == 3) {
-					currentLap = LapState::LASTLAP;
-					app->audio->PlayFx(finalLapFx);
-					playingMusic = false;
-				}
-			}
-
-			for (p2List_item<CheckPoint>* ch = checkPoints.getFirst()->next; ch != NULL; ch = ch->next) {
-				ch->data.checked = false;
-			}
-		}
-		for (p2List_item<CheckPoint>* ch = checkPoints.getFirst()->next; ch != NULL; ch = ch->next) {
-			if (body1 == ch->data.body) {
-				app->audio->PlayFx(checkpointFx);
-				ch->data.checked = true;
-				ch->data.leftC.color = ch->data.rightC.color = Green;
-			}
-			else {
-				ch->data.leftC.color = ch->data.rightC.color = Red;
-			}
-
-			if (body1 == checkPoints.getLast()->data.body) {
-				checkPoints.getFirst()->data.leftC.color = checkPoints.getFirst()->data.rightC.color = Black;
-			}
-
-		}
-	}
 }

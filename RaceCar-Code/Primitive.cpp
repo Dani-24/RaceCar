@@ -54,7 +54,8 @@ void Primitive::Render() const
 
 		glLineWidth(1.0f);
 	}
-	glColor4f(color.r, color.g, color.b, color.a);
+
+	glColor3f(color.r, color.g, color.b);
 
 	if(wire)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -86,6 +87,7 @@ void Primitive::SetPos(float x, float y, float z)
 	transform.translate(x, y, z);
 }
 
+// ------------------------------------------------------------
 vec3 Primitive::GetPos() {
 	return transform.translation();
 }
@@ -264,17 +266,14 @@ void Plane::InnerRender() const
 {
 	glLineWidth(1.0f);
 
-	glBegin(GL_LINES);
+	glBegin(GL_POLYGON);
+	glNormal3f(0.0f, 0.0f, 1.0f);
 
-	float d = 200.0f;
-
-	for(float i = -d; i <= d; i += 1.0f)
-	{
-		glVertex3f(i, 0.0f, -d);
-		glVertex3f(i, 0.0f, d);
-		glVertex3f(-d, 0.0f, i);
-		glVertex3f(d, 0.0f, i);
-	}
+	glVertex3f(1000, 0, 1000);		
+	glVertex3f(1000, 0, -1000);
+	glVertex3f(-1000, 0, -1000);
+	glVertex3f(-1000, 0, 1000);
+	
 
 	glEnd();
 }
