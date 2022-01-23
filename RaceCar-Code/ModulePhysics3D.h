@@ -7,7 +7,7 @@
 #include "Bullet/include/btBulletDynamicsCommon.h"
 
 // Recommended scale is 1.0f == 1 meter, no less than 0.2 objects
-#define GRAVITY btVector3(0.0f, -20.0f, 0.0f) 
+#define GRAVITY btVector3(0.0f, -10.0f, 0.0f) 
 
 class DebugDrawer;
 struct PhysBody3D;
@@ -37,7 +37,6 @@ public:
 
 	void SetGravity(vec3 g = { 0, -10, 0 });
 
-	btDiscreteDynamicsWorld* world;
 private:
 
 	bool debug;
@@ -46,6 +45,7 @@ private:
 	btCollisionDispatcher*				dispatcher;
 	btBroadphaseInterface*				broad_phase;
 	btSequentialImpulseConstraintSolver* solver;
+	btDiscreteDynamicsWorld* world;
 	btDefaultVehicleRaycaster*			vehicle_raycaster;
 	DebugDrawer*						debug_draw;
 

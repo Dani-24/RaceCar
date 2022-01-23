@@ -616,7 +616,7 @@ void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW,
 	leftFlag.radius = 2;
 	leftFlag.height = 5;
 	leftFlag.color = color;
-	leftFlag.SetPos(positionLeftFlag.x + position.x, positionLeftFlag.y, positionLeftFlag.z + position.z);
+	leftFlag.SetPos(positionLeftFlag.x + position.x, positionLeftFlag.y - 1, positionLeftFlag.z + position.z);
 	leftFlag.SetRotation(90, { 0, 0, 1 });
 
 	// Sensor right mark
@@ -624,7 +624,7 @@ void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW,
 	rightFlag.radius = 2;
 	rightFlag.height = 5;
 	rightFlag.color = color;
-	rightFlag.SetPos(positionRightFlag.x + position.x, positionRightFlag.y, positionRightFlag.z + position.z);
+	rightFlag.SetPos(positionRightFlag.x + position.x, positionRightFlag.y -1, positionRightFlag.z + position.z);
 	rightFlag.SetRotation(90, { 0, 0, 1 });
 
 	// Create Checkpoint
