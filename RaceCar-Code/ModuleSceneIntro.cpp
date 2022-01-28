@@ -20,7 +20,7 @@ bool ModuleSceneIntro::Start()
 
 	state = GameState::TITLESCREEN;
 
-	currentLap = LapState::FIRSTLAP;
+	currentLap = LapState::START;
 
 	areYouWinningSon = RaceState::DEFAULT;
 
@@ -87,6 +87,8 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddCheckPoint({ 50, 1, 300 }, 90, 30, Black); // meta
 
+	AddCheckPoint({ 50, 1, 350 }, 90, 30, Orange); // checkpoint test
+
 	AddCircularCircuit({ 50, 1, 600 }, { -25, 1, 675 }, -0.4f, 60, 30);
 
 	AddLinearCircuit({ -25, 0, 675 }, { -425, 0, 675 }, 100);
@@ -95,7 +97,8 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddLinearCircuit({ -425, 0, 525 }, { -335, 0, 525 }, 50);
 
-	AddCube({ -189, -17.5f, 525 }, { 300, 10, Circuit_Width * 1.5f }, Red, -5, false, false, true);
+	// rampa 1
+	AddCube({ -189, -17.5f, 525 }, { 300, 10, Circuit_Width * 1.5f }, Yellow, -5, false, false, true);
 
 	AddLinearCircuit({ -335, 0, 525 }, { -100, -21, 525 }, 50);
 
@@ -103,9 +106,22 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddLinearCircuit({ -55.5f, -20, 480 }, { -55.5f, -20, 300 }, 50);
 
-	AddCircularCircuit({ -50, -20, 300 }, { -150, -20, 300 }, 0.99f, 30, 15);
+	AddCircularCircuit({ -55.5f, -20, 300 }, { -130.5f, -20, 225 }, 0.45f, 30, 15);
 
-	AddCube({ -300, -17.5f, 264 }, { Circuit_Width * 1.5f , 10, 300 }, Red, -5, true);
+	AddLinearCircuit({ -110, -20, 225 }, { -200, -20, 200 }, 25);
+
+	AddWallCircuit({ -195, -20, 202 }, { -275, -20, 175 }, 20, false);
+
+	AddWallCircuit({ -200, -20, 195 }, { -275, -20, 125 }, 20, true);
+
+	AddCurveWallCircuit({ -270, -15, 130 }, { -320, -15, 180 }, 0.45f, 20, true);
+
+	AddWallCircuit({ -325, -20, 162 }, { -310, -20, 180 }, 7, true);
+
+	// rampa 2
+	AddCube({ -300, -17.5f, 264 }, { Circuit_Width * 1.5f , 10, 300 }, Yellow, -5, true);
+
+	AddLinearCircuit({ -300, -20, 190 }, { -300, 0, 420 }, 50, 40);
 
 	//Old Circuit
 	/*// 1
@@ -293,7 +309,7 @@ void ModuleSceneIntro::AddGround() {
 				break;
 			case 1:
 				groundToAdd.color = { 0.0f, 0.0f, 1.0f, 0.8f };
-				//sceneryCubes.add(groundToAdd);
+				sceneryCubes.add(groundToAdd);
 
 				// Sand platform under water
 				groundToAdd.SetPos(i * -size + size, -20, j * size);
@@ -566,6 +582,7 @@ void ModuleSceneIntro::AddCurveWallCircuit(vec3 initPos, vec3 finalPos, float an
 			float sub_angle = (angle > 0.0f) ? -(float)j / walls * theta : (float)j / walls * theta;
 
 			central_pos.x = center_circle.x + radius * cos(sub_angle + angle_ref);
+			central_pos.y = initPos.y;
 			central_pos.z = center_circle.z + radius * sin(sub_angle + angle_ref);
 
 			vec3 to_center = normalize(central_pos - center_circle);
@@ -584,6 +601,7 @@ void ModuleSceneIntro::AddCurveWallCircuit(vec3 initPos, vec3 finalPos, float an
 			float sub_angle = (angle > 0.0f) ? -(float)j / walls * theta : (float)j / walls * theta;
 
 			central_pos.x = center_circle.x + radius * cos(sub_angle + angle_ref);
+			central_pos.y = initPos.y;
 			central_pos.z = center_circle.z + radius * sin(sub_angle + angle_ref);
 
 			vec3 to_center = normalize(central_pos - center_circle);
@@ -636,6 +654,8 @@ void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW,
 	sensorCP.checked = false;
 	sensorCP.leftC = leftFlag;
 	sensorCP.rightC = rightFlag;
+	sensorCP.colorBody = sensor;
+	sensorCP.colorBody.color = Magenta;
 
 	sceneryCylinders.add(sensorCP.leftC);
 	app->physics->AddBody(sensorCP.leftC, 0);
@@ -661,7 +681,7 @@ update_status ModuleSceneIntro::Update(float dt)
 	switch (state)
 	{
 	case TITLESCREEN:
-
+	{
 		// Check Music
 		if (playingMusic == false) {
 			app->audio->PlayMusic("Assets/audio/music/titleScreen.ogg");
@@ -677,10 +697,8 @@ update_status ModuleSceneIntro::Update(float dt)
 			LOG("Loading Gameplay screen");
 
 			cronometro.Start();
-
+			currentLap = LapState::START;
 			playingMusic = false;
-			// Aqui deberia resetear la scena para hacer loop
-
 		}
 
 		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
@@ -693,10 +711,10 @@ update_status ModuleSceneIntro::Update(float dt)
 
 		app->camera->Position = { -250, 475, 250 };
 		app->camera->LookAt(vec3(-250, 0, 251));
-
 		break;
+		}
 	case GAMEPLAY:
-
+	{
 		// Check Music
 		if (playingMusic == false) {
 			if (playerUnderWater != true) {
@@ -728,6 +746,7 @@ update_status ModuleSceneIntro::Update(float dt)
 			cronometro.Stop();
 			playingMusic = false;
 			app->player->Respawn(app->player->initialPos, -1.57f);
+			app->player->countdown = 5; // reset
 		}
 
 		if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) {
@@ -749,8 +768,6 @@ update_status ModuleSceneIntro::Update(float dt)
 		if (app->player->allowPlayerControl != true) {
 			app->player->allowPlayerControl = true;
 		}
-
-		//LOG("X: %.2f, Y: %.2f, Z: %.2f", app->player->position.getX(), app->player->position.getY(), app->player->position.getZ());
 
 		// Underwater control
 		if (app->player->position.getX() > -637.5f && app->player->position.getX() < 110) {
@@ -780,9 +797,19 @@ update_status ModuleSceneIntro::Update(float dt)
 
 		app->renderer3D->DrawTexture(susTex, susPos, 3.0f);
 
-		break;
-	case ENDSCREEN:
+		// Checkpoints
+		p2List_item<CheckPoint>* c = app->scene_intro->checkPoints.getFirst();
+		while(c != NULL){
+			if (c->data.checked == false) {
+				c->data.colorBody.Render();
+			}
+			c = c->next;
+		}
 
+		break;
+		}
+	case ENDSCREEN:
+	{
 		// ==========================
 		//			INPUT
 		// ==========================
@@ -790,6 +817,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 			state = GameState::TITLESCREEN;
 			LOG("Exiting to Title");
+			app->player->countdown = 5; // reset
 		}
 
 		// ===============================
@@ -834,6 +862,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		app->renderer3D->DrawTexture(susTex, susPos, 3.0f);
 
 		break;
+	}
 	}
 
 	// ====================================================
@@ -885,9 +914,4 @@ void ModuleSceneIntro::CameraPlayer() {
 			app->camera->LookAt(vec3(posX, posY, posZ));
 		}
 	}
-}
-
-void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
-{
-
 }

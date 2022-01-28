@@ -24,6 +24,8 @@ bool ModulePlayer::Start()
 	fallFx = app->audio->LoadFx("Assets/audio/fx/gameplay_fallFromMap.wav");
 	respawnFx = app->audio->LoadFx("Assets/audio/fx/zas.wav");
 
+	countdown = 5;
+
 	CreateCar();
 
 	return true;
@@ -129,7 +131,7 @@ void ModulePlayer::CreateCar() {
 	car.suspensionDamping = 10.88f;
 	car.maxSuspensionTravelCm = 1000.0f;
 	car.frictionSlip = 50.5;
-	car.maxSuspensionForce = 100000.0f;
+	car.maxSuspensionForce = 6000.0f;
 
 	// Wheel properties ---------------------------------------
 	float connection_height = 1.2f;
@@ -201,13 +203,13 @@ void ModulePlayer::CreateCar() {
 
 	vehicle->collision_listeners.add(this);
 	vehicle->SetId(1);
-	vehicle->SetAsSensor(true);
+	//vehicle->SetAsSensor(true);	// Disable this or car disable colliders
 }
 
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
-	int time = app->scene_intro->cronometro.Read() / 1000;
+	time = app->scene_intro->cronometro.Read() / 1000;
 
 	if (app->scene_intro->state != GameState::TITLESCREEN) {
 		position.setValue(vehicle->GetPos().getX(), vehicle->GetPos().getY(), vehicle->GetPos().getZ());
@@ -273,10 +275,13 @@ update_status ModulePlayer::Update(float dt)
 						}
 					}
 				}
+				// ==================
+				//     Underwater
+				// ==================
 				else {
 					// Max Velocity fixed
 					if (vehicle->GetKmh() <= MAX_SPEED / 1.5f) {
-						acceleration = MAX_ACCELERATION / 1.25f;
+						acceleration = MAX_ACCELERATION * 2;
 
 						if (playingEngineFx == false) {
 							app->audio->PlayFx(engineFx);
@@ -286,7 +291,7 @@ update_status ModulePlayer::Update(float dt)
 
 					if (app->input->GetKey(SDL_SCANCODE_LSHIFT) == KEY_REPEAT) {
 						if (vehicle->GetKmh() < MAX_TURBO_SPEED / 1.5f) {
-							acceleration = MAX_ACCELERATION * 2;
+							acceleration = MAX_ACCELERATION * 10;
 							if (turboFxPlayed == false) {
 								app->audio->PlayFx(turboFx);
 								turboFxPlayed = true;
@@ -298,7 +303,7 @@ update_status ModulePlayer::Update(float dt)
 							turboFxPlayed = false;
 						}
 						if (vehicle->GetKmh() > MAX_SPEED / 1.5f) {
-							brake = BRAKE_POWER / 30;
+							brake = BRAKE_POWER / 20;
 						}
 					}
 				}
@@ -321,9 +326,12 @@ update_status ModulePlayer::Update(float dt)
 						}
 					}
 				}
+				// ==================
+				//     Underwater
+				// ==================
 				else {
 					if (vehicle->GetKmh() > 10) {
-						acceleration = -MAX_ACCELERATION * 10;
+						acceleration = -MAX_ACCELERATION * 5;
 					}
 					else if (vehicle->GetKmh() > -MAX_SPEED_BACKWARDS / 1.5f) {
 						acceleration = -MAX_ACCELERATION;
@@ -411,14 +419,17 @@ update_status ModulePlayer::Update(float dt)
 	//						Window Title
 	// =========================================================
 
-	char title[80];
+	char title[125];
 	if (app->scene_intro->state == GameState::TITLESCREEN) {
 		sprintf_s(title, "Racing GP Piston Cup || Press Space/Enter to start");
 	}
 	else {
-		if (app->scene_intro->currentLap == LapState::FIRSTLAP) {
+		if (app->scene_intro->currentLap == LapState::START) {
+			sprintf_s(title, "Racing GP Piston Cup || The race will start in %d seconds");
+		}
+		else if (app->scene_intro->currentLap == LapState::FIRSTLAP) {
 			if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
-				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || Time: %d seconds", vehicle->GetKmh(), time);
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || Time: %d seconds || Press R to respawn", vehicle->GetKmh(), time);
 			}
 			else {
 				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || YOU LOSE", vehicle->GetKmh());
@@ -426,7 +437,7 @@ update_status ModulePlayer::Update(float dt)
 		}
 		else if (app->scene_intro->currentLap == LapState::SECONDLAP) {
 			if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
-				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || Time: %d seconds", vehicle->GetKmh(), time);
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || Time: %d seconds || Press R to respawn", vehicle->GetKmh(), time);
 			}
 			else {
 				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || YOU LOSE", vehicle->GetKmh());
@@ -438,7 +449,7 @@ update_status ModulePlayer::Update(float dt)
 					sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || YOU WIN", vehicle->GetKmh());
 				}
 				else {
-					sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || Time: %d seconds", vehicle->GetKmh(), time);
+					sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || Time: %d seconds || Press R to respawn", vehicle->GetKmh(), time);
 				}
 			}
 			else {
@@ -452,9 +463,51 @@ update_status ModulePlayer::Update(float dt)
 
 void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
-	if (body2->id == 2)
-	{
-		LOG("PUTO");
+	if (body2->id == 2) {
+		if (app->scene_intro->checkPoints.getFirst()->data.body == body2)
+		{
+			if (app->scene_intro->currentLap == LapState::START) {
+				app->scene_intro->currentLap = LapState::FIRSTLAP;
+				LOG("Music starto 1/3");
+				app->scene_intro->checkPoints.getFirst()->data.checked = true;
+
+				// reset checkpoints
+				for (p2List_item<CheckPoint>* c = app->scene_intro->checkPoints.getFirst()->next; c != NULL; c = c->next) {
+					c->data.checked == false;
+				}
+			}
+			else {
+				if (app->scene_intro->checkPoints.getLast()->data.checked == true) {
+					if (app->scene_intro->currentLap == LapState::FIRSTLAP) {
+						app->scene_intro->currentLap = LapState::SECONDLAP;
+						LOG("2/3 VAMOSSS");
+						app->scene_intro->checkPoints.getFirst()->data.checked = true;
+
+						// reset checkpoints
+						for (p2List_item<CheckPoint>* c = app->scene_intro->checkPoints.getFirst()->next; c != NULL; c = c->next) {
+							c->data.checked == false;
+						}
+					}
+					else if (app->scene_intro->currentLap == LapState::SECONDLAP) {
+						app->scene_intro->currentLap = LapState::LASTLAP;
+						LOG("3/3 ya sacaba");
+						app->scene_intro->checkPoints.getFirst()->data.checked = true;
+
+						// reset checkpoints
+						for (p2List_item<CheckPoint>* c = app->scene_intro->checkPoints.getFirst()->next; c != NULL; c = c->next) {
+							c->data.checked == false;
+						}
+					}
+				}
+			}
+		}
+		else if (app->scene_intro->checkPoints.getLast()->data.body == body2) {
+			if (app->scene_intro->checkPoints.getLast()->prev->data.checked == true) {
+				app->scene_intro->checkPoints.getLast()->data.checked = true;
+				app->scene_intro->checkPoints.getLast()->prev->data.checked = false;
+				LOG("OTRO CHECKPOINTO");
+			}
+		}
 	}
 }
 

@@ -19,6 +19,7 @@ enum GameState {
 };
 
 enum LapState {
+	START,
 	FIRSTLAP,
 	SECONDLAP,
 	LASTLAP
@@ -40,9 +41,9 @@ struct Sun {
 struct CheckPoint {
 	PhysBody3D* body;
 	Cylinder leftC, rightC;
+	Cube colorBody;
 	float angle;
 	bool checked;
-	int laps = 0;
 };
 
 class ModuleSceneIntro : public Module
@@ -54,8 +55,6 @@ public:
 	bool Start();
 	update_status Update(float dt);
 	bool CleanUp();
-
-	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 
 	void CameraPlayer();
 
