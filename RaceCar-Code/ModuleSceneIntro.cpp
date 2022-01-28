@@ -27,14 +27,9 @@ bool ModuleSceneIntro::Start()
 	playingMusic = false;
 	freeCam = false;
 
-	// ===================================
-	//				Audio
-	// ===================================
+	// audio
 	winFx = app->audio->LoadFx("Assets/audio/fx/gameplay_win.wav");
 	loseFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lose.wav");
-	lapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lap.wav");
-	finalLapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lastLap.wav");
-	checkpointFx = app->audio->LoadFx("Assets/audio/fx/gameplay_checkpoint.wav");
 
 	// ===================================
 	//				Textures
@@ -78,6 +73,33 @@ bool ModuleSceneIntro::CleanUp()
 	return true;
 }
 
+void ModuleSceneIntro::SceneReset() {
+
+	state = GameState::TITLESCREEN;
+
+	currentLap = LapState::START;
+
+	areYouWinningSon = RaceState::DEFAULT;
+
+	playingMusic = false;
+	freeCam = false;
+
+	checkPoints.getFirst()->data.checked = false;
+	p2List_item<CheckPoint>* c = checkPoints.getFirst()->next;
+	while (c != NULL) {
+		c->data.checked = true;
+		c = c->next;
+	}
+
+	cronometro.Stop();
+
+	app->player->countdown = 5;
+	app->player->countDownSoundPlay = false;
+
+	app->player->lastCheckPointID = 100;
+	app->player->Respawn();
+}
+
 void ModuleSceneIntro::CreateCircuit() {
 	// ================
 	//  Circuit track:
@@ -85,9 +107,13 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddLinearCircuit({ 50, 0, 100 }, { 50, 0, 600 }, 100);
 
-	AddCheckPoint({ 50, 1, 300 }, 90, 30, Black); // meta
+	AddCheckPoint({ 50, 0, 300 }, 90, 30, Black, 2, false); // meta
 
-	AddCheckPoint({ 50, 1, 350 }, 90, 30, Orange); // checkpoint test
+	AddCheckPoint({ 50, 0, 325 }, 90, 30, Orange, 3); // checkpoint test
+	AddCheckPoint({ 50, 0, 350 }, 90, 30, Orange, 4); // checkpoint test
+	AddCheckPoint({ 50, 0, 375 }, 90, 30, Orange, 5); // checkpoint test
+	AddCheckPoint({ 50, 0, 400 }, 90, 30, Orange, 6); // checkpoint test
+	AddCheckPoint({ 50, 0, 425 }, 90, 30, Orange, 7); // checkpoint test
 
 	AddCircularCircuit({ 50, 1, 600 }, { -25, 1, 675 }, -0.4f, 60, 30);
 
@@ -614,7 +640,7 @@ void ModuleSceneIntro::AddCurveWallCircuit(vec3 initPos, vec3 finalPos, float an
 	}
 }
 
-void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW, Color color) {
+void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW, Color color, int id, bool startChecked) {
 	// Sensor
 	Cube sensor;
 	sensor.size = { 5, 5, circuitW };
@@ -649,9 +675,9 @@ void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW,
 	CheckPoint sensorCP;
 	sensorCP.body = app->physics->AddBody(sensor, 0.0f);
 	sensorCP.body->SetAsSensor(true);
-	sensorCP.body->SetId(2);
+	sensorCP.body->SetId(id);
 	sensorCP.angle = angle;
-	sensorCP.checked = false;
+	sensorCP.checked = startChecked;
 	sensorCP.leftC = leftFlag;
 	sensorCP.rightC = rightFlag;
 	sensorCP.colorBody = sensor;
@@ -743,10 +769,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 			state = GameState::TITLESCREEN;
 			LOG("Exiting to Title");
-			cronometro.Stop();
-			playingMusic = false;
-			app->player->Respawn(app->player->initialPos, -1.57f);
-			app->player->countdown = 5; // reset
+			SceneReset();
 		}
 
 		if (app->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN) {
@@ -765,7 +788,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		//			Update
 		// ==========================
 
-		if (app->player->allowPlayerControl != true) {
+		if (app->player->countdown <= 0) {
 			app->player->allowPlayerControl = true;
 		}
 
@@ -817,7 +840,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 			state = GameState::TITLESCREEN;
 			LOG("Exiting to Title");
-			app->player->countdown = 5; // reset
+			SceneReset();
 		}
 
 		// ===============================

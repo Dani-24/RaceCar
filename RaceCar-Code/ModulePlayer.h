@@ -26,9 +26,11 @@ public:
 	void CreateCar();
 
 	vec3 GetVehicleForwardVec();
-	void Respawn(vec3 position, float angle);
+	void Respawn();
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
+
+	void SetInitPos();
 
 public:
 	PhysVehicle3D* vehicle;
@@ -43,8 +45,12 @@ public:
 
 	bool allowPlayerControl = false;
 
-	int time, countdown;
+	int time;
+	float countdown;
 
+	bool countDownSoundPlay = false;
+
+	int lastCheckPointID = 100;
 private:
 	uint engineFx;
 	bool playingEngineFx = false;
@@ -55,5 +61,6 @@ private:
 	uint turboFx;
 	bool turboFxPlayed = false;
 
-	uint respawnFx;
+	uint respawnFx, finalLapFx, checkpointFx, lapFx;
+
 };

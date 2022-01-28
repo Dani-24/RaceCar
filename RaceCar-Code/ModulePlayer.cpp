@@ -18,12 +18,17 @@ bool ModulePlayer::Start()
 {
 	LOG("Loading player");
 
-	// Variables :
+	// Audio
 	engineFx = app->audio->LoadFx("Assets/audio/fx/gameplay_kartEngine.wav");
 	turboFx = app->audio->LoadFx("Assets/audio/fx/gameplay_turbo.wav");
 	fallFx = app->audio->LoadFx("Assets/audio/fx/gameplay_fallFromMap.wav");
 	respawnFx = app->audio->LoadFx("Assets/audio/fx/zas.wav");
 
+	lapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lap.wav");
+	finalLapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lastLap.wav");
+	checkpointFx = app->audio->LoadFx("Assets/audio/fx/gameplay_checkpoint.wav");
+
+	// Variables 
 	countdown = 5;
 
 	CreateCar();
@@ -211,7 +216,12 @@ update_status ModulePlayer::Update(float dt)
 {
 	time = app->scene_intro->cronometro.Read() / 1000;
 
-	if (app->scene_intro->state != GameState::TITLESCREEN) {
+	if (app->scene_intro->state == GameState::GAMEPLAY) {
+		if (countdown > -1) {
+			countdown -= dt;
+			LOG("%.2f", countdown);
+		}
+
 		position.setValue(vehicle->GetPos().getX(), vehicle->GetPos().getY(), vehicle->GetPos().getZ());
 
 		if (position.getY() < Camera_Fall_Dist) {
@@ -227,7 +237,7 @@ update_status ModulePlayer::Update(float dt)
 		}
 
 		if (position.getY() < Vehicle_Fall_Dist || app->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN) {
-			Respawn({ app->scene_intro->checkPoints.getFirst()->data.body->GetPos().getX(), 1, app->scene_intro->checkPoints.getFirst()->data.body->GetPos().getZ() }, app->scene_intro->checkPoints.getFirst()->data.angle + 2.68f);
+			Respawn();
 		}
 
 		// =========================================================
@@ -425,7 +435,17 @@ update_status ModulePlayer::Update(float dt)
 	}
 	else {
 		if (app->scene_intro->currentLap == LapState::START) {
-			sprintf_s(title, "Racing GP Piston Cup || The race will start in %d seconds");
+			if (countdown > 0) {
+				sprintf_s(title, "Racing GP Piston Cup || The race will start in %.f seconds", countdown);
+			}
+			else {
+				sprintf_s(title, "Racing GP Piston Cup || GO GOGO GOGOGO GOG OOGGOGO GOGGO OGOG GOOOOOOOO GOOOOOOOOOOOOOOOOOOOO");
+				if (countDownSoundPlay == false) {
+					countDownSoundPlay = true;
+
+					//app->audio->PlayFx();	// Countdown acaba , sonido de empezar
+				}
+			}
 		}
 		else if (app->scene_intro->currentLap == LapState::FIRSTLAP) {
 			if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
@@ -463,63 +483,116 @@ update_status ModulePlayer::Update(float dt)
 
 void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
-	if (body2->id == 2) {
-		if (app->scene_intro->checkPoints.getFirst()->data.body == body2)
-		{
-			if (app->scene_intro->currentLap == LapState::START) {
+	if (body2->id == 2) { // Meta
+		// si se puede pillar el checkpoint
+		if (app->scene_intro->checkPoints.getFirst()->data.checked == false) {
+
+			// updatear vueltas
+			switch (app->scene_intro->currentLap) {
+			case LapState::START:
 				app->scene_intro->currentLap = LapState::FIRSTLAP;
-				LOG("Music starto 1/3");
-				app->scene_intro->checkPoints.getFirst()->data.checked = true;
-
-				// reset checkpoints
-				for (p2List_item<CheckPoint>* c = app->scene_intro->checkPoints.getFirst()->next; c != NULL; c = c->next) {
-					c->data.checked == false;
-				}
+				LOG("race start");
+				break;
+			case LapState::FIRSTLAP:
+				app->scene_intro->currentLap = LapState::SECONDLAP;
+				LOG("second lap start");
+				app->audio->PlayFx(lapFx);
+				break;
+			case LapState::SECONDLAP:
+				app->scene_intro->currentLap = LapState::LASTLAP;
+				LOG("third lap start");
+				app->audio->PlayFx(finalLapFx);
+				app->scene_intro->playingMusic = false;
+				break;
+			case LapState::LASTLAP:
+				app->scene_intro->areYouWinningSon = RaceState::WIN;
+				app->scene_intro->state = GameState::ENDSCREEN;
+				app->scene_intro->playingMusic = false;
+				break;
 			}
-			else {
-				if (app->scene_intro->checkPoints.getLast()->data.checked == true) {
-					if (app->scene_intro->currentLap == LapState::FIRSTLAP) {
-						app->scene_intro->currentLap = LapState::SECONDLAP;
-						LOG("2/3 VAMOSSS");
-						app->scene_intro->checkPoints.getFirst()->data.checked = true;
 
-						// reset checkpoints
-						for (p2List_item<CheckPoint>* c = app->scene_intro->checkPoints.getFirst()->next; c != NULL; c = c->next) {
-							c->data.checked == false;
-						}
-					}
-					else if (app->scene_intro->currentLap == LapState::SECONDLAP) {
-						app->scene_intro->currentLap = LapState::LASTLAP;
-						LOG("3/3 ya sacaba");
-						app->scene_intro->checkPoints.getFirst()->data.checked = true;
+			// reset checkpointos
+			app->scene_intro->checkPoints.getFirst()->data.checked = true;
+			app->scene_intro->checkPoints.getFirst()->next->data.checked = false;
 
-						// reset checkpoints
-						for (p2List_item<CheckPoint>* c = app->scene_intro->checkPoints.getFirst()->next; c != NULL; c = c->next) {
-							c->data.checked == false;
-						}
-					}
-				}
-			}
+			// id de respawn
+			lastCheckPointID = body2->id;
 		}
-		else if (app->scene_intro->checkPoints.getLast()->data.body == body2) {
-			if (app->scene_intro->checkPoints.getLast()->prev->data.checked == true) {
-				app->scene_intro->checkPoints.getLast()->data.checked = true;
-				app->scene_intro->checkPoints.getLast()->prev->data.checked = false;
-				LOG("OTRO CHECKPOINTO");
+	}
+	else if (body2->id > 2 && body2->id < 7) { // Resto de checkpoints
+
+		p2List_item<CheckPoint>* c = app->scene_intro->checkPoints.getFirst();
+		while (c != NULL) {
+			if (c->data.body->id == body2->id) {
+				if (c->data.checked == false) {
+					LOG("Checkpointo con id %d", body2->id);
+
+					// reset checkpointos
+					c->data.checked = true;
+					c->next->data.checked = false;
+
+					// fx
+					app->audio->PlayFx(checkpointFx);
+
+					// id de respawn
+					lastCheckPointID = body2->id;
+				}
 			}
+			c = c->next;
+		}
+	}
+	else if (body2->id == 7) {
+		p2List_item<CheckPoint>* c = app->scene_intro->checkPoints.getFirst();
+		while (c != NULL) {
+			if (c->data.body->id == body2->id) {
+				if (c->data.checked == false) {
+					LOG("Lasto Checkpointo con id %d", body2->id);
+
+					// reset checkpointos
+					c->data.checked = true;
+					app->scene_intro->checkPoints.getFirst()->data.checked = false;
+
+					// fx
+					app->audio->PlayFx(checkpointFx);
+
+					// id de respawn
+					lastCheckPointID = body2->id;
+				}
+			}
+			c = c->next;
 		}
 	}
 }
 
-void ModulePlayer::Respawn(vec3 position, float angle) {
-	vehicle->SetPos(position.x, position.y, position.z);
-	vehicle->SetAngularVelocity(0, 0, 0);
-	vehicle->Orient(angle + M_PI / 2);
-	vehicle->SetLinearVelocity(0, 0, 0);
+void ModulePlayer::Respawn() {
+	
+	if (lastCheckPointID != 100) {
+		p2List_item<CheckPoint>* c = app->scene_intro->checkPoints.getFirst();
+		while (c != NULL) {
+			if (c->data.body->id == lastCheckPointID) {
+				vehicle->SetPos(c->data.body->GetPos().getX(), c->data.body->GetPos().getY(), c->data.body->GetPos().getZ());
+				vehicle->SetAngularVelocity(0, 0, 0);
+				vehicle->Orient(c->data.angle - 2.035f);
+				vehicle->SetLinearVelocity(0, 0, 0);
+				app->audio->PlayFx(respawnFx);
+			}
+			c = c->next;
+		}
+	}
+	else {
+		SetInitPos();
 
-	//app->audio->PlayFx(respawnFx);
+		vehicle->SetAngularVelocity(0, 0, 0);
+		vehicle->Orient(0);
+		vehicle->SetLinearVelocity(0, 0, 0);
+		app->audio->PlayFx(respawnFx);
+	}
 }
 
 vec3 ModulePlayer::GetVehicleForwardVec() {
 	return vehicle->GetForwardVector();
+}
+
+void ModulePlayer::SetInitPos() {
+	vehicle->SetPos(initialPos.x, initialPos.y, initialPos.z);
 }

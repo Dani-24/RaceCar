@@ -55,6 +55,7 @@ public:
 	bool Start();
 	update_status Update(float dt);
 	bool CleanUp();
+	void SceneReset();
 
 	void CameraPlayer();
 
@@ -81,7 +82,7 @@ public:
 
 	void AddCurveWallCircuit(vec3 initPos, vec3 finalPos, float angle, int walls, bool exterior);
 
-	void AddCheckPoint(vec3 position, float angle, float circuitW = Circuit_Width, Color color = White);
+	void AddCheckPoint(vec3 position, float angle, float circuitW = Circuit_Width, Color color = White, int id = 2, bool startChecked = true);
 
 	bool debug = true, freeCam;
 
@@ -95,12 +96,13 @@ public:
 
 	Timer cronometro;
 
+	bool playingMusic;
+
+	uint winFx, loseFx;
+
 private:
-	uint winFx, loseFx, lapFx, finalLapFx, checkpointFx;
 
 	float lastPlayerPosY;
-
-	bool playingMusic;
 
 	// Textures
 	uint susTex;
