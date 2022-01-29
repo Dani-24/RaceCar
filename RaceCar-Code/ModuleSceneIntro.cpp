@@ -98,6 +98,8 @@ void ModuleSceneIntro::SceneReset() {
 
 	app->player->lastCheckPointID = 100;
 	app->player->Respawn();
+
+	app->player->allowPlayerControl = false;
 }
 
 void ModuleSceneIntro::CreateCircuit() {
@@ -148,6 +150,44 @@ void ModuleSceneIntro::CreateCircuit() {
 	AddCube({ -300, -17.5f, 264 }, { Circuit_Width * 1.5f , 10, 300 }, Yellow, -5, true);
 
 	AddLinearCircuit({ -300, -20, 190 }, { -300, 0, 420 }, 50, 40);
+
+	AddCircularCircuit({ -300, 0, 420 }, { -360, 0, 460 }, -0.45f, 30, 15, 40);
+
+	AddLinearCircuit({ -360, 0, 460 }, { -425, 0, 440 }, 20, 40);
+
+	AddWallCircuit({ -425, 0, 445 }, { -475, 0, 425 }, 15, false);
+
+	AddWallCircuit({ -455, 0, 434 }, { -480, 0, 425 }, 5, true);
+
+	// Camino Wall
+	AddLinearCircuit({ -475, 0, 425 }, { -525, 0, 425 }, 10);
+
+	AddCube({ -525, 0, 425 }, { 100, 10, Circuit_Width }, Green, -25, false, false, true);
+
+	AddCube({ -570, 20, 250 }, { 100, 10, 400}, Green, -50, false, false, true);
+
+	AddCube({ -525, 0, 75 }, { 100, 10, Circuit_Width }, Green, -25, false, false, true);
+
+	// Camino Jump
+	AddLinearCircuit({ -432, 0, 422 }, { -432, 0, 300 }, 40);
+
+	AddCube({ -432, 0, 300 }, { Circuit_Width, 10, 100 }, Yellow, 15, true, false, false);
+
+	//
+
+	AddWallCircuit({ -425, 0, 175 }, { -305, 0, 50 }, 30, true);
+
+	AddWallCircuit({ -512, 0, 75 }, { -475, 0, 100 }, 10, true);
+
+	AddWallCircuit({ -510, 0, 75 }, { -300, 0, 50 }, 50, false);
+
+	AddLinearCircuit({ -300, 0, 50 }, { 0, 0, 50 }, 60);
+
+	AddCube({ -225, 0, 50 }, { 10, 2, Circuit_Width }, Yellow, 5, false, false, true);
+
+	AddCube({ -125, 0, 50 }, { 200, 2, Circuit_Width }, Yellow);
+
+	AddCircularCircuit({ 0, 0, 50 }, { 50, 0, 100 }, -0.45f, 30, 15);
 
 	//Old Circuit
 	/*// 1
@@ -915,7 +955,7 @@ void ModuleSceneIntro::CameraPlayer() {
 
 			// Get player position + forward vec3 from X and Z axis
 			float camX = app->player->position.getX() - cameraDistance * app->player->GetVehicleForwardVec().x;
-			float camY = app->player->position.getY() + 8;
+			float camY = app->player->position.getY() - cameraDistance * app->player->GetVehicleForwardVec().y + 8;
 			float camZ = app->player->position.getZ() - cameraDistance * app->player->GetVehicleForwardVec().z;
 
 			// Set camera

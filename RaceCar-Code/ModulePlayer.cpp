@@ -28,6 +28,9 @@ bool ModulePlayer::Start()
 	finalLapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lastLap.wav");
 	checkpointFx = app->audio->LoadFx("Assets/audio/fx/gameplay_checkpoint.wav");
 
+	countFx = app->audio->LoadFx("Assets/audio/fx/gameplay_thwomp.wav");
+	lastCountFx = app->audio->LoadFx("Assets/audio/fx/gameplay_thwomp_strong.wav");
+
 	// Variables 
 	countdown = 5;
 
@@ -437,13 +440,25 @@ update_status ModulePlayer::Update(float dt)
 		if (app->scene_intro->currentLap == LapState::START) {
 			if (countdown > 0) {
 				sprintf_s(title, "Racing GP Piston Cup || The race will start in %.f seconds", countdown);
+
+				if (countdown >= 1 && countdown <= 1.1f) {
+					app->audio->PlayFx(countFx);
+				}
+
+				if (countdown >= 2 && countdown <= 2.1f) {
+					app->audio->PlayFx(countFx);
+				}
+
+				if (countdown >= 3 && countdown <= 3.1f) {
+					app->audio->PlayFx(countFx);
+				}
 			}
 			else {
 				sprintf_s(title, "Racing GP Piston Cup || GO GOGO GOGOGO GOG OOGGOGO GOGGO OGOG GOOOOOOOO GOOOOOOOOOOOOOOOOOOOO");
 				if (countDownSoundPlay == false) {
 					countDownSoundPlay = true;
 
-					//app->audio->PlayFx();	// Countdown acaba , sonido de empezar
+					app->audio->PlayFx(lastCountFx);
 				}
 			}
 		}

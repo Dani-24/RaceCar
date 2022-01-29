@@ -41,7 +41,7 @@ public:
 
 	btVector3 position;
 
-	vec3 initialPos = { 50, 1, 200 };
+	vec3 initialPos = { 50, 1, 275 };
 
 	bool allowPlayerControl = false;
 
@@ -62,5 +62,5 @@ private:
 	bool turboFxPlayed = false;
 
 	uint respawnFx, finalLapFx, checkpointFx, lapFx;
-
+	uint countFx, lastCountFx;
 };

@@ -108,7 +108,7 @@ private:
 	uint susTex;
 	vec3 susPos = { 0, 0, 0 };
 
-	// Ground Map 0 = Terrain, 1 = Water with sand, 2 = Water (The map is printed rotated 90 degrees)
+	// Ground Map 0 = Terrain, 1 = Water with sand, 2 = Pure Water (The map is printed rotated 90 degrees)
 	int groundCoord[10][10] = {
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -116,9 +116,9 @@ private:
 		2, 2, 1, 1, 1, 2, 2, 1, 0, 0,
 		0, 0, 1, 1, 1, 0, 0, 1, 0, 0,
 		0, 0, 1, 1, 1, 1, 0, 1, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 2, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 2, 0, 0, 0, 0, 0, 0,
+		0, 0, 2, 2, 2, 0, 0, 0, 0, 0,
+		0, 0, 2, 2, 2, 0, 0, 0, 0, 0,
 	};
 };
