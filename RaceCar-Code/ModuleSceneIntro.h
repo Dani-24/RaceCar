@@ -100,6 +100,8 @@ public:
 
 	uint winFx, loseFx;
 
+	bool titleCam = false;
+
 private:
 
 	float lastPlayerPosY;

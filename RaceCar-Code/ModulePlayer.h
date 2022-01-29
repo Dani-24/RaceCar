@@ -45,8 +45,7 @@ public:
 
 	bool allowPlayerControl = false;
 
-	int time;
-	float countdown;
+	float countdown, killerCountDown;
 
 	bool countDownSoundPlay = false;
 

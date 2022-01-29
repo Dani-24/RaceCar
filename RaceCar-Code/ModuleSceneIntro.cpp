@@ -54,7 +54,7 @@ bool ModuleSceneIntro::Start()
 	// Map ground
 	AddGround();
 
-	// Map scenery details
+	// Map scenery details (there is no time for it sorry :P)
 	//AddCube({ 30, 10, 200 }, { 25, 20, 50 }, Yellow);
 
 	// Circuit
@@ -76,9 +76,7 @@ bool ModuleSceneIntro::CleanUp()
 void ModuleSceneIntro::SceneReset() {
 
 	state = GameState::TITLESCREEN;
-
 	currentLap = LapState::START;
-
 	areYouWinningSon = RaceState::DEFAULT;
 
 	playingMusic = false;
@@ -94,6 +92,8 @@ void ModuleSceneIntro::SceneReset() {
 	cronometro.Stop();
 
 	app->player->countdown = 5;
+	app->player->killerCountDown = 60;
+
 	app->player->countDownSoundPlay = false;
 
 	app->player->lastCheckPointID = 100;
@@ -775,12 +775,15 @@ update_status ModuleSceneIntro::Update(float dt)
 		//			Update
 		// ==========================
 
-		app->camera->Position = { -250, 475, 250 };
-		app->camera->LookAt(vec3(-250, 0, 251));
+		titleCam = true;
+		CameraPlayer();
+
 		break;
 		}
 	case GAMEPLAY:
 	{
+		titleCam = false;
+
 		// Check Music
 		if (playingMusic == false) {
 			if (playerUnderWater != true) {
@@ -948,7 +951,7 @@ update_status ModuleSceneIntro::Update(float dt)
 }
 
 void ModuleSceneIntro::CameraPlayer() {
-	if (freeCam == false) {
+	if (freeCam == false && titleCam == false) {
 		if (app->player->position.getY() > Camera_Fall_Dist) {
 			// Camera following player
 			float cameraDistance = 20;
@@ -976,5 +979,11 @@ void ModuleSceneIntro::CameraPlayer() {
 
 			app->camera->LookAt(vec3(posX, posY, posZ));
 		}
+	}
+	else if (titleCam == true) {
+
+		// La cinemática de la cámara está muy elaborada para nada es el movimiento del sol cambiando el eje Z por el Y y bajando la altura
+		app->camera->Position = { -250 + cosf(sunTimer.Read() * sun.speed) * sun.movement_width, 25, 200 + sinf(sunTimer.Read() * sun.speed) * sun.movement_height };
+		app->camera->LookAt(vec3(-375, 0, 375));
 	}
 }

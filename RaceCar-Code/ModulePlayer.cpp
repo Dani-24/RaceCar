@@ -33,6 +33,7 @@ bool ModulePlayer::Start()
 
 	// Variables 
 	countdown = 5;
+	killerCountDown = 60;
 
 	CreateCar();
 
@@ -217,12 +218,22 @@ void ModulePlayer::CreateCar() {
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
-	time = app->scene_intro->cronometro.Read() / 1000;
 
 	if (app->scene_intro->state == GameState::GAMEPLAY) {
+		// Contador salida inicial
 		if (countdown > -1) {
 			countdown -= dt;
 			LOG("%.2f", countdown);
+		}
+
+		// Contador para morir
+		if (killerCountDown > -1) {
+			killerCountDown -= dt;
+		}
+		else {
+			app->scene_intro->areYouWinningSon = RaceState::LOSE;
+			app->scene_intro->state = GameState::ENDSCREEN;
+			app->scene_intro->playingMusic = false;
 		}
 
 		position.setValue(vehicle->GetPos().getX(), vehicle->GetPos().getY(), vehicle->GetPos().getZ());
@@ -247,7 +258,7 @@ update_status ModulePlayer::Update(float dt)
 		//						Car Movement
 		// =========================================================
 
-		// Jump bc yes
+		// Jump bc yes in debug
 		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && app->scene_intro->debug == true) {
 			vehicle->Push(0, 300, 0);
 		}
@@ -464,7 +475,7 @@ update_status ModulePlayer::Update(float dt)
 		}
 		else if (app->scene_intro->currentLap == LapState::FIRSTLAP) {
 			if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
-				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || Time: %d seconds || Press R to respawn", vehicle->GetKmh(), time);
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || Time: %.f seconds remaining || Press R to respawn", vehicle->GetKmh(), killerCountDown);
 			}
 			else {
 				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || YOU LOSE", vehicle->GetKmh());
@@ -472,7 +483,7 @@ update_status ModulePlayer::Update(float dt)
 		}
 		else if (app->scene_intro->currentLap == LapState::SECONDLAP) {
 			if (app->scene_intro->areYouWinningSon != RaceState::LOSE) {
-				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || Time: %d seconds || Press R to respawn", vehicle->GetKmh(), time);
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || Time: %.f seconds remaining || Press R to respawn", vehicle->GetKmh(), killerCountDown);
 			}
 			else {
 				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || YOU LOSE", vehicle->GetKmh());
@@ -484,7 +495,7 @@ update_status ModulePlayer::Update(float dt)
 					sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || YOU WIN", vehicle->GetKmh());
 				}
 				else {
-					sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || Time: %d seconds || Press R to respawn", vehicle->GetKmh(), time);
+					sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || Time: %.f seconds remaining || Press R to respawn", vehicle->GetKmh(), killerCountDown);
 				}
 			}
 			else {
@@ -512,12 +523,18 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 				app->scene_intro->currentLap = LapState::SECONDLAP;
 				LOG("second lap start");
 				app->audio->PlayFx(lapFx);
+
+				// Add more time
+				killerCountDown += 15.0f;
 				break;
 			case LapState::SECONDLAP:
 				app->scene_intro->currentLap = LapState::LASTLAP;
 				LOG("third lap start");
 				app->audio->PlayFx(finalLapFx);
 				app->scene_intro->playingMusic = false;
+
+				// Add more time
+				killerCountDown += 15.0f;
 				break;
 			case LapState::LASTLAP:
 				app->scene_intro->areYouWinningSon = RaceState::WIN;
@@ -546,6 +563,9 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 					c->data.checked = true;
 					c->next->data.checked = false;
 
+					// Add more time
+					killerCountDown += 15.0f;
+
 					// fx
 					app->audio->PlayFx(checkpointFx);
 
@@ -566,6 +586,9 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 					// reset checkpointos
 					c->data.checked = true;
 					app->scene_intro->checkPoints.getFirst()->data.checked = false;
+
+					// Add more time
+					killerCountDown += 15.0f;
 
 					// fx
 					app->audio->PlayFx(checkpointFx);
