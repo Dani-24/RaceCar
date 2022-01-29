@@ -84,7 +84,7 @@ public:
 
 	void AddCheckPoint(vec3 position, float angle, float circuitW = Circuit_Width, Color color = White, int id = 2, bool startChecked = true);
 
-	bool debug = true, freeCam;
+	bool debug = false, freeCam;
 
 	GameState state;
 

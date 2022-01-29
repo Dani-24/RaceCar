@@ -60,6 +60,6 @@ private:
 	uint turboFx;
 	bool turboFxPlayed = false;
 
-	uint respawnFx, finalLapFx, checkpointFx, lapFx;
+	uint respawnFx, finalLapFx, checkpointFx, uwCheckpointFx, lapFx;
 	uint countFx, lastCountFx;
 };

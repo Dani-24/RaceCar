@@ -27,6 +27,7 @@ bool ModulePlayer::Start()
 	lapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lap.wav");
 	finalLapFx = app->audio->LoadFx("Assets/audio/fx/gameplay_lastLap.wav");
 	checkpointFx = app->audio->LoadFx("Assets/audio/fx/gameplay_checkpoint.wav");
+	uwCheckpointFx = app->audio->LoadFx("Assets/audio/fx/gameplay_underwater_checkpoint.wav");
 
 	countFx = app->audio->LoadFx("Assets/audio/fx/gameplay_thwomp.wav");
 	lastCountFx = app->audio->LoadFx("Assets/audio/fx/gameplay_thwomp_strong.wav");
@@ -567,7 +568,12 @@ void ModulePlayer::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 					killerCountDown += 15.0f;
 
 					// fx
-					app->audio->PlayFx(checkpointFx);
+					if (app->scene_intro->playerUnderWater == false) {
+						app->audio->PlayFx(checkpointFx);
+					}
+					else {
+						app->audio->PlayFx(uwCheckpointFx);
+					}
 
 					// id de respawn
 					lastCheckPointID = body2->id;

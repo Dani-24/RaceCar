@@ -111,19 +111,17 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddCheckPoint({ 50, 0, 300 }, 90, 30, Black, 2, false); // meta
 
-	AddCheckPoint({ 50, 0, 325 }, 90, 30, Orange, 3); // checkpoint test
-	AddCheckPoint({ 50, 0, 350 }, 90, 30, Orange, 4); // checkpoint test
-	AddCheckPoint({ 50, 0, 375 }, 90, 30, Orange, 5); // checkpoint test
-	AddCheckPoint({ 50, 0, 400 }, 90, 30, Orange, 6); // checkpoint test
-	AddCheckPoint({ 50, 0, 425 }, 90, 30, Orange, 7); // checkpoint test
-
 	AddCircularCircuit({ 50, 1, 600 }, { -25, 1, 675 }, -0.4f, 60, 30);
 
 	AddLinearCircuit({ -25, 0, 675 }, { -425, 0, 675 }, 100);
 
+	AddCheckPoint({ -250, 0, 675 }, 0, 30, Orange, 3); // checkpoint
+
 	AddCircularCircuit({ -425, 1, 675 }, { -425, 1, 525 }, -0.99f, 120, 60);
 
 	AddLinearCircuit({ -425, 0, 525 }, { -335, 0, 525 }, 50);
+
+	AddCheckPoint({ -425, 0, 525 }, 180, 30, Orange, 4); // checkpoint
 
 	// rampa 1
 	AddCube({ -189, -17.5f, 525 }, { 300, 10, Circuit_Width * 1.5f }, Yellow, -5, false, false, true);
@@ -138,6 +136,8 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddLinearCircuit({ -110, -20, 225 }, { -200, -20, 200 }, 25);
 
+	AddCheckPoint({ -200, -20, 200 }, -45, 30, Orange, 5); // checkpoint
+
 	AddWallCircuit({ -195, -20, 202 }, { -275, -20, 175 }, 20, false);
 
 	AddWallCircuit({ -200, -20, 195 }, { -275, -20, 125 }, 20, true);
@@ -150,6 +150,8 @@ void ModuleSceneIntro::CreateCircuit() {
 	AddCube({ -300, -17.5f, 264 }, { Circuit_Width * 1.5f , 10, 300 }, Yellow, -5, true);
 
 	AddLinearCircuit({ -300, -20, 190 }, { -300, 0, 420 }, 50, 40);
+
+	AddCheckPoint({ -300, 0, 420 }, 90, 30, Orange, 6); // checkpoint
 
 	AddCircularCircuit({ -300, 0, 420 }, { -360, 0, 460 }, -0.45f, 30, 15, 40);
 
@@ -182,6 +184,8 @@ void ModuleSceneIntro::CreateCircuit() {
 	AddWallCircuit({ -510, 0, 75 }, { -300, 0, 50 }, 50, false);
 
 	AddLinearCircuit({ -300, 0, 50 }, { 0, 0, 50 }, 60);
+
+	AddCheckPoint({ -250, 0, 50 }, 180, 30, Orange, 7); // checkpoint
 
 	AddCube({ -225, 0, 50 }, { 10, 2, Circuit_Width }, Yellow, 5, false, false, true);
 
