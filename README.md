@@ -18,6 +18,8 @@ https://github.com/Dani-24/RaceCar
 - A/S/D/W: Movement
 - Shift: Turbo
 - R: Reset
+- SpaceBar/Enter: Start
+- Esc: Back to Title
 
 ### Debug
 
@@ -32,6 +34,8 @@ https://github.com/Dani-24/RaceCar
 
 ## Additional comments
 This game has been done thanks to [Bullet Physics](https://pybullet.org/wordpress/), [SDL](https://www.libsdl.org/index.php) and [OpenGL](https://www.opengl.org/)
+
+This game is replayable at any point of the gameplay by going back to title and then starting again.
   
 ## License
 This project is licensed under an unmodified MIT license, which is an OSI-certified license that allows static linking with closed source software. Check LICENSE for further details.
