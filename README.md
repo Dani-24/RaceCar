@@ -38,4 +38,4 @@ This game has been done thanks to [Bullet Physics](https://pybullet.org/wordpres
 This game is replayable at any point of the gameplay by going back to title and then starting again.
   
 ## License
-This project is licensed under an unmodified MIT license, which is an OSI-certified license that allows static linking with closed source software. Check LICENSE for further details.
+This project is licensed under an unmodified MIT license, which is an OSI-certified license that allows static linking with closed source software. Check (LICENSE)[https://github.com/Dani-24/RaceCar/blob/main/LICENSE] for further details.
