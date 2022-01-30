@@ -215,158 +215,29 @@ void ModuleSceneIntro::CreateCircuit() {
 
 	AddCircularCircuit({ 0, 0, 50 }, { 50, 0, 100 }, -0.45f, 30, 15);
 
-	//Old Circuit
-	/*// 1
-	AddCheckPoint({ 0, 0, 210 }, 90, 30, Black); // meta
-	AddLinearCircuit({ 0, 0, 25 }, { 0, 0, 425 }, 60);
+	// ======================================================
+	//						   Deco
+	// ======================================================
 
-	// 1.2
-	AddCircularCircuit({ 0, 0, 425 }, { -25, 0, 450 }, -0.45f, 10, 5);
+	// Faro
+	AddCylinder({ -225, 25, 375 }, 10, 100, Yellow, 90, false, false, true);
+	AddCylinder({ -225, 75, 375 }, 15, 20, Yellow, 90, false, false, true);
+	AddCube({ -210, 10, 375 }, { 30, 20 ,50 }, Yellow);
 
-	// 2
-	AddLinearCircuit({ -25, 0, 450 }, { -50, 0, 450 }, 5);
+	// Gradas
+	AddCube({ 85, 5, 450 }, { 20, 10 ,100 }, White, 30, false, false, true);
+	AddCube({ 85, 5, 150 }, { 20, 10 ,100 }, White, 30, false, false, true);
 
-	// 2.1
-	AddCircularCircuit({ -50, 0, 450 }, { -75, 0, 425 }, -0.45f, 10, 5);
-
-	// 3
-	AddLinearCircuit({ -75, 0, 425 }, { -75, 0, 375 }, 10);
-
-	// 4
-	AddCircularCircuit({ -75, 0, 375 }, { -70, 0, 370 }, -0.225f, 5, 0);
-	AddLinearCircuit({ -65, 0, 365 }, { -45, 0, 350 }, 5);
-
-	// 5
-	AddCircularCircuit({ -45, 0, 350 }, { -45, 0, 325 }, 0.45f, 10, 1);
-	AddLinearCircuit({ -45, 0, 325 }, { -60, 0, 300 }, 5);
-
-	AddCheckPoint({ -51, 0, 315 }, -58, 30, Red);
-
-	AddCircularCircuit({ -60, 0, 300 }, { -75, 0, 300 }, 0.45f, 10, 0);
-
-	// 6
-	AddLinearCircuit({ -80, 0, 302 }, { -165, 0, 365 }, 20);
-	AddWallCircuit({ -165, 0, 365 }, { -235, 0, 415 }, 15, false);
-
-	// 7
-	AddLinearCircuit({ -225, 0, 410 }, { -275, 0, 410 }, 10);
-
-	// 7 brigde
-	AddLinearCircuit({ -275, 0, 410 }, { -325, 0, 410 }, 10);
-
-	// 7.2
-	AddLinearCircuit({ -325, 0, 410 }, { -350, 0, 410 }, 5);
-	AddCircularCircuit({ -350, 0, 410 }, { -375, 0, 385 }, -0.45f, 10, 3);
-
-	// 8
-	AddWallCircuit({ -375, 0, 385 }, { -375, 0, 300 }, 15, false);
-
-	// 9
-	AddCircularCircuit({ -375, 0, 300 }, { -400, 0, 275 }, 0.45f, 10, 3);
-	AddLinearCircuit({ -400, 0, 275 }, { -425, 0, 275 }, 5);
-	AddCircularCircuit({ -425, 0, 275 }, { -450, 0, 300 }, 0.45f, 10, 3);
-
-	// 10
-	AddLinearCircuit({ -450, 0, 300 }, { -450, 0, 400 }, 20);
-
-	// 11
-	AddCircularCircuit({ -450, 0, 400 }, { -550, 0, 400 }, -0.99f, 40, 20);
-
-	// 12
-	AddLinearCircuit({ -550, 0, 400 }, { -550, 0, 300 }, 20);
-
-	// 13
-	AddWallCircuit({ -570, 0, 290 }, { -590, 0, 290 }, 4, false);
-	AddLinearCircuit({ -560, 0, 300 }, { -560, 0, 200 }, 20, 50);
-
-	// Rute 14 ================
-	AddLinearCircuit({ -543, 0, 190 }, { -520, 0, 170 }, 5);
-
-	// 16 B
-	AddCircularCircuit({ -520, 0, 170 }, { -490, 0, 160 }, -0.225f, 10, 3);
-
-	AddCircularCircuit({ -490, 0, 160 }, { -465, 0, 135 }, 0.45f, 10, 3);
-
-	AddLinearCircuit({ -465, 0, 135 }, { -465, 0, 75 }, 10);
-
-	// 17 B
-	AddCircularCircuit({ -465, 0, 75 }, { -495, 0, 50 }, 0.35f, 10, 3);
-
-	// 18 B
-	AddLinearCircuit({ -495, 0, 50 }, { -550, 0, 50 }, 10);
-
-	// 19 B
-	AddCircularCircuit({ -550, 0, 50 }, { -550, 0, 0 }, -0.99f, 25, 8);
-
-	// 20 B
-	AddLinearCircuit({ -550, 0, 0 }, { -425, 0, 0 }, 25);
-
-	// 21 B
-	AddCircularCircuit({ -425, 0, 0 }, { -400, 0, 25 }, -0.45f, 10, 3);
-	AddCircularCircuit({ -400, 0, 25 }, { -375, 0, 50 }, 0.45f, 10, 3);
-
-	// 22 B ====
-	AddWallCircuit({ -375, 0, 50 }, { -340, 0, 50 }, 5, true);
-	AddLinearCircuit({ -340, 0, 50 }, { -90, 0, 50 }, 40);
-
-	// 22 C ====
-	AddCircularCircuit({ -360, 0, 30 }, { -335, 0, 5 }, -0.45f, 15, 3, 40);
-	AddLinearCircuit({ -335, 0, 5 }, { -300, 0, 5 }, 5, 40);
-
-	// Rute 15 ================
-	AddWallCircuit({ -570, 0, 200 }, { -570, 0, 165 }, 5, false);
-	AddLinearCircuit({ -570, 0, 165 }, { -570, 0, 115 }, 10);
-
-	// 16 A
-	AddCircularCircuit({ -570, 0, 115 }, { -545, 0, 90 }, -0.45f, 10, 3);
-
-	AddLinearCircuit({ -545, 0, 90 }, { -350, 0, 90 }, 30);
-
-	// 17 A
-	AddCircularCircuit({ -350, 0, 90 }, { -325, 0, 115 }, -0.45f, 10, 3);
-
-	// 18
-	AddCircularCircuit({ -325, 0, 115 }, { -300, 0, 140 }, 0.45f, 10, 3);
-
-	// 19 A (Loop)
-	AddLinearCircuit({ -300, 0, 140 }, { -250, 0, 140 }, 10);
-
-	AddLinearCircuit({ -250, 0, 100 }, { -200, 0, 100 }, 10);
-
-	// 20 A
-	AddLinearCircuit({ -200, 0, 100 }, { -100, 0, 100 }, 20);
-
-	// 21 A
-	AddCircularCircuit({ -100, 0, 100 }, { -75, 0, 75 }, 0.45f, 10, 3);
-
-	// === Rute Union ===
-	// 25 Pre
-
-	// boxes - 21A
-	AddCurveWallCircuit({ -75, 0, 75 }, { -50, 0, 42 }, -0.45f, 4, false);
-
-	// boxes - 25
-	AddCurveWallCircuit({ -75, 0, 25 }, { -50, 0, 58 }, 0.45f, 5, false);
-
-	// 22B - 21A
-	AddCurveWallCircuit({ -92, 0, 51 }, { -78, 0, 85 }, -0.45f, 3, false);
-
-	// 22B - 25
-	AddCurveWallCircuit({ -92, 0, 50 }, { -77, 0, 20 }, 0.45f, 3, false);
-
-	// 25
-	AddCircularCircuit({ -75, 0, 25 }, { -50, 0, 0 }, -0.45f, 10, 3);
-
-	AddLinearCircuit({ -50, 0, 0 }, { -25, 0, 0 }, 5);
-
-	AddCircularCircuit({ -25, 0, 0 }, { 0, 0, 25 }, -0.45f, 10, 3);
-
-	// 0
-	AddLinearCircuit({ -50, 0, 50 }, { 25, 0, 50 }, 10, 15);
-
-	AddCircularCircuit({ 25, 0, 50 }, { 50, 0, 75 }, -0.45f, 10, 3, 15);
-	AddLinearCircuit({ 50, 0, 75 }, { 50, 0, 425 }, 60, 15);
-	AddCircularCircuit({ 50, 0, 425 }, { 25, 0, 450 }, -0.45f, 10, 5, 15);*/
+	AddMushroom({ -450, 500 });
+	AddMushroom({ -400, 550 });
+	AddMushroom({ -460, 575 });
+	AddMushroom({ -500, 600 });
+	AddMushroom({ -550, 570 });
+	AddMushroom({ -510, 490 });
+	AddMushroom({ -420, 700 });
+	AddMushroom({ -500, 690 });
+	AddMushroom({ -400, 650 });
+	AddMushroom({ -400, 500 });
 }
 
 void ModuleSceneIntro::AddGround() {
@@ -444,6 +315,60 @@ void ModuleSceneIntro::AddCube(vec3 position, vec3 size, Color RGB, int angle, b
 	app->physics->AddBody(cubeToAdd, 0);
 
 	sceneryCubes.add(cubeToAdd);
+}
+
+void ModuleSceneIntro::AddSphere(vec3 position, float radius, Color RGB, int angle, bool rotateX, bool rotateY, bool rotateZ)
+{
+	Sphere sphereToAdd;
+
+	sphereToAdd.color = RGB;
+
+	sphereToAdd.SetPos(position.x, position.y, position.z);
+
+	sphereToAdd.radius = radius;
+
+	// angle, XYZ
+	if (rotateX == true) {
+		sphereToAdd.SetRotation(angle, { 1, 0, 0 });
+	}
+	if (rotateY == true) {
+		sphereToAdd.SetRotation(angle, { 0, 1, 0 });
+	}
+	if (rotateZ == true) {
+		sphereToAdd.SetRotation(angle, { 0, 0, 1 });
+	}
+
+	app->physics->AddBody(sphereToAdd, 0);
+
+	scenerySpheres.add(sphereToAdd);
+}
+
+void ModuleSceneIntro::AddCylinder(vec3 position, float radius, float height, Color RGB, int angle, bool rotateX, bool rotateY, bool rotateZ)
+{
+	Cylinder cylinderToAdd;
+
+	cylinderToAdd.color = RGB;
+
+	cylinderToAdd.SetPos(position.x, position.y, position.z);
+
+	cylinderToAdd.radius = radius;
+
+	cylinderToAdd.height = height;
+
+	// angle, XYZ
+	if (rotateX == true) {
+		cylinderToAdd.SetRotation(angle, { 1, 0, 0 });
+	}
+	if (rotateY == true) {
+		cylinderToAdd.SetRotation(angle, { 0, 1, 0 });
+	}
+	if (rotateZ == true) {
+		cylinderToAdd.SetRotation(angle, { 0, 0, 1 });
+	}
+
+	app->physics->AddBody(cylinderToAdd, 0);
+
+	sceneryCylinders.add(cylinderToAdd);
 }
 
 void ModuleSceneIntro::AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWalls, int circuitW) {
@@ -799,6 +724,12 @@ void ModuleSceneIntro::AddConstrainThing(vec3 position, float angle) {
 	serpientes.add(snake);
 }
 
+void ModuleSceneIntro::AddMushroom(vec2 position) {
+	AddCylinder({ position.x, 10,  position.y }, 2, 20, White, 90, false, false, true);
+	AddCylinder({ position.x, 21,  position.y }, 15, 2, Red, 90, false, false, true);
+}
+
+
 // Update
 update_status ModuleSceneIntro::Update(float dt)
 {
@@ -1039,6 +970,12 @@ update_status ModuleSceneIntro::Update(float dt)
 		c = c->next;
 	}
 
+	p2List_item<Sphere>* s = scenerySpheres.getFirst();
+	while (s != NULL) {
+		s->data.Render();
+		s = s->next;
+	}
+
 	p2List_item<Cylinder>* cy = sceneryCylinders.getFirst();
 	while (cy != NULL) {
 		cy->data.Render();
@@ -1049,7 +986,6 @@ update_status ModuleSceneIntro::Update(float dt)
 
 	app->renderer3D->DrawTexture(a1, { -700, -30, 250 }, 100.0f);
 	app->renderer3D->DrawTexture(shrek, { -570, 20, 250 }, 100.0f);
-	app->renderer3D->DrawTexture(a3, { -450, 1, 700 }, 35.0f);
 	app->renderer3D->DrawTexture(a4, { -300, 1, 0 }, 50.0f);
 	app->renderer3D->DrawTexture(f1, { -110, -25, 325 }, 25.0f);
 	app->renderer3D->DrawTexture(f2, { -200, -20, 100 }, 15.0f);
@@ -1060,6 +996,13 @@ update_status ModuleSceneIntro::Update(float dt)
 	app->renderer3D->DrawTexture(thrompTex, { 65, -2, 300 }, 25.0f);
 
 	app->renderer3D->DrawTexture(meta, { 33, -5, 300 }, 35.0f);
+
+	// Los SUSmbas las gradas
+	app->renderer3D->DrawTexture(a3, { 75, 5, 480 }, 10.0f);
+	app->renderer3D->DrawTexture(a3, { 76, 6, 420 }, 9.0f);
+	app->renderer3D->DrawTexture(a3, { 76, 6, 190 }, 10.0f);
+	app->renderer3D->DrawTexture(a3, { 74, 4, 140 }, 8.0f);
+
 
 	return UPDATE_CONTINUE;
 }

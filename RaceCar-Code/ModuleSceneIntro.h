@@ -69,6 +69,7 @@ public:
 
 public:
 	p2List<Cube> sceneryCubes;
+	p2List<Sphere> scenerySpheres;
 	p2List<Cylinder> sceneryCylinders;
 	p2List<CheckPoint> checkPoints;
 	p2List<GusanoRojo> serpientes;
@@ -80,6 +81,12 @@ public:
 
 	// X, Y, Z and {sizeX, sizeY, sizeZ} and angle rotation
 	void AddCube(vec3 position, vec3 size, Color RGB = Blue, int angle = 0, bool rotateX = false, bool rotateY = false, bool rotateZ = false);
+
+	void AddSphere(vec3 position, float radius, Color RGB = Blue, int angle = 0, bool rotateX = false, bool rotateY = false, bool rotateZ = false);
+
+	void AddCylinder(vec3 position, float radius, float height, Color RGB = Blue, int angle = 0, bool rotateX = false, bool rotateY = false, bool rotateZ = false);
+
+	void AddMushroom(vec2 position);
 
 	void AddLinearCircuit(vec3 initPos, vec3 finalPos, int sideWalls, int circuitW = Circuit_Width);
 
