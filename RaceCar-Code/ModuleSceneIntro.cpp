@@ -35,6 +35,22 @@ bool ModuleSceneIntro::Start()
 	//				Textures
 	// ===================================
 	susTex = app->renderer3D->LoadTexture("Assets/textures/amogus.png");
+	a1 = app->renderer3D->LoadTexture("Assets/textures/a1.png");
+	// a2 era SUS (aka falso png)
+	a3 = app->renderer3D->LoadTexture("Assets/textures/a3.png");
+	a4 = app->renderer3D->LoadTexture("Assets/textures/a4.png");
+
+	f1 = app->renderer3D->LoadTexture("Assets/textures/f1.png");
+	f2 = app->renderer3D->LoadTexture("Assets/textures/f2.png");
+	f3 = app->renderer3D->LoadTexture("Assets/textures/f3.png");
+	f4 = app->renderer3D->LoadTexture("Assets/textures/f4.png");
+
+	thrompTex = app->renderer3D->LoadTexture("Assets/textures/t.png");
+
+	meta = app->renderer3D->LoadTexture("Assets/textures/m.png");
+	shrek = app->renderer3D->LoadTexture("Assets/textures/s.png");
+
+	pistonCup = app->renderer3D->LoadTexture("Assets/textures/cpiston.png");
 
 	// ===================================
 	//				 Sun
@@ -106,6 +122,8 @@ void ModuleSceneIntro::CreateCircuit() {
 	// ================
 	//  Circuit track:
 	// ================
+
+	AddConstrainThing({ 50, 0, 400 }, 90);
 
 	AddLinearCircuit({ 50, 0, 100 }, { 50, 0, 600 }, 100);
 
@@ -735,6 +753,38 @@ void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW,
 	checkPoints.add(sensorCP);
 }
 
+void ModuleSceneIntro::AddConstrainThing(vec3 position, float angle) {
+	Cube c1, c2;
+	c1.size = { 2, 2, 15};
+	c1.SetPos(position.x, position.y, position.z - 10);
+	c1.SetRotation(angle, { 0, 1, 0 });
+	c1.color = Red;
+
+	c2.size = { 2, 2, 15 };
+	c2.SetPos(position.x, position.y, position.z + 10);
+	c2.SetRotation(angle, { 0, 1, 0 });
+	c2.color = Blue;
+
+	btTransform frameInA;
+	frameInA.getBasis().setEulerZYX(0, 0, M_PI / 2);
+	frameInA.setOrigin(btVector3(0, 0, 0));
+
+	btTransform frameInB;
+	frameInB.getBasis().setEulerZYX(0, 0, M_PI / 2);
+	frameInB.setOrigin(btVector3(0, 0, 0));
+
+	Door puerta;
+	puerta.c1 = c1;
+	puerta.c2 = c2;
+	puerta.bodyA = app->physics->AddBody(puerta.c1);
+	puerta.bodyB = app->physics->AddBody(puerta.c2);
+	puerta.position = position;
+
+	app->physics->AddConstraintSlider(*puerta.bodyA, *puerta.bodyB, frameInA, frameInB);
+
+	doors.add(puerta);
+}
+
 // Update
 update_status ModuleSceneIntro::Update(float dt)
 {
@@ -813,6 +863,19 @@ update_status ModuleSceneIntro::Update(float dt)
 		//			INPUT
 		// ==========================
 
+		// Auto Win
+		if (app->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
+			areYouWinningSon = RaceState::WIN;
+			state = GameState::ENDSCREEN;
+			playingMusic = false;
+		}
+		// Auto Loose
+		if (app->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
+			areYouWinningSon = RaceState::LOSE;
+			state = GameState::ENDSCREEN;
+			playingMusic = false;
+		}
+
 		if (app->input->GetKey(SDL_SCANCODE_ESCAPE) == KEY_DOWN) {
 			state = GameState::TITLESCREEN;
 			LOG("Exiting to Title");
@@ -867,15 +930,21 @@ update_status ModuleSceneIntro::Update(float dt)
 
 		app->renderer3D->DrawTexture(susTex, susPos, 3.0f);
 
+		p2List_item<Door>* d = doors.getFirst();
+		while (d != NULL) {
+			d->data.c1.Render();
+			d->data.c2.Render();
+			d = d->next;
+		}
+
 		// Checkpoints
-		p2List_item<CheckPoint>* c = app->scene_intro->checkPoints.getFirst();
+		p2List_item<CheckPoint>* c = checkPoints.getFirst();
 		while(c != NULL){
 			if (c->data.checked == false) {
 				c->data.colorBody.Render();
 			}
 			c = c->next;
 		}
-
 		break;
 		}
 	case ENDSCREEN:
@@ -902,6 +971,8 @@ update_status ModuleSceneIntro::Update(float dt)
 				app->audio->PlayMusic("Assets/audio/music/end_win.ogg");
 				app->audio->PlayFx(winFx);
 			}
+
+			app->renderer3D->DrawTexture(pistonCup, { 40, 0, 350 }, 20.0f);
 
 			break;
 		case LOSE:
@@ -950,6 +1021,22 @@ update_status ModuleSceneIntro::Update(float dt)
 		cy->data.Render();
 		cy = cy->next;
 	}
+
+	// Draw textures
+
+	app->renderer3D->DrawTexture(a1, { -700, -30, 250 }, 100.0f);
+	app->renderer3D->DrawTexture(shrek, { -570, 20, 250 }, 100.0f);
+	app->renderer3D->DrawTexture(a3, { -450, 1, 700 }, 35.0f);
+	app->renderer3D->DrawTexture(a4, { -300, 1, 0 }, 50.0f);
+	app->renderer3D->DrawTexture(f1, { -110, -25, 325 }, 25.0f);
+	app->renderer3D->DrawTexture(f2, { -200, -20, 100 }, 15.0f);
+	app->renderer3D->DrawTexture(f3, { -150, -50, 0 }, 50.0f);
+	app->renderer3D->DrawTexture(f4, { -50, -20, 480 }, 15.0f);
+
+	app->renderer3D->DrawTexture(thrompTex, { 10, -2, 300 }, 25.0f);
+	app->renderer3D->DrawTexture(thrompTex, { 65, -2, 300 }, 25.0f);
+
+	app->renderer3D->DrawTexture(meta, { 33, -5, 300 }, 35.0f);
 
 	return UPDATE_CONTINUE;
 }

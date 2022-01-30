@@ -31,6 +31,8 @@ https://github.com/Dani-24/RaceCar
 	- Up/Down: Camera Vertical movement
 	- Mouse Right Click & Drag: Camera Angle
 	- M/N: Zoom in / Zoom out
+- K: Win 
+- L: Lose
 
 ## Additional comments
 This game has been done thanks to [Bullet Physics](https://pybullet.org/wordpress/), [SDL](https://www.libsdl.org/index.php) and [OpenGL](https://www.opengl.org/)

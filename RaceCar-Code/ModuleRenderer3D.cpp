@@ -247,6 +247,7 @@ void ModuleRenderer3D::ChangeColor(Color colorToChange) {
 }
 
 uint ModuleRenderer3D::LoadTexture(const char* path) {
+	LOG("Loading texture");
 	SDL_Surface* surface = IMG_Load(path);
 
 	if (surface == NULL)
@@ -255,7 +256,7 @@ uint ModuleRenderer3D::LoadTexture(const char* path) {
 		return 0;
 	}
 
-	Uint32 texture;
+	Uint32 texture = NULL;
 
 	glGenTextures(1, &texture);
 

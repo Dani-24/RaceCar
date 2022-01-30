@@ -46,6 +46,12 @@ struct CheckPoint {
 	bool checked;
 };
 
+struct Door {
+	Cube c1, c2;
+	PhysBody3D* bodyA,* bodyB;
+	vec3 position;
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -65,6 +71,7 @@ public:
 	p2List<Cube> sceneryCubes;
 	p2List<Cylinder> sceneryCylinders;
 	p2List<CheckPoint> checkPoints;
+	p2List<Door> doors;
 
 	Sun sun;
 	Timer sunTimer;
@@ -83,6 +90,8 @@ public:
 	void AddCurveWallCircuit(vec3 initPos, vec3 finalPos, float angle, int walls, bool exterior);
 
 	void AddCheckPoint(vec3 position, float angle, float circuitW = Circuit_Width, Color color = White, int id = 2, bool startChecked = true);
+
+	void AddConstrainThing(vec3 position, float angle);
 
 	bool debug = false, freeCam;
 
@@ -109,6 +118,8 @@ private:
 	// Textures
 	uint susTex;
 	vec3 susPos = { 0, 0, 0 };
+
+	uint a1, shrek, a3, a4, f1, f2, f3, f4, thrompTex, meta, pistonCup;
 
 	// Ground Map 0 = Terrain, 1 = Water with sand, 2 = Pure Water (The map is printed rotated 90 degrees)
 	int groundCoord[10][10] = {

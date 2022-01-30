@@ -36,4 +36,4 @@ enum update_status
 #define WIN_BORDERLESS false
 #define WIN_FULLSCREEN_DESKTOP false
 #define VSYNC true
-#define TITLE "El rojo es SUS"
+#define TITLE "Compra Slap Chop por 19.95$"

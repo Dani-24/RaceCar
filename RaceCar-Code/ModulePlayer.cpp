@@ -479,7 +479,7 @@ update_status ModulePlayer::Update(float dt)
 				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || Time: %.f seconds remaining || Press R to respawn", vehicle->GetKmh(), killerCountDown);
 			}
 			else {
-				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || YOU LOSE", vehicle->GetKmh());
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 1/3 || YOU LOSE || Press ESC to replay", vehicle->GetKmh());
 			}
 		}
 		else if (app->scene_intro->currentLap == LapState::SECONDLAP) {
@@ -487,7 +487,7 @@ update_status ModulePlayer::Update(float dt)
 				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || Time: %.f seconds remaining || Press R to respawn", vehicle->GetKmh(), killerCountDown);
 			}
 			else {
-				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || YOU LOSE", vehicle->GetKmh());
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 2/3 || YOU LOSE || Press ESC to replay", vehicle->GetKmh());
 			}
 		}
 		else if (app->scene_intro->currentLap == LapState::LASTLAP) {
@@ -500,7 +500,7 @@ update_status ModulePlayer::Update(float dt)
 				}
 			}
 			else {
-				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || YOU LOSE", vehicle->GetKmh());
+				sprintf_s(title, "Racing GP Piston Cup || Car Speed: %.1f Km/h || Lap 3/3 || YOU LOSE || Press ESC to replay", vehicle->GetKmh());
 			}
 		}
 	}
