@@ -123,7 +123,7 @@ void ModuleSceneIntro::CreateCircuit() {
 	//  Circuit track:
 	// ================
 
-	AddConstrainThing({ 50, 0, 400 }, 90);
+	AddConstrainThing({ 50, 2, 400 }, 90);
 
 	AddLinearCircuit({ 50, 0, 100 }, { 50, 0, 600 }, 100);
 
@@ -140,6 +140,8 @@ void ModuleSceneIntro::CreateCircuit() {
 	AddLinearCircuit({ -425, 0, 525 }, { -335, 0, 525 }, 50);
 
 	AddCheckPoint({ -425, 0, 525 }, 180, 30, Orange, 4); // checkpoint
+
+	AddConstrainThing({ -450, 2, 500 }, 50);
 
 	// rampa 1
 	AddCube({ -189, -17.5f, 525 }, { 300, 10, Circuit_Width * 1.5f }, Yellow, -5, false, false, true);
@@ -202,6 +204,8 @@ void ModuleSceneIntro::CreateCircuit() {
 	AddWallCircuit({ -510, 0, 75 }, { -300, 0, 50 }, 50, false);
 
 	AddLinearCircuit({ -300, 0, 50 }, { 0, 0, 50 }, 60);
+
+	AddConstrainThing({ -300, 2, 150 }, 0);
 
 	AddCheckPoint({ -250, 0, 50 }, 180, 30, Orange, 7); // checkpoint
 
@@ -754,16 +758,21 @@ void ModuleSceneIntro::AddCheckPoint(vec3 position, float angle, float circuitW,
 }
 
 void ModuleSceneIntro::AddConstrainThing(vec3 position, float angle) {
-	Cube c1, c2;
-	c1.size = { 2, 2, 15};
+	Cube c1, c2, c3;
+	c1.size = { 2, 2, 10};
 	c1.SetPos(position.x, position.y, position.z - 10);
 	c1.SetRotation(angle, { 0, 1, 0 });
 	c1.color = Red;
 
-	c2.size = { 2, 2, 15 };
+	c2.size = { 2, 2, 10 };
 	c2.SetPos(position.x, position.y, position.z + 10);
 	c2.SetRotation(angle, { 0, 1, 0 });
-	c2.color = Blue;
+	c2.color = Red;
+
+	c3.size = { 2, 2, 10 };
+	c3.SetPos(position.x, position.y, position.z);
+	c3.SetRotation(angle, { 0, 1, 0 });
+	c3.color = Red;
 
 	btTransform frameInA;
 	frameInA.getBasis().setEulerZYX(0, 0, M_PI / 2);
@@ -773,16 +782,21 @@ void ModuleSceneIntro::AddConstrainThing(vec3 position, float angle) {
 	frameInB.getBasis().setEulerZYX(0, 0, M_PI / 2);
 	frameInB.setOrigin(btVector3(0, 0, 0));
 
-	Door puerta;
-	puerta.c1 = c1;
-	puerta.c2 = c2;
-	puerta.bodyA = app->physics->AddBody(puerta.c1);
-	puerta.bodyB = app->physics->AddBody(puerta.c2);
-	puerta.position = position;
+	GusanoRojo snake;
+	snake.c1 = c1;
+	snake.c2 = c2;
+	snake.c3 = c3;
+	snake.bodyA = app->physics->AddBody(snake.c1, 1);
+	snake.bodyB = app->physics->AddBody(snake.c2, 1);
+	snake.bodyC = app->physics->AddBody(snake.c3, 1);
 
-	app->physics->AddConstraintSlider(*puerta.bodyA, *puerta.bodyB, frameInA, frameInB);
+	snake.position = position;
 
-	doors.add(puerta);
+	app->physics->AddConstraintSlider(*snake.bodyA, *snake.bodyB, frameInA, frameInB);
+	app->physics->AddConstraintSlider(*snake.bodyA, *snake.bodyC, frameInA, frameInB);
+	app->physics->AddConstraintSlider(*snake.bodyB, *snake.bodyC, frameInA, frameInB);
+
+	serpientes.add(snake);
 }
 
 // Update
@@ -930,10 +944,19 @@ update_status ModuleSceneIntro::Update(float dt)
 
 		app->renderer3D->DrawTexture(susTex, susPos, 3.0f);
 
-		p2List_item<Door>* d = doors.getFirst();
+		p2List_item<GusanoRojo>* d = serpientes.getFirst();
 		while (d != NULL) {
+			d->data.c1.SetPos(d->data.bodyA->GetPos().getX(), d->data.bodyA->GetPos().getY(), d->data.bodyA->GetPos().getZ());
+			d->data.c1.SetRotationEuler(d->data.bodyA->GetRotation());
 			d->data.c1.Render();
+
+			d->data.c2.SetPos(d->data.bodyB->GetPos().getX(), d->data.bodyB->GetPos().getY(), d->data.bodyB->GetPos().getZ());
+			d->data.c2.SetRotationEuler(d->data.bodyB->GetRotation());
 			d->data.c2.Render();
+
+			d->data.c3.SetPos(d->data.bodyC->GetPos().getX(), d->data.bodyC->GetPos().getY(), d->data.bodyC->GetPos().getZ());
+			d->data.c3.SetRotationEuler(d->data.bodyC->GetRotation());
+			d->data.c3.Render();
 			d = d->next;
 		}
 

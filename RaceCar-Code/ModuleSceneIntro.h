@@ -46,9 +46,9 @@ struct CheckPoint {
 	bool checked;
 };
 
-struct Door {
-	Cube c1, c2;
-	PhysBody3D* bodyA,* bodyB;
+struct GusanoRojo {
+	Cube c1, c2, c3;
+	PhysBody3D* bodyA,* bodyB, *bodyC;
 	vec3 position;
 };
 
@@ -71,7 +71,7 @@ public:
 	p2List<Cube> sceneryCubes;
 	p2List<Cylinder> sceneryCylinders;
 	p2List<CheckPoint> checkPoints;
-	p2List<Door> doors;
+	p2List<GusanoRojo> serpientes;
 
 	Sun sun;
 	Timer sunTimer;

@@ -3,6 +3,8 @@
 #include "glmath.h"
 #include "Color.h"
 
+class btQuaternion;
+
 enum PrimitiveTypes
 {
 	Primitive_Point,
@@ -24,6 +26,7 @@ public:
 	void			SetPos(float x, float y, float z);
 	vec3			GetPos();
 	void			SetRotation(float angle, const vec3 &u);
+	void			SetRotationEuler(btQuaternion q);
 	void			Scale(float x, float y, float z);
 	PrimitiveTypes	GetType() const;
 

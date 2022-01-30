@@ -7,6 +7,11 @@
 
 #pragma comment (lib, "glut/glut32.lib")
 
+#include "PhysBody3D.h"
+#include "glmath.h"
+#include <cmath>
+#include "Bullet/include/btBulletDynamicsCommon.h"
+
 // ------------------------------------------------------------
 Primitive::Primitive() : transform(IdentityMatrix), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
 {}
@@ -96,6 +101,16 @@ vec3 Primitive::GetPos() {
 void Primitive::SetRotation(float angle, const vec3 &u)
 {
 	transform.rotate(angle, u);
+}
+
+void Primitive::SetRotationEuler(btQuaternion q)
+{
+	float angle = 2 * acos(q.getW());
+	float x = q.getX() / sqrt(1 - q.getW() * q.getW());
+	float y = q.getY() / sqrt(1 - q.getW() * q.getW());
+	float z = q.getZ() / sqrt(1 - q.getW() * q.getW());
+
+	transform.rotate(angle, {x,y,z});
 }
 
 // ------------------------------------------------------------

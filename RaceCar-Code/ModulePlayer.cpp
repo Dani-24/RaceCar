@@ -466,11 +466,16 @@ update_status ModulePlayer::Update(float dt)
 				}
 			}
 			else {
-				sprintf_s(title, "Racing GP Piston Cup || GO GOGO GOGOGO GOG OOGGOGO GOGGO OGOG GOOOOOOOO GOOOOOOOOOOOOOOOOOOOO");
 				if (countDownSoundPlay == false) {
 					countDownSoundPlay = true;
 
 					app->audio->PlayFx(lastCountFx);
+				}
+				if (app->scene_intro->areYouWinningSon == RaceState::LOSE) {
+					sprintf_s(title, "Racing GP Piston Cup || WHY YOU DON'T MOVE??? You LOSE you SUS");
+				}
+				else {
+					sprintf_s(title, "Racing GP Piston Cup || GO GOGO GOGOGO GOG OOGGOGO GOGGO OGOG GOOOOOOOO GOOOOOOOOOOOOOOOOOOOO");
 				}
 			}
 		}

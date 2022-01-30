@@ -26,6 +26,7 @@ public:
 	void SetTransform(const float* matrix) const;
 	void SetPos(float x, float y, float z);
 	void SetRotation(btQuaternion q);
+	btQuaternion GetRotation();
 	Euler GetEulerAngles(btQuaternion q);
 	void SetAsSensor(bool is_sensor);
 	void SetId(int id);
