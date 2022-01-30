@@ -117,3 +117,15 @@ void PhysBody3D::SetAngularVelocity(float x, float y, float z)
 	btVector3 v(x, y, z);
 	body->setAngularVelocity(v);
 }
+
+btVector3 PhysBody3D::GetLinearVelocity() {
+	btVector3 returnV;
+	returnV = body->getLinearVelocity();
+	return returnV;
+}
+
+btVector3 PhysBody3D::GetAngularVelocity() {
+	btVector3 returnV;
+	returnV = body->getAngularVelocity();
+	return returnV;
+}

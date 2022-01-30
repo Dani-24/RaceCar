@@ -36,6 +36,9 @@ public:
 	void SetLinearVelocity(float x, float y, float z);
 	void SetAngularVelocity(float x, float y, float z);
 
+	btVector3 GetLinearVelocity();
+	btVector3 GetAngularVelocity();
+
 public:
 	btRigidBody* body = nullptr;
 

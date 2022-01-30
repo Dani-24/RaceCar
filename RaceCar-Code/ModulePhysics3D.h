@@ -37,6 +37,8 @@ public:
 	void AddConstraintSlider(PhysBody3D& bodyA, PhysBody3D& bodyB, btTransform& frameinA, btTransform& frameinB);
 
 	void SetGravity(vec3 g = { 0, -10, 0 });
+	vec3 ForceBuoyance(PhysBody3D* body, float volume);
+	vec3 ForceDrag(PhysBody3D* body, float density);
 
 private:
 

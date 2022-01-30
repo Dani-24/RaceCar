@@ -221,6 +221,14 @@ update_status ModulePlayer::Update(float dt)
 {
 
 	if (app->scene_intro->state == GameState::GAMEPLAY) {
+
+		if (app->scene_intro->playerUnderWater == true) {
+			// Apply Bouyancy if player is underwater
+			app->physics->ForceBuoyance(vehicle, 10);
+		}
+		// Apply Drag
+		app->physics->ForceDrag(vehicle, 25);
+
 		// Contador salida inicial
 		if (countdown > -1) {
 			countdown -= dt;
@@ -261,7 +269,24 @@ update_status ModulePlayer::Update(float dt)
 
 		// Jump bc yes in debug
 		if (app->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT && app->scene_intro->debug == true) {
-			vehicle->Push(0, 300, 0);
+			vehicle->Push(0, 500, 0);
+		}
+		// Fly in debug
+		if (app->scene_intro->debug == true && app->scene_intro->freeCam == false) {
+			if (app->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT) {
+				vehicle->Push(0, 0, 500);
+			}
+			if (app->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) {
+				vehicle->Push(0, 0, -500);
+			}
+			if (app->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
+				
+				vehicle->Push(-500, 0, 0);
+			}
+			if (app->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
+			
+				vehicle->Push(500, 0, 0);
+			}
 		}
 
 		// Reset Variables (more or less like !Key_Down)
