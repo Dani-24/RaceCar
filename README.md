@@ -3,7 +3,9 @@
 ### Description
 Racing GP Piston Cup ඞ is the future of racing car games, forza horizon, mario kart, gran turismo, nothing is better than Racing GP Piston Cup ඞ.
 
-Run as an Amogus in his kart to complete 3 laps while time drops. Get checkpoints to gain more time and press E to say "viva el vino" as M.Rajoy.
+Run as an Amogus in his kart to complete 3 laps while time drops. Get checkpoints to gain more time and press E to say "viva el vino" as M.Rajoy (fictional character).
+BUT CARE, that won't be easy, Shrek has send you red snakes constrains to distract you from the race, and the water wets you, the kart is not a boat so it will run slower and will try to float up, so take care if you go fast.
+If you are strong enought, you will be awarded with the PISTON CUP.
 
 ### Members
 
